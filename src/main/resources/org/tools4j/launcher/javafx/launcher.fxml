@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextArea?>
+<VBox fx:controller="org.tools4j.launcher.javafx.LauncherPresenter" fx:id="mainPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+    <HBox fx:id="textSearchPane">
+        <Label fx:id="labelLogo" styleClass="largeTextPrompt"/>
+        <StackPane>
+            <FlowPane fx:id="dataSearchPane">
+                <TextField fx:id="dataSearchBox" styleClass="searchTextBox"/>
+            </FlowPane>
+            <FlowPane fx:id="commandSearchPane" visible="false">
+                <BorderPane>
+                    <left>
+                        <HBox alignment="CENTER">
+                            <Label fx:id="selectedDataLabel" styleClass="searchTextBox"/>
+                            <Label fx:id="separatorLabel" styleClass="largeTextPrompt"/>
+                        </HBox>
+                    </left>
+                    <center>
+                        <TextField fx:id="commandSearchBox" styleClass="searchTextBox"/>
+                    </center>
+                </BorderPane>
+            </FlowPane>
+        </StackPane>
+    </HBox>
+    <StackPane fx:id="outerTablePane" styleClass="contentPane">
+        <BorderPane fx:id="dataTableContentPane" styleClass="tablePane">
+            <center>
+                <TableView fx:id="dataTableView" styleClass="tableView"/>
+            </center>
+        </BorderPane>
+        <BorderPane fx:id="commandTableContentPane" visible="false" styleClass="tablePane">
+            <center>
+                <TableView fx:id="commandTableView" styleClass="tableView"/>
+            </center>
+        </BorderPane>
+        <BorderPane fx:id="consoleOutputContentPane" visible="false" styleClass="tablePane">
+            <center>
+                <TextArea fx:id="consoleOutput" editable="false"/>
+            </center>
+            <bottom>
+                <Label fx:id="consoleLabel"/>
+            </bottom>
+        </BorderPane>
+    </StackPane>
+</VBox>
