@@ -10,7 +10,7 @@ import spock.lang.Specification
 class DataSetFromCsvFileTest extends Specification {
     def "GetData with column headings"() {
         given:
-        DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(new CsvFile("src/test/resources/test2/table.csv", (char) ','));
+        DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(new CsvFile("src/test/resources/csv-test/table.csv", (char) ','));
 
         when:
         DataSet data = csvDataFile.load();

@@ -21,9 +21,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * Time: 6:00 PM
  */
 public class AbstractLauncherTest extends ApplicationTest {
-    public static final String WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS = "src/test/resources/test1";
-    public static final String WORKING_DIR_CONTAINING_JUST_ONE_COMMAND = "src/test/resources/test5";
-    public static final String WORKING_DIR_CONTAINING_ZERO_COMMANDS = "src/test/resources/test6";
+    public static final String WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS = "src/test/resources/table-with-multiple-commands";
+    public static final String WORKING_DIR_CONTAINING_JUST_ONE_COMMAND = "src/test/resources/table-with-single-command";
+    public static final String WORKING_DIR_CONTAINING_ZERO_COMMANDS = "src/test/resources/table-no-commands";
     protected final AtomicBoolean destroyCalled = new AtomicBoolean(false);
     protected ExecutionService executionService;
 
