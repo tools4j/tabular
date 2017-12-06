@@ -16,6 +16,4 @@ public class SearchableDataSetFromDataSet {
     public SearchableDataSetFromDataSet(final DataSet source) {
         this.source = source;
     }
-
-
 }

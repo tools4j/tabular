@@ -44,4 +44,19 @@ public class RowWithCommands extends RowDecorator {
             }
         };
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RowWithCommands)) return false;
+
+        final RowWithCommands row = (RowWithCommands) o;
+
+        return commands.equals(row.commands);
+    }
+
+    @Override
+    public int hashCode() {
+        return commands.hashCode();
+    }
 }

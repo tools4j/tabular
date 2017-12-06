@@ -45,6 +45,7 @@ public class ExecutingCommand {
                 try {
                     process.waitFor();
                 } catch (InterruptedException e) {
+                    errorOccurred.set(true);
                     e.printStackTrace();
                 } finally {
                     finished.set(true);
@@ -98,8 +99,11 @@ public class ExecutingCommand {
         if(finished.get()){
             return;
         } else {
-            process.destroyForcibly();
-            onFinishWithError.apply(null);
+            try {
+                process.destroyForcibly();
+            } finally {
+                onFinishWithError.apply(null);
+            }
         }
     }
 }

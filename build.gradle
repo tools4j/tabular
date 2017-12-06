@@ -1,14 +1,14 @@
-group 'tiddle'
-version '2.4'
+group 'org.tools4j'
+version '1.0'
 
 apply plugin: 'groovy'
 apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'javafx-gradle-plugin'
 
 buildscript {
     repositories { jcenter() }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2'
     }
 }
 
@@ -16,32 +16,34 @@ repositories {
     mavenCentral()
 }
 
-shadowJar {
-    manifest {
-        attributes 'Main-Class': 'tiddle.javafx.Main'
-    }
+jfx {
+    jfxMainAppJarName = "launcher.jar"
+    mainClass = 'org.tools4j.launcher.javafx.Main'
+    vendor = 'Ben Warner'
+    additionalAppResources = 'src/main/dist/*'
 }
 
 dependencies {
-    compile "com.opencsv:opencsv:4.0"
-    compile "org.apache.lucene:lucene-core:2.4.1"
-    compile "net.sf.saxon:saxon-dom:8.7"
-    compile "net.sf.saxon:saxon-xpath:8.7"
-    compile "xmlunit:xmlunit:1.2"
-    compile "log4j:log4j:1.2.14"
-    compile "com.airhacks:afterburner.fx:1.6.0"
+    compile 'com.opencsv:opencsv:4.0'
+    compile 'org.apache.lucene:lucene-core:2.4.1'
+    compile 'net.sf.saxon:saxon-dom:8.7'
+    compile 'net.sf.saxon:saxon-xpath:8.7'
+    compile 'xmlunit:xmlunit:1.2'
+    compile 'log4j:log4j:1.2.14'
+    compile 'com.airhacks:afterburner.fx:1.6.0'
     compile 'com.udojava:EvalEx:1.16'
-    compile "com.github.tulskiy:jkeymaster:1.2"
+    compile 'com.github.tulskiy:jkeymaster:1.2'
     compile 'org.jsoup:jsoup:1.10.1'
-    testCompile "junit:junit:4.4"
-    compile group: 'com.google.guava', name: 'guava', version: '23.3-jre'
-    compile "org.codehaus.groovy:groovy-all:2.4.10"
-    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
-    // dependencies for using Spock
-    testCompile "org.hamcrest:hamcrest-core:1.3" // only necessary if Hamcrest matchers are used
-    testRuntime "cglib:cglib-nodep:3.1"          // allows mocking of classes (in addition to interfaces)
-    testRuntime "org.objenesis:objenesis:2.1"    // allows mocking of classes without default constructor (together with CGLIB)
-    testCompile "org.tools4j:groovy-tables:1.6"
-    testCompile "org.testfx:testfx-core:4.0.8-alpha"
-    testCompile "org.testfx:testfx-junit:4.0.8-alpha"
+    compile 'com.google.guava:guava:23.3-jre'
+    compile 'org.codehaus.groovy:groovy-all:2.4.10'
+
+    testCompile 'junit:junit:4.4'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'org.hamcrest:hamcrest-core:1.3' // only necessary if Hamcrest matchers are used
+    testCompile 'org.tools4j:groovy-tables:1.6'
+    testCompile 'org.testfx:testfx-core:4.0.8-alpha'
+    testCompile 'org.testfx:testfx-junit:4.0.8-alpha'
+
+    testRuntime 'cglib:cglib-nodep:3.1'          // allows mocking of classes (in addition to interfaces)
+    testRuntime 'org.objenesis:objenesis:2.1'    // allows mocking of classes without default constructor (together with CGLIB)
 }

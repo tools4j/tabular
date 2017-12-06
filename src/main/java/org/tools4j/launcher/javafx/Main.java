@@ -7,8 +7,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.log4j.Logger;
-import org.tools4j.launcher.service.AppContext;
-import org.tools4j.launcher.service.AppContextFromDir;
+import org.tools4j.launcher.service.DataSetContext;
+import org.tools4j.launcher.service.DataSetContextFromDir;
 import org.tools4j.launcher.util.PropertiesRepo;
 
 public class Main extends Application {
@@ -33,14 +33,15 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         final WorkingDir workingDir = new WorkingDir();
         LOG.info("Loading AppContext...");
-        final AppContext appContext = new AppContextFromDir(workingDir.get(), propertyOverrides).load();
+        final DataSetContext appContext = new DataSetContextFromDir(workingDir.get(), propertyOverrides).load();
 
-        Injector.setModelOrService(AppContext.class, appContext);
+        Injector.setModelOrService(DataSetContext.class, appContext);
         Injector.setModelOrService(Stage.class, primaryStage);
         Injector.setModelOrService(ExecutionService.class, executionService);
 
-        primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        if(primaryStage.getStyle() != StageStyle.TRANSPARENT) {
+            primaryStage.initStyle(StageStyle.TRANSPARENT);
+        }
 
         final LauncherView mainView = new LauncherView();
         final Scene scene = new Scene(mainView.getView());

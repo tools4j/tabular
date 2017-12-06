@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import org.tools4j.launcher.service.Command;
 import org.tools4j.launcher.service.PostExecutionBehaviour;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * User: ben
  * Date: 21/11/17
@@ -12,8 +15,11 @@ import org.tools4j.launcher.service.PostExecutionBehaviour;
  */
 public class ExecutionServiceImpl implements ExecutionService {
     private final static Logger LOG = Logger.getLogger(LauncherPresenter.class);
+    private List<ExecutingCommand> executedCommands;
 
-    public ExecutionServiceImpl() {}
+    public ExecutionServiceImpl() {
+        executedCommands = new ArrayList<>();
+    }
 
     @Override
     public ExecutingCommand exec(final Command command, final TextArea outputConsole, final PostExecutionBehaviour postExecutionBehaviour){
@@ -25,11 +31,24 @@ public class ExecutionServiceImpl implements ExecutionService {
             postExecutionBehaviour.onRunning.apply(null);
             final ExecutingCommand executingCommand = new ExecutingCommand(pr, postExecutionBehaviour.onFinish, postExecutionBehaviour.onFinishWithError, outputConsole);
             executingCommand.init();
+            executedCommands.add(executingCommand);
             return executingCommand;
 
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void destroy() {
+        LOG.info("Shutting down any previously run command which are still executing.");
+        for(final ExecutingCommand command: executedCommands){
+            if(!command.isFinished()){
+                LOG.warn("Shutting command which was still executing...");
+                command.stop();
+            }
+        }
+
     }
 }

@@ -12,28 +12,21 @@ public class DataSetContextFromDir {
     private final static Logger LOG = Logger.getLogger(DataSetContextFromDir.class);
 
     private final String configDir;
-    private final String dataSetName;
-    private final PropertiesRepo sharedProperties;
     private final PropertiesRepo propertyOverrides;
 
-    public DataSetContextFromDir(final String configDir, final String dataSetName, final PropertiesRepo sharedProperties) {
-        this(configDir, dataSetName, sharedProperties, new PropertiesRepo());
+    public DataSetContextFromDir(final String configDir) {
+        this(configDir, new PropertiesRepo());
     }
 
-    public DataSetContextFromDir(final String configDir, final String dataSetName, final PropertiesRepo sharedProperties, final PropertiesRepo propertyOverrides) {
+    public DataSetContextFromDir(final String configDir, final PropertiesRepo propertyOverrides) {
         this.configDir = configDir;
-        this.dataSetName = dataSetName;
-        this.sharedProperties = sharedProperties;
         this.propertyOverrides = propertyOverrides;
     }
 
-    public DataSetContext load() {
-        LOG.info("Loading DataSet: " + dataSetName);
-        final DataSetFromDir dataSetFromDir = new DataSetFromDir(configDir, dataSetName, sharedProperties);
-        DataSet dataSet = dataSetFromDir.load();
 
+    public DataSetContext load() {
         LOG.info("Loading DataSet properties");
-        PropertiesRepo dataSetProperties = new PropertiesRepo(configDir + "/" + dataSetName);
+        PropertiesRepo dataSetProperties = new PropertiesRepo(configDir + "/config");
 
         LOG.info("Loading column abbreviations");
         final PropertiesRepo columnAbbreviations = dataSetProperties.getWithPrefix("app.column.abbreviations");
@@ -44,14 +37,19 @@ public class DataSetContextFromDir {
         }
 
         LOG.info("Resolving variables in dataset properties");
-        dataSetProperties = dataSetProperties.resolveVariablesWithinValues(sharedProperties);
-
-        LOG.info("Resolving variables in dataset table cells");
-        dataSet = dataSet.resolveVariablesInCells(dataSetProperties, sharedProperties);
-        PropertiesRepo dataSetPropertiesWithSharedPropertiesAndOverrides = new PropertiesRepo(sharedProperties);
+        PropertiesRepo dataSetPropertiesWithSharedPropertiesAndOverrides = new PropertiesRepo();
+        dataSetPropertiesWithSharedPropertiesAndOverrides.putAll(new EnvironmentVariables().load());
+        dataSetPropertiesWithSharedPropertiesAndOverrides.putAll(new SystemVariables().load());
         dataSetPropertiesWithSharedPropertiesAndOverrides.putAll(dataSetProperties);
         dataSetPropertiesWithSharedPropertiesAndOverrides.putAll(propertyOverrides);
         dataSetPropertiesWithSharedPropertiesAndOverrides = dataSetPropertiesWithSharedPropertiesAndOverrides.resolveVariablesWithinValues();
+
+        LOG.info("Loading DataSet CSV");
+        final DataSetFromDir dataSetFromDir = new DataSetFromDir(configDir, propertyOverrides);
+        DataSet dataSet = dataSetFromDir.load();
+
+        LOG.info("Resolving variables in dataset table cells");
+        dataSet = dataSet.resolveVariablesInCells(dataSetProperties, dataSetPropertiesWithSharedPropertiesAndOverrides);
 
         LOG.info("Loading commandMetadata from properties");
         CommandMetadataFromProperties commandMetadataFromProperties = new CommandMetadataFromProperties(dataSetPropertiesWithSharedPropertiesAndOverrides);
@@ -61,6 +59,6 @@ public class DataSetContextFromDir {
         dataSet = dataSet.resolveCommands(commandMetadatas, dataSetPropertiesWithSharedPropertiesAndOverrides);
 
         LOG.info("Finished loading dataset");
-        return new DataSetContext(dataSetName, dataSet, dataSetPropertiesWithSharedPropertiesAndOverrides);
+        return new DataSetContext(dataSet, commandMetadatas, dataSetPropertiesWithSharedPropertiesAndOverrides);
     }
 }

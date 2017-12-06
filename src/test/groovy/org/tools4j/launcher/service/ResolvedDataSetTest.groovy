@@ -11,8 +11,7 @@ class ResolvedDataSetTest extends Specification {
     def "test resolved dataset"(){
         when:
         final String configDir = "src/test/resources/test3"
-        final SharedConfig sharedConfig = new SharedConfigFromDir(configDir).load();
-        final DataSetContext dataSetContext = new DataSetContextFromDir(configDir, 'blah', sharedConfig.asPropertiesRepo()).load();
+        final DataSetContext dataSetContext = new DataSetContextFromDir(configDir).load();
 
         then:
         println dataSetContext.toPrettyString();

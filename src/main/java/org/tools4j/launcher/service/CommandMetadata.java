@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  * Date: 7/11/17
  * Time: 6:15 PM
  */
-public class CommandMetadata extends RowFromMap implements Predicate<Row> {
+public class CommandMetadata extends RowFromMap implements Predicate<Row>, Pretty {
     private final static Logger LOG = Logger.getLogger(CommandMetadata.class);
     private final String name;
     private final Predicate<Row> predicate;
@@ -53,5 +53,19 @@ public class CommandMetadata extends RowFromMap implements Predicate<Row> {
 
     public static List<String> columnNames(){
         return Arrays.asList("Name", "Description");
+    }
+
+    public String toPrettyString(final String indent) {
+        return toString();
+    }
+
+    @Override
+    public String toString() {
+        return "CommandMetadata{" +
+                "name='" + name + '\'' +
+                ", predicate=" + predicate +
+                ", command='" + command + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

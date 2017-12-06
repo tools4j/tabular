@@ -1,5 +1,6 @@
 package org.tools4j.launcher.service;
 
+import org.tools4j.launcher.util.IndentableStringBuilder;
 import org.tools4j.launcher.util.PropertiesRepo;
 
 import java.util.LinkedHashMap;
@@ -13,7 +14,7 @@ import java.util.stream.Stream;
  * Date: 8/11/17
  * Time: 5:45 PM
  */
-public class CommandMetadatas {
+public class CommandMetadatas implements Pretty {
     private final Map<String, CommandMetadata> commandMetadataMap;
 
     public CommandMetadatas(final List<CommandMetadata> commands) {
@@ -39,5 +40,22 @@ public class CommandMetadatas {
 
     public List<Command> getCommandInstances(final Row row, final PropertiesRepo properties) {
         return getCommandsFor(row).commandMetadataMap.values().stream().map((commandMetadata -> commandMetadata.getCommandInstance(row, properties))).collect(Collectors.toList());
+    }
+
+    @Override
+    public String toPrettyString(final String indent) {
+        final IndentableStringBuilder sb = new IndentableStringBuilder(indent);
+        sb.append("commandMetadatas{\n");
+        sb.activateIndent();
+        for(final CommandMetadata commandMetadata: commandMetadataMap.values()){
+            sb.append(commandMetadata.toPrettyString(indent));
+        }
+        sb.decactivateIndent();
+        sb.append("}");
+        return sb.toString();
+    }
+
+    public boolean isEmpty() {
+        return commandMetadataMap.isEmpty();
     }
 }

@@ -24,7 +24,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.apache.log4j.Logger;
-import org.tools4j.launcher.service.AppContext;
 import org.tools4j.launcher.service.Command;
 import org.tools4j.launcher.service.DataSetContext;
 import org.tools4j.launcher.service.MutablePartIndex;
@@ -97,7 +96,7 @@ public class LauncherPresenter implements Initializable {
     private static double yOffset = 0;
 
     @Inject
-    private AppContext appContext;
+    private DataSetContext dataSetContext;
 
     @Inject
     private Stage stage;
@@ -108,17 +107,17 @@ public class LauncherPresenter implements Initializable {
     private ObservableList<Result<RowWithCommands>> dataTableItems;
     private ObservableList<Result<Command>> commandTableItems;
 
-    private boolean toolbarHidden = false;
     private ExpandCollapseHelper expandCollapseHelper;
     private boolean skipCommandSearch;
+    private boolean zeroCommandsConfigured;
 
     @Override
     public void initialize(final URL url, final ResourceBundle resourceBundle){
         try {
             final PropertyPersistenceService tablePropertySaveService = new PropertyPersistenceServiceImpl("tables");
-            final DataSetContext dataSetContext = appContext.first();
             final AtomicReference<ExecutingCommand> executingCommand = new AtomicReference<>();
             skipCommandSearch = dataSetContext.skipCommandSearch();
+            zeroCommandsConfigured = dataSetContext.zeroCommandsConfigured();
 
             final ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executionService, consoleOutput,
                 new PostExecutionBehaviour(
@@ -228,7 +227,6 @@ public class LauncherPresenter implements Initializable {
                 if(KeyEvent.getCode() == KeyCode.ENTER){
                     return;
                 }
-
                 if (commandSearchBox.getText() != null
                         && commandSearchBox.getText().length() > 0
                             && !(commandSearchBox.getSelectedText() != null
@@ -343,25 +341,27 @@ public class LauncherPresenter implements Initializable {
 
                 } else if (e.getCode() == KeyCode.ENTER) {
                     LOG.debug("Enter key pressed:" + e);
-                    final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem().getRow();
-                    selectedDataLabel.setText(dataSetContext.getValueToDisplayWhenDataRowSelected(selectedRow, dataSearchBox.getText()));
-                    dataSearchPane.setVisible(false);
-                    dataTableContentPane.setVisible(false);
-                    commandSearchPane.setVisible(true);
+                    if(!zeroCommandsConfigured) {
+                        final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem().getRow();
+                        selectedDataLabel.setText(dataSetContext.getValueToDisplayWhenDataRowSelected(selectedRow, dataSearchBox.getText()));
+                        dataSearchPane.setVisible(false);
+                        dataTableContentPane.setVisible(false);
+                        commandSearchPane.setVisible(true);
 
-                    if(skipCommandSearch){
-                        final Command command = selectedRow.getCommands().get(0);
-                        commandSearchBox.setText(dataSetContext.getValueToDisplayWhenCommandRowSelected(command));
-                        commandSearchBox.setEditable(false);
-                        executeCommandAndEnterConsoleMode(executingCommand, executionEnvironment, command);
+                        if (skipCommandSearch) {
+                            final Command command = selectedRow.getCommands().get(0);
+                            commandSearchBox.setText(dataSetContext.getValueToDisplayWhenCommandRowSelected(command));
+                            commandSearchBox.setEditable(false);
+                            executeCommandAndEnterConsoleMode(executingCommand, executionEnvironment, command);
 
-                    } else {
-                        commandIndex.update(selectedRow.getCommandsTable());
-                        commandTableItems.clear();
-                        commandTableItems.setAll(commandIndex.returnAll());
-                        commandTableContentPane.setVisible(true);
-                        commandSearchBox.clear();
-                        commandSearchBox.requestFocus();
+                        } else {
+                            commandIndex.update(selectedRow.getCommandsTable());
+                            commandTableItems.clear();
+                            commandTableItems.setAll(commandIndex.returnAll());
+                            commandTableContentPane.setVisible(true);
+                            commandSearchBox.clear();
+                            commandSearchBox.requestFocus();
+                        }
                     }
                 } else if (e.getCode() == KeyCode.ESCAPE) {
                     LOG.debug("Escape key pressed from dataTable");

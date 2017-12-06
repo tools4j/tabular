@@ -16,21 +16,20 @@ public class DataSetContext {
     public static final String APP_COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED = "app.command.column.to.display.when.selected";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE = "app.columns.to.display.in.command.table";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "app.columns.to.display.in.data.table";
-    private final String dataSetName;
     private final DataSet dataSet;
     private final PropertiesRepo properties;
+    private final CommandMetadatas commandMetadatas;
 
-    public DataSetContext(final String dataSetName, final DataSet dataSet, final PropertiesRepo properties) {
-        this.dataSetName = dataSetName;
+    public DataSetContext(final DataSet dataSet, final CommandMetadatas commandMetadatas, final PropertiesRepo properties) {
         this.dataSet = dataSet;
         this.properties = properties;
+        this.commandMetadatas = commandMetadatas;
     }
 
     @Override
     public String toString() {
         return "DataSetContext{" +
-                "dataSetName='" + dataSetName + '\'' +
-                ", dataSet=" + dataSet +
+                "dataSet=" + dataSet +
                 ", properties=" + properties +
                 '}';
     }
@@ -44,8 +43,8 @@ public class DataSetContext {
         final IndentableStringBuilder sb = new IndentableStringBuilder(indent);
         sb.append("DataSetContext{\n");
         sb.activateIndent();
-        sb.append("dataSetName=").append(dataSetName).append("\n");
         sb.append("dataSet=").append(dataSet.toPrettyString(indent)).append("\n");
+        sb.append("commandMetadatas=").append(commandMetadatas.toPrettyString(indent)).append("\n");
         sb.append("properties=").append(properties.toPrettyString(indent)).append("\n");
         sb.decactivateIndent();
         sb.append("}");
@@ -65,16 +64,11 @@ public class DataSetContext {
     }
 
     public boolean skipCommandSearch() {
-        return (isOnlySingleCommandConfiguredPerRow() && properties.getAsBoolean("app.skip.command.browse.if.only.one.command.configured", false));
+        return (commandMetadatas.size() == 1 && properties.getAsBoolean("app.skip.command.browse.if.only.one.command.configured", false));
     }
 
-    private boolean isOnlySingleCommandConfiguredPerRow() {
-        for(final RowWithCommands row: dataSet.getRows()){
-            if(row.getCommands().size() > 1){
-                return false;
-            }
-        }
-        return true;
+    public boolean zeroCommandsConfigured() {
+        return commandMetadatas.isEmpty();
     }
 
     public List<String> getDataColumnsToDisplay() {

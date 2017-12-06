@@ -1,15 +1,27 @@
 package org.tools4j.launcher.service;
 
 import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.testfx.api.FxRobot;
+import org.testfx.api.FxRobotInterface;
+import org.testfx.api.FxToolkit;
+import org.testfx.api.FxToolkitContext;
+import org.testfx.framework.junit.ApplicationAdapter;
 import org.testfx.framework.junit.ApplicationTest;
+import org.tools4j.launcher.javafx.ExecutionService;
 import org.tools4j.launcher.javafx.Main;
 import org.tools4j.launcher.util.PropertiesRepo;
 
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -27,41 +39,17 @@ import static org.tools4j.launcher.service.Utils.containsText;
  * Date: 24/11/17
  * Time: 7:02 AM
  */
-public class TestLauncherHungProcess extends ApplicationTest {
-    private final AtomicBoolean destroyCalled = new AtomicBoolean(false);
-    private final AtomicReference<Stage> stage = new AtomicReference<>();
+public class TestLauncherManyCommandsHungProcess extends AbstractLauncherTest {
 
     @Override
-    public void start(Stage stage) {
-        try {
-            while(this.stage.get() != null){
-                System.out.println("Waiting for stage to be closed...");
-                Thread.sleep(100);
-            }
-            System.setProperty("workingDir", "src/test/resources/test1");
-            destroyCalled.set(false);
-            //Will be busy for 200 seconds (effecitvely hung)
-            final Main main = new Main(new PropertiesRepo(), new MockExecutionService(MockExecutionService.getBusyProcess(200, aVoid -> {
-                destroyCalled.set(true);
-                return null;
-            })));
-            main.start(stage);
-            this.stage.set(stage);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public ExecutionService getExecutionService() {
+        //200 seconds is effectively hung
+        return super.getExecutionServiceWithBusyProcess(200);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Platform.runLater(() -> {
-            final Stage stage = this.stage.get();
-            if(stage != null){
-                System.out.println("Closing stage...");
-                stage.close();
-                this.stage.set(null);
-            }
-        });
+    @Override
+    public String getWorkingDir() {
+        return WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS;
     }
 
     @Test
@@ -76,6 +64,7 @@ public class TestLauncherHungProcess extends ApplicationTest {
         //ESCAPE will halt the process
         clickOn(Ids.consoleOutput).type(KeyCode.ESCAPE);
         verifyConsoleMode();
+        Thread.sleep(100);
         verifyThat(Ids.consoleLabel, containsText("Finished with error"));
 
         //Should be finished now

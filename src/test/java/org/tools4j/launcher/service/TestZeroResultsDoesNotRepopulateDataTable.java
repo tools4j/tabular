@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import org.junit.After;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
+import org.tools4j.launcher.javafx.ExecutionService;
 import org.tools4j.launcher.javafx.Main;
 import org.tools4j.launcher.util.PropertiesRepo;
 
@@ -21,22 +22,16 @@ import static org.tools4j.launcher.service.LauncherUtils.verifyDataSearchMode;
  * Date: 24/11/17
  * Time: 7:02 AM
  */
-public class TestZeroResultsDoesNotRepopulateDataTable extends ApplicationTest {
+public class TestZeroResultsDoesNotRepopulateDataTable extends AbstractLauncherTest {
 
     @Override
-    public void start(Stage stage) {
-        try {
-            System.setProperty("workingDir", "src/test/resources/test1");
-            final Main main = new Main(new PropertiesRepo(), new MockExecutionService(MockExecutionService.getFinishedProcess()));
-            main.start(stage);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public ExecutionService getExecutionService() {
+        return super.getExecutionServiceWithSucessfullyFinished();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        super.stop();
+    @Override
+    public String getWorkingDir() {
+        return WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS;
     }
 
     @Test

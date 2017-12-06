@@ -10,13 +10,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * User: ben
  * Date: 24/10/17
  * Time: 6:57 AM
  */
-public class DataSet implements TableWithColumnHeadings<RowWithCommands>{
+public class DataSet implements TableWithColumnHeadings<RowWithCommands>, Pretty{
     private final List<String> columns;
     private final List<RowWithCommands> table;
 
@@ -90,6 +91,7 @@ public class DataSet implements TableWithColumnHeadings<RowWithCommands>{
         return table;
     }
 
+    @Override
     public String toPrettyString(final String indent) {
         final IndentableStringBuilder sb = new IndentableStringBuilder(indent);
         sb.append("dataSet{\n");

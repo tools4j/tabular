@@ -1,7 +1,5 @@
 package org.tools4j.launcher.service;
 
-import com.sun.org.glassfish.gmbal.Description;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -50,5 +48,23 @@ public class Command extends RowFromMap {
 
     public String getCommandLineString() {
         return commandLineString;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Command)) return false;
+
+        final Command command = (Command) o;
+
+        if (name != null ? !name.equals(command.name) : command.name != null) return false;
+        return commandLineString != null ? commandLineString.equals(command.commandLineString) : command.commandLineString == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (commandLineString != null ? commandLineString.hashCode() : 0);
+        return result;
     }
 }
