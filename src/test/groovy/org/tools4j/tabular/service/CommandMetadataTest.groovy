@@ -1,0 +1,65 @@
+package org.tools4j.tabular.service
+
+import org.tools4j.tabular.util.PropertiesFromString
+import org.tools4j.tabular.util.PropertiesRepo
+import spock.lang.Specification
+
+/**
+ * User: ben
+ * Date: 8/11/17
+ * Time: 5:28 PM
+ */
+class CommandMetadataTest extends Specification {
+    private PropertiesRepo propertiesRepo
+    private CommandMetadatas commandsMetadata
+    private Row row;
+
+    def setup(){
+        propertiesRepo = new PropertiesRepo(new PropertiesFromString('''
+            app.commmands.openHomeDir.name=Open Home Dir
+            app.commmands.openHomeDir.predicate=true
+            app.commmands.openHomeDir.command=ssh ${h} && cd ${d}
+            
+            app.commmands.startApplication.name=Start App
+            app.commmands.startApplication.predicate='${e}' != 'prod'
+            app.commmands.startApplication.command=ssh ${h} && cd ${d}/bin && ./start.sh
+            
+            app.commmands.tailAppLog.name=Tail App Log
+            app.commmands.tailAppLog.predicate='${e}' == 'prod'
+            app.commmands.tailAppLog.command=ssh ${h} && cd ${l} && tail -f ${app.log.filename}
+            
+            app.log.filename=app.log
+        ''').load());
+
+        commandsMetadata = new CommandMetadataFromProperties(propertiesRepo).load()
+        row = new RowFromMap([h: "myhostname", e: "prod", d: "~/", l: "~/logs/"]);
+    }
+
+    def "test command size"() {
+        given:
+        assert commandsMetadata.size() == 3
+    }
+
+    def "test get commands for row"() {
+        given:
+        final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
+        assert commandsForRow.size() == 2
+        assert commandsForRow.containsCommands("Open Home Dir", "Tail App Log")
+    }
+
+    def "get command 1"() {
+        given:
+        final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
+        final CommandMetadata commandMetadata = commandsForRow.get("Open Home Dir");
+        final Command command = commandMetadata.getCommandInstance(row, propertiesRepo);
+        assert command.toString() == 'ssh myhostname && cd ~/'
+    }
+
+    def "get command 2"() {
+        given:
+        final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
+        final CommandMetadata commandMetadata = commandsForRow.get("Tail App Log");
+        final Command command = commandMetadata.getCommandInstance(row, propertiesRepo);
+        assert command.toString() == 'ssh myhostname && cd ~/logs/ && tail -f app.log'
+    }
+}

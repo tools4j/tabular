@@ -7,22 +7,13 @@ Working in large corporations as a programmer I'd often have to deal with a larg
 
 I've written it in a way to be agnostic to the dataset being viewed in the hope that others might find it useful for other use cases.
 
+Setup:
+Download the latest
+
 There are 3 ways that Tabular can be used.
 
-1. To search across table data
-2. To search across table data, select a row, and run a command using data from that row
-3. To search across table data, select a row, search for an appropriate command, select a command to run.
-
-1. To search across table data
-In this mode, the user can search across the data in a table.  The indexing used is very simple. See this explanation for more detail.  Tabular Indexing Overview
-
-
-
-2. To search across table data, select a row, and run a command using data from that row
-
-
-
-
-
+1. To search across table data.  See example.
+2. To search across table data, select a row, and run a command using data from that row. See example.
+3. To search across table data, select a row, search for an appropriate command, select a command to run. See example.
 
 Tabular Indexing Overview

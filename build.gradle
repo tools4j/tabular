@@ -17,8 +17,8 @@ repositories {
 }
 
 jfx {
-    jfxMainAppJarName = "launcher.jar"
-    mainClass = 'org.tools4j.launcher.javafx.Main'
+    jfxMainAppJarName = "tabular.jar"
+    mainClass = 'org.tools4j.tabular.javafx.Main'
     vendor = 'Ben Warner'
     additionalAppResources = 'src/main/dist/*'
 }
