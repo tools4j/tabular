@@ -19,9 +19,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Time: 6:00 PM
  */
 public class AbstractLauncherTest extends ApplicationTest {
-    public static final String WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS = "src/test/resources/table-with-multiple-commands";
-    public static final String WORKING_DIR_CONTAINING_JUST_ONE_COMMAND = "src/test/resources/table-with-single-command";
-    public static final String WORKING_DIR_CONTAINING_ZERO_COMMANDS = "src/test/resources/table-no-commands";
+    public static final String WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS = "src/test/resources/table_with_multiple_commands";
+    public static final String WORKING_DIR_CONTAINING_JUST_ONE_COMMAND = "src/test/resources/table_with_single_command";
+    public static final String WORKING_DIR_CONTAINING_ZERO_COMMANDS = "src/test/resources/table_no_commands";
     protected final AtomicBoolean destroyCalled = new AtomicBoolean(false);
     protected ExecutionService executionService;
 

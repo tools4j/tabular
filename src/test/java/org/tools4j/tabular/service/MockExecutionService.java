@@ -2,7 +2,7 @@ package org.tools4j.tabular.service;
 
 import javafx.scene.control.TextArea;
 import org.apache.log4j.Logger;
-import org.tools4j.tabular.javafx.ExecutingCommand;
+import org.tools4j.tabular.javafx.DefaultExecutingCommand;
 import org.tools4j.tabular.javafx.ExecutionService;
 
 import java.io.ByteArrayInputStream;
@@ -21,7 +21,7 @@ import java.util.function.Function;
  */
 public class MockExecutionService implements ExecutionService {
     private final static Logger LOG = Logger.getLogger(MockExecutionService.class);
-    private List<ExecutingCommand> executedCommands;
+    private List<DefaultExecutingCommand> executedCommands;
     private final Process process;
 
     public MockExecutionService(final Process process) {
@@ -30,11 +30,11 @@ public class MockExecutionService implements ExecutionService {
     }
 
     @Override
-    public ExecutingCommand exec(final Command command, final TextArea outputConsole, final PostExecutionBehaviour postExecutionBehaviour) {
+    public DefaultExecutingCommand exec(final Command command, final TextArea outputConsole, final PostExecutionBehaviour postExecutionBehaviour) {
         outputConsole.appendText("Mocked Executor!\n");
         outputConsole.appendText("Was instructed to execute this command: " + command.getCommandLineString() + "\n");
-        postExecutionBehaviour.onRunning.apply(null);
-        final ExecutingCommand executingCommand = new ExecutingCommand(process, postExecutionBehaviour.onFinish, postExecutionBehaviour.onFinishWithError, outputConsole);
+        postExecutionBehaviour.onRunning.run();
+        final DefaultExecutingCommand executingCommand = new DefaultExecutingCommand(process, postExecutionBehaviour.onFinish, postExecutionBehaviour.onFinishWithError, outputConsole);
         executingCommand.init();
         executedCommands.add(executingCommand);
         return executingCommand;
@@ -43,7 +43,7 @@ public class MockExecutionService implements ExecutionService {
     @Override
     public void destroy() {
         LOG.info("Shutting down any previously run command which are still executing.");
-        for(final ExecutingCommand command: executedCommands){
+        for(final DefaultExecutingCommand command: executedCommands){
             if(!command.isFinished()){
                 LOG.info("Shutting command which was still executing...");
                 command.stop();
@@ -87,8 +87,6 @@ public class MockExecutionService implements ExecutionService {
 
     public static Process getFinishedWithErrorProcess(){
         return new Process() {
-            public boolean destroyed = false;
-
             @Override
             public OutputStream getOutputStream() {
                 return new ByteArrayOutputStream(0);

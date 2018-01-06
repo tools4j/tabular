@@ -43,8 +43,7 @@ public class PropertiesFile {
     private java.util.Properties getPropertiesFromWorkingDirectory() {
         try {
             java.util.Properties config = new java.util.Properties();
-            String path = System.getProperty("user.dir");
-            java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(path + "/" + propertiesPathAndFileNameWithoutExtension + ".properties"));
+            java.io.FileInputStream fis = new java.io.FileInputStream(new java.io.File(propertiesPathAndFileNameWithoutExtension + ".properties"));
             config.load(fis);
             fis.close();
             return config;

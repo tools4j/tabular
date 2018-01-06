@@ -10,7 +10,7 @@ import spock.lang.Specification
 class ResolvedDataSetTest extends Specification {
     def "test resolved dataset"(){
         when:
-        final String configDir = "src/test/resources/simple-table"
+        final String configDir = "src/test/resources/simple_table_with_substitutions"
         final DataSetContext dataSetContext = new DataSetContextFromDir(configDir).load();
 
         then:

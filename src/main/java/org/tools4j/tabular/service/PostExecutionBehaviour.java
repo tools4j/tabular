@@ -8,11 +8,11 @@ import java.util.function.Function;
  * Time: 6:00 PM
  */
 public class PostExecutionBehaviour {
-    public final Function<Void, Void> onFinish;
-    public final Function<Void, Void> onFinishWithError;
-    public final Function<Void, Void> onRunning;
+    public final Runnable onFinish;
+    public final Runnable onFinishWithError;
+    public final Runnable onRunning;
 
-    public PostExecutionBehaviour(final Function<Void, Void> onRunning, final Function<Void, Void> onFinish, final Function<Void, Void> onFinishWithError) {
+    public PostExecutionBehaviour(final Runnable onRunning, final Runnable onFinish, final Runnable onFinishWithError) {
         this.onRunning = onRunning;
         this.onFinish = onFinish;
         this.onFinishWithError = onFinishWithError;

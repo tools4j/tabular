@@ -24,19 +24,27 @@ public class ExecutionServiceImpl implements ExecutionService {
     @Override
     public ExecutingCommand exec(final Command command, final TextArea outputConsole, final PostExecutionBehaviour postExecutionBehaviour){
         Runtime rt = Runtime.getRuntime();
+        final Process pr;
         try {
             LOG.info("Executing: " + command.getCommandLineString() + " in workingDir:" + System.getProperty("user.dir"));
             outputConsole.appendText("$ " + command.getCommandLineString() + "\n");
-            final Process pr = rt.exec(command.getCommandLineString());
-            postExecutionBehaviour.onRunning.apply(null);
-            final ExecutingCommand executingCommand = new ExecutingCommand(pr, postExecutionBehaviour.onFinish, postExecutionBehaviour.onFinishWithError, outputConsole);
+
+            ExecutingCommand executingCommand;
+            try {
+                postExecutionBehaviour.onRunning.run();
+                pr = rt.exec(command.getCommandLineString());
+                executingCommand = new DefaultExecutingCommand(pr, postExecutionBehaviour.onFinish, postExecutionBehaviour.onFinishWithError, outputConsole);
+            } catch (Exception e){
+                LOG.error("Error running command '" + command + "' :" + e.getMessage());
+                executingCommand = new CommandExecutedWithException(e, outputConsole, postExecutionBehaviour);
+            }
             executingCommand.init();
             executedCommands.add(executingCommand);
             return executingCommand;
 
         } catch (Exception e) {
             LOG.error(e);
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 

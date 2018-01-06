@@ -119,9 +119,8 @@ public class LauncherPresenter implements Initializable {
             skipCommandSearch = dataSetContext.skipCommandSearch();
             zeroCommandsConfigured = dataSetContext.zeroCommandsConfigured();
 
-            final ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executionService, consoleOutput,
-                new PostExecutionBehaviour(
-                    aVoid -> {
+            final ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executionService, consoleOutput, new PostExecutionBehaviour(
+                    () -> {
                         //Running
                         Platform.runLater(() -> {
                             consoleOutput.getStyleClass().removeAll("error", "finished");
@@ -130,8 +129,8 @@ public class LauncherPresenter implements Initializable {
                             consoleLabel.getStyleClass().add("running");
                             consoleLabel.setText("Running... Press [ESC] to forcibly stop.  Press [ENTER] to allow process to complete in the background.");
                         });
-                        return null;
-                    }, aVoid -> {
+                    },
+                    () -> {
                         //Finished
                         Platform.runLater(() -> {
                             consoleOutput.getStyleClass().removeAll("error", "running");
@@ -143,8 +142,8 @@ public class LauncherPresenter implements Initializable {
                                 exitConsoleCollapseAndMinimize();
                             }
                         });
-                        return null;
-                    }, aVoid -> {
+                    },
+                    () -> {
                         //Finished with error
                         Platform.runLater(() -> {
                             consoleOutput.getStyleClass().removeAll("finished", "running");
@@ -153,7 +152,6 @@ public class LauncherPresenter implements Initializable {
                             consoleLabel.getStyleClass().add("error");
                             consoleLabel.setText("Finished with error. Press [ENTER] to minimize.  [ESC] to run another command.");
                         });
-                        return null;
                     }
                 )
             );
@@ -352,7 +350,7 @@ public class LauncherPresenter implements Initializable {
                             final Command command = selectedRow.getCommands().get(0);
                             commandSearchBox.setText(dataSetContext.getValueToDisplayWhenCommandRowSelected(command));
                             commandSearchBox.setEditable(false);
-                            executeCommandAndEnterConsoleMode(executingCommand, executionEnvironment, command);
+                            enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, command);
 
                         } else {
                             commandIndex.update(selectedRow.getCommandsTable());
@@ -375,7 +373,7 @@ public class LauncherPresenter implements Initializable {
 
                 } else if (e.getCode() == KeyCode.ENTER) {
                     final Command selectedRow = commandTableView.getSelectionModel().getSelectedItem().getRow();
-                    executeCommandAndEnterConsoleMode(executingCommand, executionEnvironment, selectedRow);
+                    enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, selectedRow);
 
                 } else if (e.getCode() == KeyCode.ESCAPE) {
                     commandSearchBox.requestFocus();
@@ -426,11 +424,11 @@ public class LauncherPresenter implements Initializable {
         }
     }
 
-    private void executeCommandAndEnterConsoleMode(final AtomicReference<ExecutingCommand> executingCommand, final ExecutionEnvironment executionEnvironment, final Command selectedRow) {
+    private void enterConsoleModeAndExecuteCommand(final AtomicReference<ExecutingCommand> executingCommand, final ExecutionEnvironment executionEnvironment, final Command selectedRow) {
         consoleOutput.clear();
+        enterConsoleMode();
         final ExecutingCommand executingCommandInstance = executionEnvironment.exec(selectedRow);
         executingCommand.set(executingCommandInstance);
-        enterConsoleMode();
     }
 
     private void enterConsoleMode() {

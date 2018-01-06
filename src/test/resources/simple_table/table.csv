@@ -1,0 +1,13 @@
+App,Env,Location,Host
+WebServer,Dev,London,lndevweb01
+WebServer,Uat,London,lnuatweb01
+WebServer,Prod,London,lnprodweb01
+WebServer,Prod,Melbourne,mbprodweb01
+MessagingServer,Dev,London,lndevmsg01
+MessagingServer,Uat,London,lnuatmsg01
+MessagingServer,Prod,London,lnprodmsg01
+MessagingServer,Prod,Melbourne,mbprodmsg01
+DatabaseServer,Dev,London,lndevdb01
+DatabaseServer,Uat,London,lnuatdb01
+DatabaseServer,Prod,London,lnproddb01
+DatabaseServer,Prod,Melbourne,mbproddb01
