@@ -1,8 +1,7 @@
 # Simple search across a table of data
 
-This example shows how to setup
-
-Tabular to provide searching across a table of data.
+This example shows how to setup Tabular to provide searching across a
+table of data.
 
 The csv file table.csv in this package contains a simple CSV file:
 
@@ -21,12 +20,10 @@ DatabaseServer,Prod,London,lnproddb01
 DatabaseServer,Prod,Melbourne,mbproddb01`
 
 The first row contains the column headings, and the subsequent rows
-contain the table data. When searching
+contain the table data.
 
-And config.properties contains just the property specifying the shortcut
+config.properties contains just the property specifying the shortcut
 to install to launch Tabular.
 
 `hotkey.combinations.show=shift ctrl PLUS`
-
-Launching Tabular
 

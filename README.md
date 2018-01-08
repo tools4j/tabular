@@ -3,25 +3,31 @@
 Tabular is a GUI providing searching of a static table of data, with the
 option of launching commands from selected rows.
 
-I've written Tabular in a way to be agnostic to the dataset being viewed in the hope that others might find it useful for other use cases.
+![alt text](img/launcher-initial-prompt.png)
+
+You provide the data via a CSV file, and configure the rules for viewing
+and searching the data via a properties file. There is also the option
+of launching commands from the data of a selected row.
+
+![alt text](img/launcher-simple-search.png)
 
 ## Setup
 
-1. Ensure you have a version of a Java >= Java 8.
+1. Ensure you have a version of a Java greater than or equal to Java 8.
 2. Download the latest version of the Tabular zip from <TODO>, and unzip
    into your directory of choice.
 3. Edit the table.csv and config.properties as per your Usage
 requirements. Please see the examples and config reference below for
 some guidance.
-4. Run the jar file. Depending on your OS, just double clicking the jar
-   file should launch the jar. If this does not work, you can run: `java -jar tabular.jar` in the directory where the jar file
+4. Run the jar file. Depending on your OS, just double click the jar and the application should launch.
+   If this does not work, you can run: `java -jar tabular.jar` in the directory where the jar file
    is located.
 
 ## Usage
 There are 3 ways that Tabular can be used.
-1. To search across a table of data.  See example.
-2. To search across a table of data, select a row, and run a command using data from that row. See example.
-3. To search across a table of data, select a row, search for an appropriate command, select a command to run. See example.
+1. To search across a table of data.  [See example.](src/test/resources/simple_table/README.md)
+2. To search across a table of data, select a row, and run a command using data from that row. [See example.](src/test/resources/table_with_single_command/README.md)
+3. To search across a table of data, select a row, search for an appropriate command, select a command to run. [See example.](src/test/resources/table_with_multiple_commands/README.md)
 
 ## Configuration reference
 ### General properties
@@ -71,7 +77,6 @@ Variable substition can be used within the csv cell values.  Variables should be
 
 ## Troubleshooting
 If you get an exception which looks like this: `Exception in thread "main" java.lang.UnsupportedClassVersionError: org/tools4j/tabular/javafx/Main : Unsupported major.minor version 52.0`, this probably means that you are using a version of Java < Java8.  Check your Java version by running `java -version`.
-
 
 ## Acknowledgements
 - jkeymaster is used to provide hotkey support.  https://github.com/tulskiy/jkeymaster
