@@ -54,20 +54,22 @@ There are 3 ways that Tabular can be used.
 | app.commmands.<commandName>.description |Human readable description for the command. |
 
 #### Command definition examples
-`app.commmands.openHomeDir.name=Open Home Dir
-app.commmands.openHomeDir.predicate=true
-app.commmands.openHomeDir.command=/bin/myTerminal "ssh ${Host} 'cd ~/ && ls -al'"
-app.commmands.openHomeDir.description=ssh to the target host, and open the home directory`
+```
+app.commmands.displayInStockControl.name=Display in stock control
+app.commmands.displayInStockControl.predicate=true
+app.commmands.displayInStockControl.command=../stock-control-app.exe --show ${Id}
+app.commmands.displayInStockControl.description=Opens up the selected item in the stock control application
 
-`app.commmands.startApplication.name=Start App
-app.commmands.startApplication.predicate='${Env}' != 'prod'
-app.commmands.startApplication.command=/bin/myTerminal "ssh ${Host} 'cd ~/${AppName}/bin && ./start.sh'"
-app.commmands.startApplication.description=ssh to the target host, and start the application`
+app.commmands.displayInWebsite.name=Display on website
+app.commmands.displayInWebsite.predicate=true
+app.commmands.displayInWebsite.command=firefox.exe 'http://www.acmeclothing.co.uk/item/${Id}'
+app.commmands.displayInWebsite.description=Open the item in a browser
 
-`app.commmands.tailAppLog.name=Tail App Log
-app.commmands.tailAppLog.predicate=true
-app.commmands.tailAppLog.command=ssh ${Host} 'cd ${l} && tail -f app.log'
-app.commmands.tailAppLog.description=ssh to the target host, go to the logs directory, and tail the application log file`
+app.commmands.orderLowStock.name=Order for low stock
+app.commmands.orderLowStock.predicate=${NumInStock} <= 5
+app.commmands.orderLowStock.command=./stock-control-app.exe --order ${Id}
+app.commmands.orderLowStock.description=Places order for items which are low in stock
+```
 
 ## CSV file format
 The CSV parsing is done using OpenCSV.  Please see the [documentation](http://opencsv.sourceforge.net/) for more details.
