@@ -14,10 +14,9 @@ of launching commands from the data of a selected row.
 ## Setup
 
 1. Ensure you have a version of a Java greater than or equal to Java 8.
-2. Download the latest version of the Tabular zip from <TODO>, and unzip
+2. Download the latest version of the Tabular zip from [here](dist), and unzip
    into your directory of choice.
-3. Edit the table.csv and config.properties as per your Usage
-requirements. Please see the examples and config reference below for
+3. Edit the table.csv and config.properties as per your requirements. Please see the examples and config reference below for
 some guidance.
 4. Run the jar file. Depending on your OS, just double click the jar and the application should launch.
    If this does not work, you can run: `java -jar tabular.jar` in the directory where the jar file

@@ -3,7 +3,7 @@
 This example shows how to setup Tabular to provide searching across a
 table of data.
 
-The csv file table.csv in this package contains a simple CSV file:
+The csv file [table.csv](table.csv) in this package contains a simple CSV file:
 
 ```
 Id,Item,Category,Color,Cost
@@ -20,7 +20,7 @@ Id,Item,Category,Color,Cost
 The first row contains the column headings, and the subsequent rows
 contain the table data.
 
-config.properties contains just the property specifying the shortcut
+[config.properties](config.properties) contains just the property specifying the shortcut
 to install to launch Tabular.
 
 `hotkey.combinations.show=shift ctrl PLUS`
