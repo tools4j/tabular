@@ -26,7 +26,7 @@ public class MutablePartIndex<R extends Row> implements Pretty {
         if(partIndex == null){
             return Collections.emptyList();
         } else {
-            return partIndex.returnAll();
+            return partIndex.returnAll().asList();
         }
     }
 

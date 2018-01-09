@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.tools4j.tabular.javafx.ExecutionService;
 
 import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.hasItems;
 import static org.tools4j.tabular.service.LauncherUtils.verifyDataSearchMode;
 
 /**
@@ -32,6 +33,18 @@ public class TestLauncherZeroCommands extends AbstractLauncherTest {
         clickOn(Ids.dataSearchBox).type(KeyCode.ENTER, 2);
         verifyDataSearchMode(true);
         clickOn(Ids.dataSearchBox).type(KeyCode.ESCAPE, 1);
-        Thread.sleep(1000);
+    }
+
+    @Test
+    public void testLauncher_enterWithNoSearchTextShowsAllData() throws InterruptedException {
+        verifyDataSearchMode(false);
+        clickOn(Ids.dataSearchBox).type(KeyCode.ENTER, 1);
+        verifyThat(Ids.dataTableView, hasItems(41));
+        clickOn(Ids.dataSearchBox).write("Uat").type(KeyCode.ENTER, 1);
+        verifyThat(Ids.dataTableView, hasItems(18));
+        clickOn(Ids.dataSearchBox).type(KeyCode.ESCAPE, 1);
+        verifyDataSearchMode(false);
+        clickOn(Ids.dataSearchBox).type(KeyCode.ENTER, 1);
+        verifyThat(Ids.dataTableView, hasItems(41));
     }
 }

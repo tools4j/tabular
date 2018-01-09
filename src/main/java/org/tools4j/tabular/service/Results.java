@@ -1,7 +1,9 @@
 package org.tools4j.tabular.service;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -78,5 +80,9 @@ public class Results<R extends Row> implements Pretty, Iterable<Result<R>>{
     @Override
     public Iterator<Result<R>> iterator() {
         return results.iterator();
+    }
+
+    public List<Result<R>> asList() {
+        return new ArrayList<>(results);
     }
 }

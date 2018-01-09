@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
  * Time: 6:25 AM
  */
 public class SearchQuery {
+    public final static SearchQuery EMPTY = new SearchQuery("", Collections.emptyList());
     private final String query;
     private final List<Word> wordsInQuery;
 

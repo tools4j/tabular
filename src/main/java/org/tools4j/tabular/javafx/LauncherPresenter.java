@@ -35,6 +35,7 @@ import org.tools4j.tabular.service.RowWithCommands;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -199,15 +200,22 @@ public class LauncherPresenter implements Initializable {
 
             dataSearchBox.setOnKeyReleased((KeyEvent) -> {
                 LOG.debug("dataSearchBox.onKeyReleased");
-                if (dataSearchBox.getText() != null && dataSearchBox.getText().length() > 0) {
-                    final Results<RowWithCommands> results = dataIndex.search(dataSearchBox.getText()).withAllWordsMatching();
+                final Results<RowWithCommands> results;
+                if(!KeyEvent.getCode().equals(KeyCode.ESCAPE)) {
+                    if (dataSearchBox.getText() == null || dataSearchBox.getText().length() == 0) {
+                        results = dataIndex.returnAll();
+                    } else {
+                        results = dataIndex.search(dataSearchBox.getText()).withAllWordsMatching();
+                    }
+
                     LOG.debug(results.toPrettyString());
+
                     if (results.size() > 0) {
                         dataTableItems.clear();
                         if (!expandCollapseHelper.isContentVisible()) {
                             expandCollapseHelper.setExpandedMode(true);
                         }
-                        for (final Result<RowWithCommands> result: results) {
+                        for (final Result<RowWithCommands> result : results) {
                             try {
                                 dataTableItems.add(result);
                             } catch (Exception e) {

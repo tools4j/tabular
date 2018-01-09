@@ -5,10 +5,12 @@ import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 /**
@@ -46,13 +48,13 @@ public class PartIndex<R extends Row> implements Pretty {
         return search(new SearchQuery.QueryParser(query).parse());
     }
 
-    public List<Result<R>> returnAll(){
-        final List<Result<R>> list = new ArrayList<>();
+    public Results<R> returnAll(){
+        final Set<Result<R>> set = new HashSet<>();
         for(int i=0; i<table.getRows().size(); i++){
             final R row = table.getRows().get(i);
-            list.add(new Result<R>(new SimpleRowCoordinate(i), row, new LinkedHashSet<>(), 0));
+            set.add(new Result<R>(new SimpleRowCoordinate(i), row, new LinkedHashSet<>(), 0));
         }
-        return list;
+        return new Results<R>(SearchQuery.EMPTY, set);
     }
 
     private Results<R> search(final SearchQuery query) {
