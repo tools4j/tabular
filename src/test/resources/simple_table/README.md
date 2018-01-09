@@ -23,5 +23,7 @@ contain the table data.
 [config.properties](config.properties) contains just the property specifying the shortcut
 to install to launch Tabular.
 
-`hotkey.combinations.show=shift ctrl PLUS`
+```
+hotkey.combinations.show=shift ctrl PLUS
+```
 

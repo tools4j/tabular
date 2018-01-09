@@ -24,9 +24,9 @@ some guidance.
 
 ## Usage
 There are 3 ways that Tabular can be used.
-1. To search across a table of data.  [See example.](src/test/resources/simple_table/README.md)
-2. To search across a table of data, select a row, and run a command using data from that row. [See example.](src/test/resources/table_with_single_command/README.md)
-3. To search across a table of data, select a row, search for an appropriate command, select a command to run. [See example.](src/test/resources/table_with_multiple_commands/README.md)
+1. To search across a table of data.  [See example.](src/test/resources/simple_table)
+2. To search across a table of data, select a row, and run a command using data from that row. [See example.](src/test/resources/table_with_single_command)
+3. To search across a table of data, select a row, search for an appropriate command, select a command to run. [See example.](src/test/resources/table_with_multiple_commands)
 
 ## Configuration reference
 ### General properties
