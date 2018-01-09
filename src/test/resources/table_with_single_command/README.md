@@ -1,4 +1,4 @@
-# Running a command from a selected row from the search results
+# Running a command from a selected row
 
 This example shows how to setup Tabular to provide searching across a
 table of data, and then run a command from a selected row.
@@ -41,6 +41,7 @@ app.commmands.openHomeDir.description=Opens up the selected item in the stock co
 
 ## Configuring the command
 Choose a <command> string to use for each of the four command properties.  This must contain only alpha-numeric characters.
+
 |property |description |
 |---|---|
 | `app.commmands.<command>.name` | Short name of the command |

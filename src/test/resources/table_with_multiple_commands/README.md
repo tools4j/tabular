@@ -49,6 +49,7 @@ app.commmands.orderLowStock.description=Places order for items which are low in 
 
 ## Configuring the commands
 For each command, chose a <command> string to use for each of the four command properties.  This must contain only alpha-numeric characters.
+
 |property |description |
 |---|---|
 | `app.commmands.<command>.name` | Short name of the command |
