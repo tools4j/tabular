@@ -45,7 +45,6 @@ There are 3 ways that Tabular can be used.
 | app.command.column.to.display.when.selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'. |
 | app.close.console.on.command.finish | Close Tabular once the command has finished running. Defaults to false. |
 | app.skip.command.browse.if.only.one.command.configured |  Defaults to false. |
-| app.column.abbreviations.<ColumnName> | Can be used to specify abbreviations for column names.  e.g. `app.column.abbreviations.Host=h` Can make for more concise variable names. |
 ### Command definitions
 |property |description |
 |---|---|

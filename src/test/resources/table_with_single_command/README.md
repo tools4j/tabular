@@ -40,7 +40,7 @@ app.commmands.openHomeDir.description=Opens up the selected item in the stock co
 | `app.skip.command.browse.if.only.one.command.configured` | because there is only one command defined, there is no need to show a list of commands to run. If you wish to run the command immediately when the user presses Enter when a row is selected, configure this to `true`. If you wish to still display the list (with one item in it), then configure this to `false` |
 
 ## Configuring the command
-Choose a <command> string to use for each of the four command properties.  This must contain only alpha-numeric characters.
+For each command, chose a <command> string that must be consistent across each of the four command properties.  This must contain only alpha-numeric characters.
 
 |property |description |
 |---|---|
