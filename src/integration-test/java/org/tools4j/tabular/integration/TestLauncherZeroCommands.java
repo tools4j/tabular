@@ -1,4 +1,4 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.integration;
 
 import javafx.scene.input.KeyCode;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.tools4j.tabular.javafx.ExecutionService;
 
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.hasItems;
-import static org.tools4j.tabular.service.LauncherUtils.verifyDataSearchMode;
+import static org.tools4j.tabular.integration.LauncherUtils.verifyDataSearchMode;
 
 /**
  * User: ben

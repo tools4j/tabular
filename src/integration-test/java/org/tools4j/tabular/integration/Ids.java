@@ -1,4 +1,4 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.integration;
 
 /**
  * User: ben

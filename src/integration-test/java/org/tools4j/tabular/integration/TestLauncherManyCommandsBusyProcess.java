@@ -1,4 +1,4 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.integration;
 
 import javafx.scene.input.KeyCode;
 import org.junit.Test;
@@ -7,10 +7,10 @@ import org.tools4j.tabular.javafx.ExecutionService;
 import static org.junit.Assert.assertFalse;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.util.NodeQueryUtils.hasText;
-import static org.tools4j.tabular.service.LauncherUtils.verifyCommandSearchMode;
-import static org.tools4j.tabular.service.LauncherUtils.verifyConsoleMode;
-import static org.tools4j.tabular.service.LauncherUtils.verifyDataSearchMode;
-import static org.tools4j.tabular.service.Utils.containsText;
+import static org.tools4j.tabular.integration.LauncherUtils.verifyCommandSearchMode;
+import static org.tools4j.tabular.integration.LauncherUtils.verifyConsoleMode;
+import static org.tools4j.tabular.integration.LauncherUtils.verifyDataSearchMode;
+import static org.tools4j.tabular.integration.Utils.containsText;
 
 /**
  * User: ben

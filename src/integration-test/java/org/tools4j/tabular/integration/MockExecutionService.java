@@ -1,9 +1,11 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.integration;
 
 import javafx.scene.control.TextArea;
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.javafx.DefaultExecutingCommand;
 import org.tools4j.tabular.javafx.ExecutionService;
+import org.tools4j.tabular.service.Command;
+import org.tools4j.tabular.service.PostExecutionBehaviour;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

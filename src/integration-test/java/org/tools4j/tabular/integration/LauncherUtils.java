@@ -1,10 +1,10 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.integration;
 
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.util.NodeQueryUtils.hasText;
 import static org.testfx.util.NodeQueryUtils.isVisible;
-import static org.tools4j.tabular.service.Utils.isEditable;
-import static org.tools4j.tabular.service.Utils.not;
+import static org.tools4j.tabular.integration.Utils.isEditable;
+import static org.tools4j.tabular.integration.Utils.not;
 
 /**
  * User: ben

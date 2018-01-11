@@ -1,4 +1,4 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.integration;
 
 import javafx.scene.input.KeyCode;
 import org.junit.Test;
@@ -7,21 +7,21 @@ import org.tools4j.tabular.javafx.ExecutionService;
 import static org.junit.Assert.assertFalse;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.util.NodeQueryUtils.hasText;
-import static org.tools4j.tabular.service.LauncherUtils.verifyCommandSearchMode;
-import static org.tools4j.tabular.service.LauncherUtils.verifyConsoleMode;
-import static org.tools4j.tabular.service.LauncherUtils.verifyDataSearchMode;
-import static org.tools4j.tabular.service.Utils.containsText;
+import static org.tools4j.tabular.integration.LauncherUtils.verifyCommandSearchMode;
+import static org.tools4j.tabular.integration.LauncherUtils.verifyConsoleMode;
+import static org.tools4j.tabular.integration.LauncherUtils.verifyDataSearchMode;
+import static org.tools4j.tabular.integration.Utils.containsText;
 
 /**
  * User: ben
  * Date: 24/11/17
  * Time: 7:02 AM
  */
-public class TestLauncherManyCommandsErrorInProcess extends AbstractLauncherTest {
+public class TestLauncherManyCommandsExceptionWhenCallingProcess extends AbstractLauncherTest {
 
     @Override
     public ExecutionService getExecutionService() {
-        return super.getExecutionServiceWithFinishedWithErrors();
+        return new MockExceptioningExecutionService();
     }
 
     @Override
@@ -38,6 +38,7 @@ public class TestLauncherManyCommandsErrorInProcess extends AbstractLauncherTest
         verifyConsoleMode();
         Thread.sleep(500);
         verifyThat(Ids.consoleLabel, containsText("Finished with error"));
+        verifyThat(Ids.consoleOutput, containsText("Mock Exception"));
         clickOn(Ids.consoleOutput).type(KeyCode.ESCAPE);
         verifyCommandSearchMode("hauu0001");
         clickOn(Ids.commandSearchBox).type(KeyCode.ESCAPE);

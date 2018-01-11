@@ -1,4 +1,4 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.integration;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -25,9 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Time: 6:00 PM
  */
 public class AbstractLauncherTest extends ApplicationTest {
-    public static final String WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS = "src/test/resources/table_with_multiple_commands_with_substitutions";
-    public static final String WORKING_DIR_CONTAINING_JUST_ONE_COMMAND = "src/test/resources/table_with_single_command_with_substitutions";
-    public static final String WORKING_DIR_CONTAINING_ZERO_COMMANDS = "src/test/resources/table_no_commands";
+    public static final String WORKING_DIR_CONTAINING_SEARCHABLE_COMMANDS = "src/integration-test/resources/table_with_multiple_commands_with_substitutions";
+    public static final String WORKING_DIR_CONTAINING_JUST_ONE_COMMAND = "src/integration-test/resources/table_with_single_command_with_substitutions";
+    public static final String WORKING_DIR_CONTAINING_ZERO_COMMANDS = "src/integration-test/resources/table_no_commands";
     protected final AtomicBoolean destroyCalled = new AtomicBoolean(false);
     protected ExecutionService executionService;
 
