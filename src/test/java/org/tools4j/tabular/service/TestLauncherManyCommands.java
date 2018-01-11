@@ -4,6 +4,12 @@ import javafx.scene.input.KeyCode;
 import org.junit.Test;
 import org.tools4j.tabular.javafx.ExecutionService;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.util.NodeQueryUtils.hasText;
 import static org.tools4j.tabular.service.LauncherUtils.verifyCommandSearchMode;

@@ -25,4 +25,13 @@ public interface Row extends Map<String, String>{
     Collection<String> values();
 
     Set<Map.Entry<String,String>> entrySet();
+
+    default String toCsv(){
+        final StringBuilder sb = new StringBuilder();
+        for(final String value: values()){
+            if(sb.length() > 0) sb.append(", ");
+            sb.append(value);
+        }
+        return sb.toString();
+    }
 }

@@ -1,5 +1,10 @@
 package org.tools4j.tabular.service;
 
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import org.junit.After;
 import org.testfx.api.FxToolkit;
@@ -8,6 +13,7 @@ import org.tools4j.tabular.javafx.ExecutionService;
 import org.tools4j.tabular.javafx.Main;
 import org.tools4j.tabular.util.PropertiesRepo;
 
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -70,5 +76,71 @@ public class AbstractLauncherTest extends ApplicationTest {
 
     public final ExecutionService getExecutionServiceWithFinishedWithErrors(){
         return new MockExecutionService(MockExecutionService.getFinishedWithErrorProcess());
+    }
+
+    private TableView<?> getTableView(String tableSelector) {
+        Node node = super.lookup(tableSelector).query();
+        if (!(node instanceof TableView)) {
+            throw new RuntimeException(tableSelector + " selected " + node + " which is not a TableView!");
+        }
+        return (TableView<?>) node;
+    }
+
+    /**
+     * @param tableSelector Selektor zur Identifikation der Tabelle.
+     * @param row Zeilennummer
+     * @param column Spaltennummer
+     * @return Der Wert der gegebenen Zelle in der Tabelle. Es handelt sich nicht um das, was auf der UI dransteht,
+     *         sondern um den Wert, also nicht notwendigerweise ein String.
+     */
+    protected Object cellValue(String tableSelector, int row, int column) {
+        return getTableView(tableSelector).getColumns().get(column).getCellData(row);
+    }
+
+    /**
+     * @param tableSelector Selektor zur Identifikation der Tabelle.
+     * @param row Zeilennummer
+     * @return Die entsprechende Zeile.
+     */
+    protected TableRow<?> row(String tableSelector, int row) {
+
+        TableView<?> tableView = getTableView(tableSelector);
+
+        List<Node> current = tableView.getChildrenUnmodifiable();
+        while (current.size() == 1) {
+            current = ((Parent) current.get(0)).getChildrenUnmodifiable();
+        }
+
+        current = ((Parent) current.get(1)).getChildrenUnmodifiable();
+        while (!(current.get(0) instanceof TableRow)) {
+            current = ((Parent) current.get(0)).getChildrenUnmodifiable();
+        }
+
+        Node node = current.get(row);
+        if (node instanceof TableRow) {
+            return (TableRow<?>) node;
+        } else {
+            throw new RuntimeException("Expected Group with only TableRows as children");
+        }
+    }
+
+    /**
+     * @param tableSelector Selektor zur Identifikation der Tabelle.
+     * @param row Zeilennummer
+     * @param column Spaltennummer
+     * @return Die entsprechende Zelle.
+     */
+    protected TableCell<?, ?> cell(String tableSelector, int row, int column) {
+        List<Node> current = row(tableSelector, row).getChildrenUnmodifiable();
+        while (current.size() == 1 && !(current.get(0) instanceof TableCell)) {
+            current = ((Parent) current.get(0)).getChildrenUnmodifiable();
+        }
+
+        Node node = current.get(column);
+        if (node instanceof TableCell) {
+            return (TableCell<?, ?>) node;
+        } else {
+            throw new RuntimeException("Expected TableRowSkin with only TableCells as children");
+        }
     }
 }

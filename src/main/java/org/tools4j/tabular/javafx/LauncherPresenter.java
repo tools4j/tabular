@@ -2,7 +2,6 @@ package org.tools4j.tabular.javafx;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,6 +13,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -21,8 +22,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.service.Command;
 import org.tools4j.tabular.service.DataSetContext;
@@ -31,13 +32,14 @@ import org.tools4j.tabular.service.PartIndex;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
 import org.tools4j.tabular.service.Result;
 import org.tools4j.tabular.service.Results;
+import org.tools4j.tabular.service.Row;
 import org.tools4j.tabular.service.RowWithCommands;
 
 import javax.inject.Inject;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * User: ben
@@ -169,12 +171,7 @@ public class LauncherPresenter implements Initializable {
             dataTableView.setItems(dataTableItems);
             for(final String columnName: dataSetContext.getDataColumnsToDisplay()){
                 final TableColumn<Result<RowWithCommands>, String> column = new TableColumn<>(columnName);
-                column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Result<RowWithCommands>, String>, ObservableValue<String>>() {
-                    @Override
-                    public ObservableValue<String> call(final TableColumn.CellDataFeatures<Result<RowWithCommands>, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(param.getTableColumn().getText()));
-                    }
-                });
+                column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(param.getTableColumn().getText())));
                 dataTableView.getColumns().add(column);
             }
             final PropertySaveTableHelper<Result<RowWithCommands>> dataTableSaveHelper = new PropertySaveTableHelper<>(dataTableView, "dataTableView", tablePropertySaveService);
@@ -186,8 +183,6 @@ public class LauncherPresenter implements Initializable {
             for(final String columnName: dataSetContext.getCommandColumnsToDisplay()){
                 final TableColumn<Result<Command>, String> column = new TableColumn<>(columnName);
                 column.setPrefWidth(200.0);
-
-
                 column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(param.getTableColumn().getText())));
                 commandTableView.getColumns().add(column);
             }
@@ -198,61 +193,21 @@ public class LauncherPresenter implements Initializable {
             final PartIndex<RowWithCommands> dataIndex = new PartIndex<>(dataSetContext.getDataSet());
             final MutablePartIndex<Command> commandIndex = new MutablePartIndex<>();
 
-            dataSearchBox.setOnKeyReleased((KeyEvent) -> {
-                LOG.debug("dataSearchBox.onKeyReleased");
-                final Results<RowWithCommands> results;
-                if(!KeyEvent.getCode().equals(KeyCode.ESCAPE)) {
-                    if (dataSearchBox.getText() == null || dataSearchBox.getText().length() == 0) {
-                        results = dataIndex.returnAll();
-                    } else {
-                        results = dataIndex.search(dataSearchBox.getText()).withAllWordsMatching();
-                    }
+            dataSearchBox.setOnKeyReleased((keyEvent) -> {
+                LOG.debug("dataSearchBox.onKeyReleased " + keyEvent);
+                if(!keyEvent.getCode().equals(KeyCode.ESCAPE)
+                    && !keyEvent.getCode().equals(KeyCode.CONTROL)) {
 
-                    LOG.debug(results.toPrettyString());
-
-                    if (results.size() > 0) {
-                        dataTableItems.clear();
-                        if (!expandCollapseHelper.isContentVisible()) {
-                            expandCollapseHelper.setExpandedMode(true);
-                        }
-                        for (final Result<RowWithCommands> result : results) {
-                            try {
-                                dataTableItems.add(result);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        dataTableView.getSelectionModel().selectFirst();
-                    }
+                    searchDataTable(dataIndex);
                 }
             });
 
             commandSearchBox.setOnKeyReleased((KeyEvent) -> {
                 LOG.debug("commandSearchBox.onKeyReleased");
-
                 if(KeyEvent.getCode() == KeyCode.ENTER){
                     return;
                 }
-                if (commandSearchBox.getText() != null
-                        && commandSearchBox.getText().length() > 0
-                            && !(commandSearchBox.getSelectedText() != null
-                            && commandSearchBox.getSelectedText().length() > 0
-                            && commandSearchBox.getSelectedText().equals(commandSearchBox.getText()))) {
-
-                    final Results<Command> results = commandIndex.search(commandSearchBox.getText()).withAllWordsMatching();
-                    LOG.debug(results.toPrettyString());
-                    if (results.size() > 0) {
-                        commandTableItems.clear();
-                        for (final Result<Command> result: results) {
-                            try {
-                                commandTableItems.add(result);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        dataTableView.getSelectionModel().selectFirst();
-                    }
-                }
+                searchCommandTable(commandIndex);
             });
 
 
@@ -340,35 +295,35 @@ public class LauncherPresenter implements Initializable {
                 }
             });
 
+            dataTableView.setOnMouseClicked(event -> {
+                if(event.getClickCount() >= 2){
+                    if( event.getTarget() instanceof Text ){
+                        saveToClipboard(((Text) event.getTarget()).getText());
+                    }
+                }
+            });
+
+            commandTableView.setOnMouseClicked(event -> {
+                if(event.getClickCount() >= 2){
+                    if( event.getTarget() instanceof Text ){
+                        saveToClipboard(((Text) event.getTarget()).getText());
+                    }
+                }
+            });
 
             dataTableView.setOnKeyPressed((KeyEvent e) -> {
-                if (e.getCode() == KeyCode.RIGHT) {
-                    LOG.debug("Gone right");
+                if( e.getCode() == KeyCode.A && e.isControlDown() && !e.isAltDown() && !e.isShiftDown()){
+                    final String tableAsCsv = dataTableItems.stream().map((row) -> row.toCsv()).collect(Collectors.joining("\n"));
+                    saveToClipboard(tableAsCsv);
+
+                } else if( e.getCode() == KeyCode.C && e.isControlDown() && !e.isAltDown() && !e.isShiftDown()){
+                    final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem().getRow();
+                    final String rowAsCsv = selectedRow.toCsv();
+                    saveToClipboard(rowAsCsv);
 
                 } else if (e.getCode() == KeyCode.ENTER) {
                     LOG.debug("Enter key pressed:" + e);
-                    if(!zeroCommandsConfigured) {
-                        final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem().getRow();
-                        selectedDataLabel.setText(dataSetContext.getValueToDisplayWhenDataRowSelected(selectedRow, dataSearchBox.getText()));
-                        dataSearchPane.setVisible(false);
-                        dataTableContentPane.setVisible(false);
-                        commandSearchPane.setVisible(true);
-
-                        if (skipCommandSearch) {
-                            final Command command = selectedRow.getCommands().get(0);
-                            commandSearchBox.setText(dataSetContext.getValueToDisplayWhenCommandRowSelected(command));
-                            commandSearchBox.setEditable(false);
-                            enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, command);
-
-                        } else {
-                            commandIndex.update(selectedRow.getCommandsTable());
-                            commandTableItems.clear();
-                            commandTableItems.setAll(commandIndex.returnAll());
-                            commandTableContentPane.setVisible(true);
-                            commandSearchBox.clear();
-                            commandSearchBox.requestFocus();
-                        }
-                    }
+                    selectCurrentDatatableRow(executingCommand, executionEnvironment, commandIndex);
                 } else if (e.getCode() == KeyCode.ESCAPE) {
                     LOG.debug("Escape key pressed from dataTable");
                     onDataSearchEscapeKeyPressed();
@@ -376,12 +331,17 @@ public class LauncherPresenter implements Initializable {
             });
 
             commandTableView.setOnKeyPressed((KeyEvent e) -> {
-                if (e.getCode() == KeyCode.RIGHT) {
-                    LOG.debug("Gone right");
+                if( e.getCode() == KeyCode.A && e.isControlDown() && !e.isAltDown() && !e.isShiftDown()){
+                    final String tableAsCsv = commandTableItems.stream().map((row) -> row.toCsv()).collect(Collectors.joining("\n"));
+                    saveToClipboard(tableAsCsv);
+
+                } else if( e.getCode() == KeyCode.C && e.isControlDown() && !e.isAltDown() && !e.isShiftDown()){
+                    final Row selectedRow = commandTableView.getSelectionModel().getSelectedItem().getRow();
+                    final String rowAsCsv = selectedRow.toCsv();
+                    saveToClipboard(rowAsCsv);
 
                 } else if (e.getCode() == KeyCode.ENTER) {
-                    final Command selectedRow = commandTableView.getSelectionModel().getSelectedItem().getRow();
-                    enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, selectedRow);
+                    selectCurrentCommandTableRow(executingCommand, executionEnvironment);
 
                 } else if (e.getCode() == KeyCode.ESCAPE) {
                     commandSearchBox.requestFocus();
@@ -429,6 +389,85 @@ public class LauncherPresenter implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    private void searchCommandTable(final MutablePartIndex<Command> commandIndex) {
+        if (commandSearchBox.getText() != null
+                && commandSearchBox.getText().length() > 0
+                    && !(commandSearchBox.getSelectedText() != null
+                    && commandSearchBox.getSelectedText().length() > 0
+                    && commandSearchBox.getSelectedText().equals(commandSearchBox.getText()))) {
+
+            final Results<Command> results = commandIndex.search(commandSearchBox.getText()).withAllWordsMatching();
+            LOG.debug(results.toPrettyString());
+            if (results.size() > 0) {
+                commandTableItems.clear();
+                for (final Result<Command> result: results) {
+                    try {
+                        commandTableItems.add(result);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                dataTableView.getSelectionModel().selectFirst();
+            }
+        }
+    }
+
+    private void searchDataTable(final PartIndex<RowWithCommands> dataIndex) {
+        final Results<RowWithCommands> results;
+        if (dataSearchBox.getText() == null || dataSearchBox.getText().length() == 0) {
+            results = dataIndex.returnAll();
+        } else {
+            results = dataIndex.search(dataSearchBox.getText()).withAllWordsMatching();
+        }
+
+        LOG.debug(results.toPrettyString());
+
+        if (results.size() > 0) {
+            dataTableItems.clear();
+            if (!expandCollapseHelper.isContentVisible()) {
+                expandCollapseHelper.setExpandedMode(true);
+            }
+            for (final Result<RowWithCommands> result : results) {
+                try {
+                    dataTableItems.add(result);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            dataTableView.getSelectionModel().selectFirst();
+        }
+    }
+
+    private void selectCurrentCommandTableRow(final AtomicReference<ExecutingCommand> executingCommand, final ExecutionEnvironment executionEnvironment) {
+        final Command selectedRow = commandTableView.getSelectionModel().getSelectedItem().getRow();
+        enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, selectedRow);
+    }
+
+    private void selectCurrentDatatableRow(final AtomicReference<ExecutingCommand> executingCommand, final ExecutionEnvironment executionEnvironment, final MutablePartIndex<Command> commandIndex) {
+        if(!zeroCommandsConfigured) {
+            final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem().getRow();
+            selectedDataLabel.setText(dataSetContext.getValueToDisplayWhenDataRowSelected(selectedRow, dataSearchBox.getText()));
+            dataSearchPane.setVisible(false);
+            dataTableContentPane.setVisible(false);
+            commandSearchPane.setVisible(true);
+
+            if (skipCommandSearch) {
+                final Command command = selectedRow.getCommands().get(0);
+                commandSearchBox.setText(dataSetContext.getValueToDisplayWhenCommandRowSelected(command));
+                commandSearchBox.setEditable(false);
+                enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, command);
+
+            } else {
+                commandIndex.update(selectedRow.getCommandsTable());
+                commandTableItems.clear();
+                commandTableItems.setAll(commandIndex.returnAll());
+                commandTableContentPane.setVisible(true);
+                commandSearchBox.clear();
+                commandSearchBox.requestFocus();
+            }
         }
     }
 
@@ -532,5 +571,13 @@ public class LauncherPresenter implements Initializable {
     private void clearAndReset() {
         dataTableItems.clear();
         expandCollapseHelper.setExpandedMode(false);
+    }
+
+    private void saveToClipboard(final String text){
+        LOG.info("Saving to clipboard: " + text);
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        final ClipboardContent content = new ClipboardContent();
+        content.putString(text);
+        clipboard.setContent(content);
     }
 }

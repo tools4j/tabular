@@ -47,4 +47,14 @@ public class TestLauncherZeroCommands extends AbstractLauncherTest {
         clickOn(Ids.dataSearchBox).type(KeyCode.ENTER, 1);
         verifyThat(Ids.dataTableView, hasItems(41));
     }
+
+    @Test
+    public void testLauncher_hideThenHotkeyLaunch() throws InterruptedException {
+        verifyDataSearchMode(false);
+        clickOn(Ids.dataSearchBox).type(KeyCode.ENTER, 1);
+        verifyThat(Ids.dataTableView, hasItems(41));
+        clickOn(Ids.dataSearchBox).type(KeyCode.ESCAPE, 2);
+        push(KeyCode.CONTROL, KeyCode.SHIFT, KeyCode.EQUALS);
+        verifyDataSearchMode(false);
+    }
 }
