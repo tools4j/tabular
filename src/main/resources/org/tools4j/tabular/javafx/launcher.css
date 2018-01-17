@@ -25,6 +25,7 @@
 #resultDetailsPane,
 #textTitle,
 #textTags{
+    -fx-min-width: 0;
     -fx-border-width: 0;
     -fx-background-color: -fx-var-background;
     -fx-padding: 0;
@@ -85,7 +86,7 @@ Label#textTitle {
     -fx-border-width: 0;
     -fx-background-color: transparent;
     -fx-padding: 10;
-    -fx-pref-width: 600px;
+    -fx-pref-width: 800px;
 }
 
 .searchTextBox {

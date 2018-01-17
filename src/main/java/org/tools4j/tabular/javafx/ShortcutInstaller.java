@@ -44,7 +44,11 @@ public class ShortcutInstaller {
         for (String hotkeyCombination: hotKeyCombinations) {
             try {
                 LOG.info("Registering hotkey " + hotkeyCombination + " for window restore.");
-                provider.register(KeyStroke.getKeyStroke(hotkeyCombination), hotKeyListener);
+                final KeyStroke keyStroke = KeyStroke.getKeyStroke(hotkeyCombination);
+                if(keyStroke == null){
+                    throw new Exception("Could not parse hotkeyCombination, assuming badly formatted text: '" + hotkeyCombination + "'");
+                }
+                provider.register(keyStroke, hotKeyListener);
             } catch (Throwable t) {
                 LOG.error("Unable to assign hotkey: " + hotkeyCombination + " " + t.getMessage(), t);
             }

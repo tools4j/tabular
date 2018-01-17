@@ -12,7 +12,7 @@
 <VBox fx:controller="org.tools4j.tabular.javafx.LauncherPresenter" fx:id="mainPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
     <HBox fx:id="textSearchPane">
         <Label fx:id="labelLogo" styleClass="largeTextPrompt"/>
-        <StackPane>
+        <StackPane fx:id="searchStackPane">
             <FlowPane fx:id="dataSearchPane">
                 <TextField fx:id="dataSearchBox" styleClass="searchTextBox"/>
             </FlowPane>
