@@ -6,6 +6,8 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.service.DataSetContext;
 import org.tools4j.tabular.service.DataSetContextFromDir;
@@ -31,6 +33,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        if(System.getProperties().containsKey("logging.level")){
+            LogManager.getRootLogger().setLevel(Level.toLevel(System.getProperty("logging.level")));
+        }
+
         final WorkingDir workingDir = new WorkingDir();
         LOG.info("Loading AppContext...");
         final DataSetContext appContext = new DataSetContextFromDir(workingDir.get(), propertyOverrides).load();

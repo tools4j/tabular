@@ -1,5 +1,5 @@
 group 'org.tools4j'
-version '1.0'
+version '1.1'
 
 apply plugin: 'groovy'
 apply plugin: 'java'
@@ -24,7 +24,7 @@ jfx {
 
 dependencies {
     compile 'com.opencsv:opencsv:4.0'
-    compile 'log4j:log4j:1.2.14'
+    compile 'log4j:log4j:1.2.16'
     compile 'com.airhacks:afterburner.fx:1.6.0'
     compile 'com.github.tulskiy:jkeymaster:1.2'
     compile 'com.google.guava:guava:23.3-jre'
@@ -39,8 +39,6 @@ dependencies {
 
     testRuntime 'cglib:cglib-nodep:3.1'          // allows mocking of classes (in addition to interfaces)
     testRuntime 'org.objenesis:objenesis:2.1'    // allows mocking of classes without default constructor (together with CGLIB)
-
-
 }
 
 sourceSets {
@@ -62,6 +60,11 @@ configurations {
 task copyAdditionalResources(type: Copy) {
     from 'src/main/dist'
     into 'build/dist/files'
+}
+
+task copyAdditionalLibs(type: Copy) {
+    from 'lib'
+    into 'build/dist/files/lib'
 }
 
 task copyJfxFiles(type: Copy) {
@@ -93,6 +96,7 @@ task copyTabularZipToDistDirectory(type: Copy) {
 
 buildTabularZip.dependsOn createTabularZip
 buildTabularZip.dependsOn copyAdditionalResources
+buildTabularZip.dependsOn copyAdditionalLibs
 buildTabularZip.dependsOn copyJfxFiles
 buildTabularZip.dependsOn jfxJar
 buildTabularZip.dependsOn copyTabularZipToDistDirectory
