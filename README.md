@@ -32,7 +32,7 @@ There are 3 ways that Tabular can be used.
 ### General properties
 |property |description |
 |---|---|
-| hotkey.combinations.show | comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method.  See here for more info: https://docs.oracle.com/javase/7/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String) |
+| hotkey.combinations.show | comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
 | app.csv.delimiter | allows you to specify the delimiter to use in the table.csv file.  By default this is a comma ',' |
 | app.csv.escapedCharacterQuote | allows you to specify a custom escape character when you want to include the delimiter in your cell text.  By default this is a double quote ".  See [OpenCSV Documentation](http://opencsv.sourceforge.net/) for more info. |
 | app.columns.to.display.in.data.table | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells. |
@@ -76,7 +76,28 @@ The CSV parsing is done using OpenCSV.  Please see the [documentation](http://op
 Variable substition can be used within the csv cell values.  Variables should be specified with a preceding ${ and a trailing }. e.g. ${myVar}.  Variables can be defined in the config.properties file.  Other cell values in the same row can also be referenced simply by using the column name.  Environment and System variables can also be referenced.
 
 ## Troubleshooting
-If you get an exception which looks like this: `Exception in thread "main" java.lang.UnsupportedClassVersionError: org/tools4j/tabular/javafx/Main : Unsupported major.minor version 52.0`, this probably means that you are using a version of Java < Java8.  Check your Java version by running `java -version`.
+* If you get an exception which looks like this: `Exception in thread "main" java.lang.UnsupportedClassVersionError: org/tools4j/tabular/javafx/Main : Unsupported major.minor version 52.0`, this probably means that you are using a version of Java < Java8.  Check your Java version by running `java -version`.
+
+## Valid values for the 'hotkey.combinations.show' property
+The following has been pasted from the docs at: https://docs.oracle.com/javase/7/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)
+Each comma separated valid must have the following syntax:
+```
+   <modifiers>* (<typedID> | <pressedReleasedID>)*
+   modifiers := shift | control | ctrl | meta | alt | altGraph
+   typedID := typed <typedKey>
+   typedKey := string of length 1 giving Unicode character.
+   pressedReleasedID := (pressed | released) key
+   key := KeyEvent key code name, i.e. the name following "VK_".
+```
+If typed, pressed or released is not specified, pressed is assumed. Here are some examples:
+```
+INSERT
+control DELETE
+alt shift X
+alt shift released X
+typed a
+```
+
 
 ## Acknowledgements
 - jkeymaster is used to provide hotkey support.  https://github.com/tulskiy/jkeymaster

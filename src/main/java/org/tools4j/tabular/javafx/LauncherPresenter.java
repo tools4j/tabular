@@ -214,7 +214,7 @@ public class LauncherPresenter implements Initializable {
             dataSearchBox.setOnKeyPressed((KeyEvent e) -> {
                 if (e.getCode() == KeyCode.DOWN) {
                     dataTableView.requestFocus();
-                    dataTableView.getSelectionModel().selectNext();
+                    dataTableView.getSelectionModel().selectFirst();
 
                 } else if (e.getCode() == KeyCode.UP) {
                     dataTableView.requestFocus();
@@ -249,7 +249,7 @@ public class LauncherPresenter implements Initializable {
             commandSearchBox.setOnKeyPressed((KeyEvent e) -> {
                 if (e.getCode() == KeyCode.DOWN) {
                     commandTableView.requestFocus();
-                    commandTableView.getSelectionModel().selectNext();
+                    commandTableView.getSelectionModel().selectFirst();
 
                 } else if (e.getCode() == KeyCode.UP) {
                     commandTableView.requestFocus();
