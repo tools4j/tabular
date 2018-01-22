@@ -13,9 +13,10 @@
     <HBox fx:id="textSearchPane">
         <Label fx:id="labelLogo" styleClass="largeTextPrompt"/>
         <StackPane fx:id="searchStackPane">
-            <FlowPane fx:id="dataSearchPane">
+            <StackPane fx:id="dataSearchPane" alignment="BASELINE_LEFT">
+                <Label fx:id="dataSearchBoxBackgroundLabel" styleClass="searchBoxBackgroundLabel"/>
                 <TextField fx:id="dataSearchBox" styleClass="searchTextBox"/>
-            </FlowPane>
+            </StackPane>
             <FlowPane fx:id="commandSearchPane" visible="false">
                 <BorderPane>
                     <left>
@@ -25,7 +26,10 @@
                         </HBox>
                     </left>
                     <center>
-                        <TextField fx:id="commandSearchBox" styleClass="searchTextBox"/>
+                        <StackPane fx:id="commandStackPane" alignment="BASELINE_LEFT">
+                            <Label fx:id="commandSearchBoxBackgroundLabel" styleClass="searchBoxBackgroundLabel"/>
+                            <TextField fx:id="commandSearchBox" styleClass="searchTextBox"/>
+                        </StackPane>
                     </center>
                 </BorderPane>
             </FlowPane>

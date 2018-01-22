@@ -23,4 +23,6 @@ public class Ids {
     public static final String consoleOutputContentPane = "#consoleOutputContentPane";
     public static final String consoleOutput = "#consoleOutput";
     public static final String consoleLabel = "#consoleLabel";
+    public static final String dataSearchBoxBackgroundLabel = "#dataSearchBoxBackgroundLabel";
+    public static final String commandSearchBoxBackgroundLabel = "#commandSearchBoxBackgroundLabel";
 }

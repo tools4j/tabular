@@ -19,7 +19,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -66,7 +68,7 @@ public class LauncherPresenter implements Initializable {
     @FXML
     public VBox mainPane;
     @FXML
-    public Pane textSearchPane;
+    public HBox textSearchPane;
     @FXML
     public Pane commandSearchPane;
     @FXML
@@ -93,7 +95,14 @@ public class LauncherPresenter implements Initializable {
     private Pane commandTableContentPane;
     @FXML
     private Pane outerTablePane;
-
+    @FXML
+    private Label dataSearchBoxBackgroundLabel;
+    @FXML
+    private Label commandSearchBoxBackgroundLabel;
+    @FXML
+    private Pane searchStackPane;
+    @FXML
+    private Pane commandStackPane;
 
     private static double xOffset = 0;
     private static double yOffset = 0;
@@ -121,6 +130,14 @@ public class LauncherPresenter implements Initializable {
             final AtomicReference<ExecutingCommand> executingCommand = new AtomicReference<>();
             skipCommandSearch = dataSetContext.skipCommandSearch();
             zeroCommandsConfigured = dataSetContext.zeroCommandsConfigured();
+            updateCommandSearchBackgroundText();
+            updateDataSearchBackgroundText();
+
+            //Ensure that these elements grow to fit their parent HBox panes
+            HBox.setHgrow(dataSearchBox, Priority.ALWAYS);
+            HBox.setHgrow(commandSearchBox, Priority.ALWAYS);
+            HBox.setHgrow(searchStackPane, Priority.ALWAYS);
+            HBox.setHgrow(commandStackPane, Priority.ALWAYS);
 
             final ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executionService, consoleOutput, new PostExecutionBehaviour(
                     () -> {
@@ -197,7 +214,7 @@ public class LauncherPresenter implements Initializable {
                 LOG.debug("dataSearchBox.onKeyReleased " + keyEvent);
                 if(!keyEvent.getCode().equals(KeyCode.ESCAPE)
                     && !keyEvent.getCode().equals(KeyCode.CONTROL)) {
-
+                    updateDataSearchBackgroundText();
                     searchDataTable(dataIndex);
                 }
             });
@@ -207,6 +224,7 @@ public class LauncherPresenter implements Initializable {
                 if(KeyEvent.getCode() == KeyCode.ENTER){
                     return;
                 }
+                updateCommandSearchBackgroundText();
                 searchCommandTable(commandIndex);
             });
 
@@ -292,13 +310,16 @@ public class LauncherPresenter implements Initializable {
                 if (newValue != null) {
                     final String valueToDisplayInPrompt = dataSetContext.getValueToDisplayWhenCommandRowSelected(newValue, commandSearchBox.getText());
                     commandSearchBox.setText(valueToDisplayInPrompt);
+                    updateCommandSearchBackgroundText();
                 }
             });
 
             dataTableView.setOnMouseClicked(event -> {
                 if(event.getClickCount() >= 2){
                     if( event.getTarget() instanceof Text ){
-                        saveToClipboard(((Text) event.getTarget()).getText());
+//                        saveToClipboard(((Text) event.getTarget()).getText());
+                        LOG.debug("Double click.");
+                        selectCurrentDatatableRow(executingCommand, executionEnvironment, commandIndex);
                     }
                 }
             });
@@ -306,7 +327,9 @@ public class LauncherPresenter implements Initializable {
             commandTableView.setOnMouseClicked(event -> {
                 if(event.getClickCount() >= 2){
                     if( event.getTarget() instanceof Text ){
-                        saveToClipboard(((Text) event.getTarget()).getText());
+//                        saveToClipboard(((Text) event.getTarget()).getText());
+                        LOG.debug("Double click.");
+                        selectCurrentCommandTableRow(executingCommand, executionEnvironment);
                     }
                 }
             });
@@ -392,6 +415,30 @@ public class LauncherPresenter implements Initializable {
         }
     }
 
+    private void updateDataSearchBackgroundText(){
+        if(dataSearchBox.getText().isEmpty()){
+            if(dataSearchBoxBackgroundLabel.getText().isEmpty()) {
+                dataSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("data.search.background.prompt.text", ""));
+            }
+        } else {
+            if(!dataSearchBoxBackgroundLabel.getText().isEmpty()){
+                dataSearchBoxBackgroundLabel.setText("");
+            }
+        }
+    }
+    
+    private void updateCommandSearchBackgroundText(){
+        if(commandSearchBox.getText().isEmpty()){
+            if(commandSearchBoxBackgroundLabel.getText().isEmpty()) {
+                commandSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("command.search.background.prompt.text", ""));
+            }
+        } else {
+            if(!commandSearchBoxBackgroundLabel.getText().isEmpty()){
+                commandSearchBoxBackgroundLabel.setText("");
+            }
+        }
+    }
+
     private void searchCommandTable(final MutablePartIndex<Command> commandIndex) {
         if (commandSearchBox.getText() != null
                 && commandSearchBox.getText().length() > 0
@@ -466,6 +513,7 @@ public class LauncherPresenter implements Initializable {
                 commandTableItems.setAll(commandIndex.returnAll());
                 commandTableContentPane.setVisible(true);
                 commandSearchBox.clear();
+                updateDataSearchBackgroundText();
                 commandSearchBox.requestFocus();
             }
         }
@@ -561,6 +609,7 @@ public class LauncherPresenter implements Initializable {
         clearAndReset();
         dataSearchBox.clear();
         dataSearchBox.requestFocus();
+        updateDataSearchBackgroundText();
     }
 
     private void minimize() {

@@ -45,11 +45,6 @@
     -fx-text-fill: -fx-var-text;
 }
 
-.searchTextBox {
-    -fx-font: 24px Tahoma;
-    -fx-padding: 7 2 10 2;
-}
-
 .largeTextPrompt {
     -fx-text-fill: -fx-var-text;
     -fx-font-size: 24px;
@@ -89,9 +84,20 @@ Label#textTitle {
     -fx-pref-width: 800px;
 }
 
-.searchTextBox {
+.searchTextBox, .searchBoxBackgroundLabel {
+    -fx-font: 24px Tahoma;
+    -fx-padding: 7 2 10 2;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-text-box-border: transparent;
+    -fx-background-color: none;
+    -fx-max-width: 800px;
+}
+
+.searchBoxBackgroundLabel {
+    -fx-padding: 7 2 10 4;
+    -fx-text-fill: #BBBBBB;
+    -fx-alignment: left;
     -fx-text-box-border: transparent;
     -fx-background-color: none;
 }
