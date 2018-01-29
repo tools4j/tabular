@@ -1,0 +1,1 @@
+%JAVA_HOME%\bin\java -cp lib/jkeymaster-1.2.jar com.tulskiy.keymaster.AWTTest
