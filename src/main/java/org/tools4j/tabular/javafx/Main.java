@@ -1,6 +1,7 @@
 package org.tools4j.tabular.javafx;
 
 import com.airhacks.afterburner.injection.Injector;
+import com.tulskiy.keymaster.common.Provider;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -65,5 +66,13 @@ public class Main extends Application {
         });
 
         ResizeHelper.addResizeListener(primaryStage);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            LOG.info("Shutting down jkeymaster hotkey provider.");
+            final Provider provider = Provider.getCurrentProvider(false);
+            provider.reset();
+            provider.stop();
+            LOG.info("Completed shutdown of jkeymaster hotkey provider.");
+        }));
     }
 }

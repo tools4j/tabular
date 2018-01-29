@@ -1,3 +1,4 @@
+![alt text](src/main/dist/tabular-128.ico)
 # Tabular
 ## Introduction
 Tabular is a GUI providing searching of a static table of data, with the
