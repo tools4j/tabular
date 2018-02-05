@@ -76,21 +76,15 @@ app.commmands.orderLowStock.description=Places order for items which are low in 
 The CSV parsing is done using OpenCSV.  Please see the [documentation](http://opencsv.sourceforge.net/) for more details.
 Variable substition can be used within the csv cell values.  Variables should be specified with a preceding ${ and a trailing }. e.g. ${myVar}.  Variables can be defined in the config.properties file.  Other cell values in the same row can also be referenced simply by using the column name.  Environment and System variables can also be referenced.
 
+## Per-user properties
+One way of distributing Tabular amongst a team is to check-in the Tabular distribution, along with your table.csv and config.properties into a Version Control System e.g. Git/SVN.  If users wish to configure any config overrides, they can create a 'config-local.properties' and add any config overrides there.  Be sure to add the file to the appropriate ignore file is not accidentally added to your VCS.
+
 ## Troubleshooting
 * If you get an exception which looks like this: `Exception in thread "main" java.lang.UnsupportedClassVersionError: org/tools4j/tabular/javafx/Main : Unsupported major.minor version 52.0`, this probably means that you are using a version of Java < Java8.  Check your Java version by running `java -version`.
 
 ## Valid values for the 'hotkey.combinations.show' property
-The following has been pasted from the docs at: https://docs.oracle.com/javase/7/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)
-Each comma separated valid must have the following syntax:
-```
-   <modifiers>* (<typedID> | <pressedReleasedID>)*
-   modifiers := shift | control | ctrl | meta | alt | altGraph
-   typedID := typed <typedKey>
-   typedKey := string of length 1 giving Unicode character.
-   pressedReleasedID := (pressed | released) key
-   key := KeyEvent key code name, i.e. the name following "VK_".
-```
-If typed, pressed or released is not specified, pressed is assumed. Here are some examples:
+You must use values accepted by javax.swing.Keystroke.getKeyStroke() method.  You can find the docs here: https://docs.oracle.com/javase/7/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)
+Here are some examples:
 ```
 INSERT
 control DELETE
@@ -98,7 +92,14 @@ alt shift X
 alt shift released X
 typed a
 ```
-
+### Capturing keystrokes
+To 'capture' a keystroke combination to use within Tabular, you can run the jkeymaster 'key grabber' application.  You can start it by running something like this on the command line:
+```
+java -cp lib/jkeymaster-1.2.jar com.tulskiy.keymaster.AWTTest
+```
+(jkeymaster jar is distributed with Tabular)
+If you're running on Windows, I've provided a key-grabber.bat file in the distribution which you can use.
+It will create a small window, with a small edit box which you can click into, and enter your keystrokes of choice.  The keystrokes are printed out in the format required to configure Tabular's hotkey.
 
 ## Acknowledgements
 - jkeymaster is used to provide hotkey support.  https://github.com/tulskiy/jkeymaster

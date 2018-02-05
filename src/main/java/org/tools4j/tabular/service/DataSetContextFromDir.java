@@ -3,6 +3,8 @@ package org.tools4j.tabular.service;
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.util.PropertiesRepo;
 
+import java.io.File;
+
 /**
  * User: ben
  * Date: 31/10/17
@@ -25,10 +27,16 @@ public class DataSetContextFromDir {
 
     public DataSetContext load() {
         LOG.info("Loading DataSet properties");
-        PropertiesRepo dataSetProperties = new PropertiesRepo(configDir + "/config");
+        final PropertiesRepo configFileProperties = new PropertiesRepo(configDir + "/config");
+
+        PropertiesRepo configLocalFileProperties = null;
+        if(new File(configDir + "/config-local.properties").exists()){
+            LOG.info("Detected a config-local.properties file.  Using values from this file to override values in config.properties");
+            configLocalFileProperties = new PropertiesRepo(configDir + "/config-local");
+        }
 
         LOG.info("Loading column abbreviations");
-        final PropertiesRepo columnAbbreviations = dataSetProperties.getWithPrefix("app.column.abbreviations");
+        final PropertiesRepo columnAbbreviations = configFileProperties.getWithPrefix("app.column.abbreviations");
 
         final PropertiesRepo dataSetPropertiesWithAddedColumnAbbreviations = new PropertiesRepo();
         for(final String columnName: columnAbbreviations.keySet()){
@@ -41,9 +49,15 @@ public class DataSetContextFromDir {
 
 
         final PropertiesRepo allProperties = new PropertiesRepo();
-        LOG.info("==================== Config file properties ====================");
-        LOG.info(dataSetProperties.toPrettyString());
-        allProperties.putAll(dataSetProperties);
+        LOG.info("==================== config.properties file properties ====================");
+        LOG.info(configFileProperties.toPrettyString());
+        allProperties.putAll(configFileProperties);
+
+        if(configLocalFileProperties != null) {
+            LOG.info("==================== config-local.properties file properties ====================");
+            LOG.info(configLocalFileProperties.toPrettyString());
+            allProperties.putAll(configLocalFileProperties);
+        }
 
         LOG.info("==================== Configured abbreviations ====================");
         LOG.info(dataSetPropertiesWithAddedColumnAbbreviations.toPrettyString());
@@ -70,7 +84,7 @@ public class DataSetContextFromDir {
         DataSet dataSet = dataSetFromDir.load();
 
         LOG.info("Resolving variables in dataset table cells");
-        dataSet = dataSet.resolveVariablesInCells(dataSetProperties, resolvedProperties);
+        dataSet = dataSet.resolveVariablesInCells(configFileProperties, resolvedProperties);
 
         LOG.info("Loading commandMetadata from properties");
         CommandMetadataFromProperties commandMetadataFromProperties = new CommandMetadataFromProperties(resolvedProperties);
