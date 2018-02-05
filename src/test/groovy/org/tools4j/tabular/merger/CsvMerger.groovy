@@ -100,7 +100,9 @@ class CsvMerger {
     protected void printAsCsv(List<Map<String, String>> rows, PrintStream out) {
         PrintWriter writer = new PrintWriter(out);
         final CSVWriter csvWriter = new CSVWriter(writer, (char) ',')
-        rows.each { final Map<String, String> map ->
+        final List<String> firstRow = rows.first().keySet().asList()
+        csvWriter.writeNext(firstRow.toArray(new String[firstRow.size()]))
+        rows.stream().skip(1).each { final Map<String, String> map ->
             try {
                 final List<String> cells = map.values().asList()
                 csvWriter.writeNext(cells.toArray(new String[cells.size()]));
