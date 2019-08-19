@@ -95,7 +95,7 @@ Label#textTitle {
 }
 
 .searchBoxBackgroundLabel {
-    -fx-padding: 7 2 10 4;
+    -fx-padding: 10 2 10 4;
     -fx-text-fill: #BBBBBB;
     -fx-alignment: left;
     -fx-text-box-border: transparent;
