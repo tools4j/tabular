@@ -1,4 +1,4 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.util;
 
 import org.tools4j.tabular.util.PropertiesRepo;
 import org.tools4j.tabular.util.PropertiesRepoLoader;
