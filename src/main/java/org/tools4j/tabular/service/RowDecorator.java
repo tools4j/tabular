@@ -2,6 +2,7 @@ package org.tools4j.tabular.service;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -14,6 +15,9 @@ public class RowDecorator implements Row {
 
     public RowDecorator(final Row row) {
         this.row = row;
+        if(row instanceof RowWithCommands){
+            System.out.println("here");
+        }
     }
 
     @Override
@@ -84,5 +88,18 @@ public class RowDecorator implements Row {
     @Override
     public String toString() {
         return row.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RowDecorator that = (RowDecorator) o;
+        return row.equals(that.row);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row);
     }
 }

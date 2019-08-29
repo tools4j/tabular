@@ -16,13 +16,30 @@ import java.util.Map;
  * Date: 24/10/17
  * Time: 6:57 AM
  */
-public class DataSet implements TableWithColumnHeadings<RowWithCommands>, Pretty{
+public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Pretty{
     private final List<String> columns;
-    private final List<RowWithCommands> table;
+    private final List<T> table;
 
-    public DataSet(final List<String> columns, final List<RowWithCommands> table) {
+    public DataSet(final List<T> table) {
+        this(extractColumnNames(table), table);
+    }
+
+    public DataSet(final List<String> columns, final List<T> table) {
         this.columns = columns;
         this.table = table;
+    }
+
+    private static List<String> extractColumnNames(List<? extends Row> table) {
+        List<String> firstRowColumnHeaders = null;
+        for (Map<String, String> row : table) {
+            ArrayList<String> currentRowColumnHeaders = new ArrayList<>(row.keySet());
+            if(firstRowColumnHeaders == null){
+                firstRowColumnHeaders = currentRowColumnHeaders;
+            } else if(!currentRowColumnHeaders.equals(firstRowColumnHeaders)){
+                throw new IllegalArgumentException("Column headers do not match between rows. firstRowColumnHeaders " + firstRowColumnHeaders + ", currentRowColumnHeaders " + currentRowColumnHeaders);
+            }
+        }
+        return firstRowColumnHeaders;
     }
 
     @Override
@@ -33,22 +50,22 @@ public class DataSet implements TableWithColumnHeadings<RowWithCommands>, Pretty
                 '}';
     }
 
-    public DataSet resolveVariablesInCells(final PropertiesRepo... usingAdditionalProperties){
+    public DataSet<RowFromMap> resolveVariablesInCells(final PropertiesRepo... usingAdditionalProperties){
         final Map<String, String> additionalProperties = new HashMap<>();
         for(int i=0; i<usingAdditionalProperties.length; i++){
             additionalProperties.putAll(usingAdditionalProperties[i].asMap());
         }
-        final List<RowWithCommands> tableWithResolvedCells = new ArrayList<>();
-        for(final RowWithCommands row: table){
-            final RowWithCommands rowWithResolvedCells = new RowWithCommands(new RowFromMap(new ResolvedMap(row, additionalProperties).resolve()), row.getCommands());
+        final List<RowFromMap> tableWithResolvedCells = new ArrayList<>();
+        for(final T row: table){
+            final RowFromMap rowWithResolvedCells = new RowFromMap(new ResolvedMap(row, additionalProperties).resolve());
             tableWithResolvedCells.add(rowWithResolvedCells);
         }
-        return new DataSet(columns, tableWithResolvedCells);
+        return new DataSet<>(columns, tableWithResolvedCells);
     }
 
-    public DataSet resolveCommands(final CommandMetadatas commandMetadatas, final PropertiesRepo propertiesRepo){
+    public DataSet<RowWithCommands> resolveCommands(final CommandMetadatas commandMetadatas, final PropertiesRepo propertiesRepo){
         final List<RowWithCommands> rowWithCommands = new ArrayList<>(table.size());
-        for(final RowWithCommands row: table){
+        for(final T row: table){
             final CommandMetadatas commandMetadatasForRow = commandMetadatas.getCommandsFor(row);
             final List<Command> commandInstancesForRow = commandMetadatasForRow.getCommandInstances(row, propertiesRepo);
             final RowWithCommands rowWithResolvedCells = new RowWithCommands(row, commandInstancesForRow);
@@ -86,7 +103,7 @@ public class DataSet implements TableWithColumnHeadings<RowWithCommands>, Pretty
     }
 
     @Override
-    public List<RowWithCommands> getRows() {
+    public List<T> getRows() {
         return table;
     }
 
@@ -105,7 +122,7 @@ public class DataSet implements TableWithColumnHeadings<RowWithCommands>, Pretty
     public String toCsv(){
         final StringBuilder sb = new StringBuilder();
         sb.append(join(columns)).append("\n");
-        final Iterator<RowWithCommands> rows = table.iterator();
+        final Iterator<T> rows = table.iterator();
         while(rows.hasNext()){
             sb.append(join(rows.next().values()));
             if(rows.hasNext()){
@@ -135,7 +152,7 @@ public class DataSet implements TableWithColumnHeadings<RowWithCommands>, Pretty
         return table.size();
     }
 
-    public RowWithCommands getRow(final int i) {
+    public T getRow(final int i) {
         return table.get(i);
     }
 }

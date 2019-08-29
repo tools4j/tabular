@@ -60,10 +60,6 @@ public class DataSetContextFromDir {
             allProperties.putAll(configLocalFileProperties);
         }
 
-        LOG.info("==================== Configured abbreviations ====================");
-        LOG.info(dataSetPropertiesWithAddedColumnAbbreviations.toPrettyString());
-        allProperties.putAll(dataSetPropertiesWithAddedColumnAbbreviations);
-
         LOG.info("==================== Environment Variables ====================");
         LOG.info(environmentVariables.toPrettyString());
         allProperties.putAll(environmentVariables);
@@ -76,7 +72,13 @@ public class DataSetContextFromDir {
         LOG.info(propertyOverrides.toPrettyString());
         allProperties.putAll(propertyOverrides);
 
+        LOG.info("==================== Resolving all variables in properties ====================");
         final PropertiesRepo resolvedProperties = allProperties.resolveVariablesWithinValues();
+
+        LOG.info("==================== Configured abbreviations ====================");
+        LOG.info(dataSetPropertiesWithAddedColumnAbbreviations.toPrettyString());
+        resolvedProperties.putAll(dataSetPropertiesWithAddedColumnAbbreviations);
+
         LOG.info("==================== Final Resolved Properties ====================");
         LOG.info(resolvedProperties.toPrettyString());
 

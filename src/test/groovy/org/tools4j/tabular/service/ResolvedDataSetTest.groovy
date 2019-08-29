@@ -1,6 +1,10 @@
 package org.tools4j.tabular.service
 
+import org.tools4j.groovytables.GroovyTables
+import org.tools4j.groovytables.Rows
 import spock.lang.Specification
+
+import static org.tools4j.tabular.util.TestUtils.dataSetFromRows
 
 /**
  * User: ben
@@ -14,9 +18,32 @@ class ResolvedDataSetTest extends Specification {
         final DataSetContext dataSetContext = new DataSetContextFromDir(configDir).load();
 
         then:
-        final List<String> columns = ["number", "descriptionAndDomain", "description", "numberAtDomain"];
-        final List<Map<String, String>> table = [["number":"one", "descriptionAndDomain":"scooter:tools4j.com", "description":"scooter", "numberAtDomain":"one@tools4j.com"], ["number":"two", "descriptionAndDomain":"trains:tools4j.com", "description":"trains", "numberAtDomain":"two@tools4j.com"], ["number":"three", "descriptionAndDomain":"trunks:tools4j.com", "description":"trunks", "numberAtDomain":"three@tools4j.com"], ["number":"four", "descriptionAndDomain":"escaped dollar four:tools4j.com", "description":"escaped dollar four", "numberAtDomain":"four@tools4j.com"], ["number":"ninety-nine", "descriptionAndDomain":"baloons-hi there!:tools4j.com", "description":"baloons-hi there!", "numberAtDomain":"ninety-nine@tools4j.com"]]
-        final DataSet expected = new DataSetFromStringMap(columns, table).asDataSet();
+        final Rows expectedData = GroovyTables.createRows {
+            number        | descriptionAndDomain              | description           | numberAtDomain
+            "one"         | "scooter:tools4j.com"             | "scooter"             | "one@tools4j.com"
+            "two"         | "trains:tools4j.com"              | "trains"              | "two@tools4j.com"
+            "three"       | "trunks:tools4j.com"              | "trunks"              | "three@tools4j.com"
+            "four"        | "escaped dollar four:tools4j.com" | "escaped dollar four" | "four@tools4j.com"
+            "ninety-nine" | "baloons-hi there!:tools4j.com"   | "baloons-hi there!"   | "ninety-nine@tools4j.com"}
+        final DataSet expected = dataSetFromRows(expectedData);
+        assert dataSetContext.dataSet == expected;
+    }
+
+    def "test resolved dataset - when sysProperty exists matching column name"(){
+        when:
+        final String configDir = "src/test/resources/table_with_substitutions"
+        System.setProperty("number", "blah!")
+        final DataSetContext dataSetContext = new DataSetContextFromDir(configDir).load();
+
+        then:
+        final Rows expectedData = GroovyTables.createRows {
+            number        | descriptionAndDomain              | description           | numberAtDomain
+            "one"         | "scooter:tools4j.com"             | "scooter"             | "one@tools4j.com"
+            "two"         | "trains:tools4j.com"              | "trains"              | "two@tools4j.com"
+            "three"       | "trunks:tools4j.com"              | "trunks"              | "three@tools4j.com"
+            "four"        | "escaped dollar four:tools4j.com" | "escaped dollar four" | "four@tools4j.com"
+            "ninety-nine" | "baloons-hi there!:tools4j.com"   | "baloons-hi there!"   | "ninety-nine@tools4j.com"}
+        final DataSet expected = dataSetFromRows(expectedData);
         assert dataSetContext.dataSet == expected;
     }
 }

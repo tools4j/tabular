@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
  * Date: 6/12/17
  * Time: 6:25 AM
  */
-public class DataSetFromStringMap {
+public class DataSetFromColumnsAndListOfMaps {
     private final List<String> columns;
     private final List<Map<String, String>> table;
 
-    public DataSetFromStringMap(final List<String> columns, final List<Map<String, String>> table) {
+    public DataSetFromColumnsAndListOfMaps(final List<String> columns, final List<Map<String, String>> table) {
         this.columns = columns;
         this.table = table;
     }

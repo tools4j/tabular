@@ -15,31 +15,31 @@ import java.util.stream.Stream;
  * Time: 5:45 PM
  */
 public class CommandMetadatas implements Pretty {
-    private final Map<String, CommandMetadata> commandMetadataMap;
+    private final Map<String, CommandMetadata> commandMetadataByCommandName;
 
     public CommandMetadatas(final List<CommandMetadata> commands) {
-        this.commandMetadataMap = new LinkedHashMap<>();
-        commands.forEach((commandMetadata -> commandMetadataMap.put(commandMetadata.getName(), commandMetadata)));
+        this.commandMetadataByCommandName = new LinkedHashMap<>();
+        commands.forEach((commandMetadata -> commandMetadataByCommandName.put(commandMetadata.getName(), commandMetadata)));
     }
 
     public CommandMetadatas getCommandsFor(final Row row){
-        return new CommandMetadatas(commandMetadataMap.values().stream().filter((commandMetadata -> commandMetadata.test(row))).collect(Collectors.toList()));
+        return new CommandMetadatas(commandMetadataByCommandName.values().stream().filter((commandMetadata -> commandMetadata.test(row))).collect(Collectors.toList()));
     }
 
     public int size() {
-        return commandMetadataMap.size();
+        return commandMetadataByCommandName.size();
     }
 
     public boolean containsCommands(final String ... commandNames) {
-        return Stream.of(commandNames).allMatch((command) -> commandMetadataMap.containsKey(command));
+        return Stream.of(commandNames).allMatch((command) -> commandMetadataByCommandName.containsKey(command));
     }
 
     public CommandMetadata get(final String commandName) {
-        return commandMetadataMap.get(commandName);
+        return commandMetadataByCommandName.get(commandName);
     }
 
     public List<Command> getCommandInstances(final Row row, final PropertiesRepo properties) {
-        return getCommandsFor(row).commandMetadataMap.values().stream().map((commandMetadata -> commandMetadata.getCommandInstance(row, properties))).collect(Collectors.toList());
+        return getCommandsFor(row).commandMetadataByCommandName.values().stream().map((commandMetadata -> commandMetadata.getCommandInstance(row, properties))).collect(Collectors.toList());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CommandMetadatas implements Pretty {
         final IndentableStringBuilder sb = new IndentableStringBuilder(indent);
         sb.append("commandMetadatas{\n");
         sb.activateIndent();
-        for(final CommandMetadata commandMetadata: commandMetadataMap.values()){
+        for(final CommandMetadata commandMetadata: commandMetadataByCommandName.values()){
             sb.append(commandMetadata.toPrettyString(indent));
         }
         sb.decactivateIndent();
@@ -56,6 +56,6 @@ public class CommandMetadatas implements Pretty {
     }
 
     public boolean isEmpty() {
-        return commandMetadataMap.isEmpty();
+        return commandMetadataByCommandName.isEmpty();
     }
 }

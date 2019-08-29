@@ -62,8 +62,8 @@ public class ResolvedMap {
         final Map<String, String> map = new LinkedHashMap<>(this.primaryMap.size() + this.secondaryMap.size());
 
         //Initialize the maps and sets
-        map.putAll(this.primaryMap);
         map.putAll(this.secondaryMap);
+        map.putAll(this.primaryMap);
         unresolved.addAll(map.keySet());
 
         //Loop

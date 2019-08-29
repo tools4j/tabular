@@ -54,6 +54,32 @@ class ResolvedMapTest extends Specification {
         assert resolved == expected
     }
 
+    def "test Resolve - does not override column values with property value with the same name as column heading (bug I have seen)"() {
+        when:
+        final Map<String, String> properties = ['password': 'this should not be substituted into table']
+        final Map<String, String> resolved = new ResolvedMap(map, properties).resolve();
+
+        then:
+        final Map<String, String> expected = [
+                'connection.host'              : 'haud0001',
+                'connection.username'          : 'me',
+                'connection.port'              : '8080',
+                'connection.password'          : 'secret',
+                'password'                     : 'secret',
+                'nested1'                      : 'host',
+                'nested2'                      : 'and.port',
+                'host.and.port'                : 'haud0001:8080',
+                'username.and.password'        : 'me:secret',
+                'fullUrl'                      : 'haud0001:8080:me:secret',
+                'fullUrl.with.nested.variables': 'haud0001:8080:me:secret',
+                'missing.variables1'           : '${${missing1}.${missing2}}:haud0001:${missing3}:8080',
+                'missing.variables2'           : '${and.port.host}:haud0001:${missing3}:8080',
+                'escaped.dollar'               : 'blah \\${connection.host} blah'
+        ]
+
+        assert resolved == expected
+    }
+
     def "test Resolve using secondaryMap"() {
         given:
         final Map<String, String> secondaryMap = [

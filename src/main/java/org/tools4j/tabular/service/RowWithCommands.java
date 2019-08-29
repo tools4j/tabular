@@ -3,6 +3,7 @@ package org.tools4j.tabular.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * User: ben
@@ -46,17 +47,16 @@ public class RowWithCommands extends RowDecorator {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RowWithCommands)) return false;
-
-        final RowWithCommands row = (RowWithCommands) o;
-
-        return commands.equals(row.commands);
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        RowWithCommands that = (RowWithCommands) o;
+        return Objects.equals(commands, that.commands);
     }
 
     @Override
     public int hashCode() {
-        return commands.hashCode();
+        return Objects.hash(super.hashCode(), commands);
     }
 }

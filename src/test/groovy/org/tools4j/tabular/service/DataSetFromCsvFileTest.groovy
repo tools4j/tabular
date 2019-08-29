@@ -18,7 +18,7 @@ class DataSetFromCsvFileTest extends Specification {
         then:
         final List<String> columns = ["a", "b", "c"];
         final List<Map<String, String>> table = [["a":"one", "b":"white", "c":"scooter"], ["a":"two", "b":"blue", "c":"trains"], ["a":"three", "b":"orange", "c":"trunks"], ["a":"four", "b":"purple", "c":"monsters"], ["a":"ninety-nine", "b":"red", "c":"baloons"]];
-        final DataSet expected = new DataSetFromStringMap(columns, table).asDataSet();
+        final DataSet expected = new DataSetFromColumnsAndListOfMaps(columns, table).asDataSet();
         assert data == expected;
     }
 }

@@ -2,6 +2,7 @@ package org.tools4j.tabular.service;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -84,5 +85,18 @@ public class RowFromMap implements Row {
     @Override
     public String toString() {
         return map.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RowFromMap that = (RowFromMap) o;
+        return map.equals(that.map);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(map);
     }
 }
