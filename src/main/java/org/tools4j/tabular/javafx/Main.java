@@ -14,8 +14,13 @@ import org.tools4j.tabular.service.DataSetContext;
 import org.tools4j.tabular.service.DataSetContextFromDir;
 import org.tools4j.tabular.util.PropertiesRepo;
 
+import java.io.File;
+
 public class Main extends Application {
     private final static Logger LOG = Logger.getLogger(Main.class);
+    public static final String TABULAR_CONFIG_DIR_SYS_PROP = "tabular.config.dir";
+    public static final String TABULAR_CONFIG_DIR_ENV_PROP = "TABULAR_CONFIG_DIR";
+    public static final String WORKING_DIR_SYS_PROP = "user.dir";
     private final PropertiesRepo propertyOverrides;
     private final ExecutionService executionService;
 
@@ -38,9 +43,9 @@ public class Main extends Application {
             LogManager.getRootLogger().setLevel(Level.toLevel(System.getProperty("logging.level")));
         }
 
-        final WorkingDir workingDir = new WorkingDir();
-        LOG.info("Loading AppContext...");
-        final DataSetContext appContext = new DataSetContextFromDir(workingDir.get(), propertyOverrides).load();
+        String configDir = resolveWorkingDir();
+        LOG.info("Loading AppContext using dir [" + configDir + "]");
+        final DataSetContext appContext = new DataSetContextFromDir(configDir, propertyOverrides).load();
 
         Injector.setModelOrService(DataSetContext.class, appContext);
         Injector.setModelOrService(Stage.class, primaryStage);
@@ -74,5 +79,29 @@ public class Main extends Application {
             provider.stop();
             LOG.info("Completed shutdown of jkeymaster hotkey provider.");
         }));
+    }
+
+    public static String resolveWorkingDir() {
+        if(System.getProperties().containsKey("tabular.config.dir")) {
+            String dir = System.getProperty(TABULAR_CONFIG_DIR_SYS_PROP);
+            LOG.info("Resolved config dir to [" + dir + "] from system property tabular.config.dir");
+            if (!new File(dir).exists()) {
+                throw new IllegalStateException("Could not find config directory at [" + dir + "] defined by system property " + TABULAR_CONFIG_DIR_SYS_PROP);
+            }
+            return dir;
+
+        } else if(System.getenv(TABULAR_CONFIG_DIR_ENV_PROP) != null){
+            String dir = System.getenv("TABULAR_CONFIG_DIR");
+            LOG.info("Resolved config dir to [" + dir + "] from environment variable TABULAR_CONFIG_DIR");
+            if(!new File(dir).exists()){
+                throw new IllegalStateException("Could not find config directory at [" + dir + "] defined by system property " + TABULAR_CONFIG_DIR_ENV_PROP);
+            }
+            return dir;
+
+        } else {
+            String dir = System.getProperty(WORKING_DIR_SYS_PROP);
+            LOG.info("Resolved config dir to [" + dir + "] using working directory system property user.dir");
+            return dir;
+        }
     }
 }
