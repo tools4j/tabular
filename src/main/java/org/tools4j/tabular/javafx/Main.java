@@ -21,15 +21,13 @@ public class Main extends Application {
     public static final String TABULAR_CONFIG_DIR_SYS_PROP = "tabular.config.dir";
     public static final String TABULAR_CONFIG_DIR_ENV_PROP = "TABULAR_CONFIG_DIR";
     public static final String WORKING_DIR_SYS_PROP = "user.dir";
-    private final PropertiesRepo propertyOverrides;
     private final ExecutionService executionService;
 
     public Main() {
-        this(new PropertiesRepo(), new ExecutionServiceImpl());
+        this(new ExecutionServiceImpl());
     }
 
-    public Main(final PropertiesRepo propertyOverrides, final ExecutionService executionService) {
-        this.propertyOverrides = propertyOverrides;
+    public Main(final ExecutionService executionService) {
         this.executionService = executionService;
     }
 
@@ -45,7 +43,7 @@ public class Main extends Application {
 
         String configDir = resolveWorkingDir();
         LOG.info("Loading AppContext using dir [" + configDir + "]");
-        final DataSetContext appContext = new DataSetContextFromDir(configDir, propertyOverrides).load();
+        final DataSetContext appContext = new DataSetContextFromDir(configDir).load();
 
         Injector.setModelOrService(DataSetContext.class, appContext);
         Injector.setModelOrService(Stage.class, primaryStage);

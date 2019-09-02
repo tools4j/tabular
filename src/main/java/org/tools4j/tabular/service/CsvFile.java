@@ -31,14 +31,14 @@ public class CsvFile {
         this(new FileReader(fileLocation), delimiter, null);
     }
 
-    public CsvFile(final String fileLocation, final char delimiter, final Character quote) throws FileNotFoundException {
-        this(new FileReader(fileLocation), delimiter, quote);
-    }
-
     public CsvFile(final Reader reader, final char delimiter, final Character quote) {
         this.reader = reader;
         this.delimiter = delimiter;
         this.quote = quote;
+    }
+
+    public CsvFile(final String fileLocation, final char delimiter, final Character quote) throws FileNotFoundException {
+        this(new FileReader(fileLocation), delimiter, quote);
     }
 
     public List<String[]> getRows(){

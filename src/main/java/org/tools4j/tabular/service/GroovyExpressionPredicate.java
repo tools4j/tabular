@@ -30,19 +30,7 @@ public class GroovyExpressionPredicate implements Predicate<Row> {
             return true;
         }
 
-        final Binding sharedData = new Binding();
-        final String groovyScriptWithResolvedVariables = new ResolvedString(groovyExpression, propertiesRepo.asMap(), row).resolve();
-
-        final GroovyShell shell = new GroovyShell(sharedData);
-        final Object evaluatedResult;
-        try {
-            evaluatedResult = shell.evaluate(groovyScriptWithResolvedVariables);
-        } catch (Exception e) {
-            throw new RuntimeException("Error evaluating script: '" + groovyScriptWithResolvedVariables + "'");
-        }
-        if(!(evaluatedResult instanceof Boolean)){
-            throw new RuntimeException("Expression does not evaluate to a Boolean. Expression:'" + groovyScriptWithResolvedVariables + "' for Row:" + row);
-        }
+        final Object evaluatedResult = new GroovyExpression(groovyExpression, propertiesRepo, Boolean.class).resolveExpression(row);
         return (Boolean) evaluatedResult;
     }
 }
