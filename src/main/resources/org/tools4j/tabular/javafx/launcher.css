@@ -112,7 +112,7 @@ Label#textTitle {
 }
 
 #separatorLabel{
-    -fx-padding: 5 5 10 5;
+    -fx-padding: 8 3 10 5;
 }
 
 .expandedMode#textSearchPane{

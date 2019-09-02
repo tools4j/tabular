@@ -1,7 +1,6 @@
 package org.tools4j.tabular.service;
 
-import com.opencsv.CSVIterator;
-import com.opencsv.CSVReader;
+import com.opencsv.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -42,8 +41,8 @@ public class CsvFile {
         this.quote = quote;
     }
 
-    public List<String[]> getData(){
-        final List<String[]> data = new ArrayList<>();
+    public List<String[]> getRows(){
+        final List<String[]> rows = new ArrayList<>();
         try {
             final CSVReader csvReader;
             if(quote != null){
@@ -53,11 +52,11 @@ public class CsvFile {
             }
             final CSVIterator iterator = new CSVIterator(csvReader);
             while(iterator.hasNext()) {
-                data.add(iterator.next());
+                rows.add(iterator.next());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return data;
+        return rows;
     }
 }

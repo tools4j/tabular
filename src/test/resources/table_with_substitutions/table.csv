@@ -2,5 +2,5 @@ number,descriptionAndDomain,description,numberAtDomain
 one,${d}:${domain},scooter,${n}@${domain}
 two,${d}:${domain},trains,${n}@${domain}
 three,${d}:${domain},trunks,${n}@${domain}
-four,${d}:${domain},escaped dollar \${n},${n}@${domain}
+four,${d}:${domain},escaped dollar \\${n},${n}@${domain}
 ninety-nine,${d}:${domain},baloons-${testEnv1},${n}@${domain}

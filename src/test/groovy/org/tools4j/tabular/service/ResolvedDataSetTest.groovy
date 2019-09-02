@@ -20,11 +20,11 @@ class ResolvedDataSetTest extends Specification {
         then:
         final Rows expectedData = GroovyTables.createRows {
             number        | descriptionAndDomain              | description           | numberAtDomain
-            "one"         | "scooter:tools4j.com"             | "scooter"             | "one@tools4j.com"
-            "two"         | "trains:tools4j.com"              | "trains"              | "two@tools4j.com"
-            "three"       | "trunks:tools4j.com"              | "trunks"              | "three@tools4j.com"
-            "four"        | "escaped dollar four:tools4j.com" | "escaped dollar four" | "four@tools4j.com"
-            "ninety-nine" | "baloons-hi there!:tools4j.com"   | "baloons-hi there!"   | "ninety-nine@tools4j.com"}
+            'one'         | 'scooter:tools4j.com'             | 'scooter'             | 'one@tools4j.com'
+            'two'         | 'trains:tools4j.com'              | 'trains'              | 'two@tools4j.com'
+            'three'       | 'trunks:tools4j.com'              | 'trunks'              | 'three@tools4j.com'
+            'four'        | 'escaped dollar ${n}:tools4j.com' | 'escaped dollar ${n}' | 'four@tools4j.com'
+            'ninety-nine' | 'baloons-hi there!:tools4j.com'   | 'baloons-hi there!'   | 'ninety-nine@tools4j.com'}
         final DataSet expected = dataSetFromRows(expectedData);
         assert dataSetContext.dataSet == expected;
     }
@@ -38,11 +38,11 @@ class ResolvedDataSetTest extends Specification {
         then:
         final Rows expectedData = GroovyTables.createRows {
             number        | descriptionAndDomain              | description           | numberAtDomain
-            "one"         | "scooter:tools4j.com"             | "scooter"             | "one@tools4j.com"
-            "two"         | "trains:tools4j.com"              | "trains"              | "two@tools4j.com"
-            "three"       | "trunks:tools4j.com"              | "trunks"              | "three@tools4j.com"
-            "four"        | "escaped dollar four:tools4j.com" | "escaped dollar four" | "four@tools4j.com"
-            "ninety-nine" | "baloons-hi there!:tools4j.com"   | "baloons-hi there!"   | "ninety-nine@tools4j.com"}
+            'one'         | 'scooter:tools4j.com'             | 'scooter'             | 'one@tools4j.com'
+            'two'         | 'trains:tools4j.com'              | 'trains'              | 'two@tools4j.com'
+            'three'       | 'trunks:tools4j.com'              | 'trunks'              | 'three@tools4j.com'
+            'four'        | 'escaped dollar ${n}:tools4j.com' | 'escaped dollar ${n}' | 'four@tools4j.com'
+            'ninety-nine' | 'baloons-hi there!:tools4j.com'   | 'baloons-hi there!'   | 'ninety-nine@tools4j.com'}
         final DataSet expected = dataSetFromRows(expectedData);
         assert dataSetContext.dataSet == expected;
     }

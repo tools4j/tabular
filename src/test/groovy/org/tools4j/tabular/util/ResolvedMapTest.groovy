@@ -48,7 +48,7 @@ class ResolvedMapTest extends Specification {
                 'fullUrl.with.nested.variables': 'haud0001:8080:me:secret',
                 'missing.variables1'           : '${${missing1}.${missing2}}:haud0001:${missing3}:8080',
                 'missing.variables2'           : '${and.port.host}:haud0001:${missing3}:8080',
-                'escaped.dollar'               : 'blah \\${connection.host} blah'
+                'escaped.dollar'               : 'blah ${connection.host} blah'
         ]
 
         assert resolved == expected
@@ -74,7 +74,7 @@ class ResolvedMapTest extends Specification {
                 'fullUrl.with.nested.variables': 'haud0001:8080:me:secret',
                 'missing.variables1'           : '${${missing1}.${missing2}}:haud0001:${missing3}:8080',
                 'missing.variables2'           : '${and.port.host}:haud0001:${missing3}:8080',
-                'escaped.dollar'               : 'blah \\${connection.host} blah'
+                'escaped.dollar'               : 'blah ${connection.host} blah'
         ]
 
         assert resolved == expected
@@ -106,9 +106,24 @@ class ResolvedMapTest extends Specification {
                 'fullUrl.with.nested.variables': 'haud0001:8080:me:secret',
                 'missing.variables1'           : 'me:secret:haud0001:${missing3}:8080',
                 'missing.variables2'           : '${and.port.host}:haud0001:${missing3}:8080',
-                'escaped.dollar'               : 'blah \\${connection.host} blah'
+                'escaped.dollar'               : 'blah ${connection.host} blah'
         ]
 
         assert resolved == expected
+    }
+
+    def "test replace"(String str, String expectedResult){
+        when:
+        def result = ResolvedMap.replaceAllEscapeCharsNotPrecededByEscapeChars(str)
+
+        then:
+        assert result == expectedResult
+
+        where:
+         str                            | expectedResult
+        'hello there \\ mr \\\\warner'  | 'hello there  mr \\warner'
+        '\\\\'                          | '\\'
+        '\\'                            | ''
+        '\\${escape}'                   | '${escape}'
     }
 }

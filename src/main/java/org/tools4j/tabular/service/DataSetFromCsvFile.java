@@ -19,7 +19,7 @@ public class DataSetFromCsvFile {
     }
 
     public DataSet load(){
-        final List<String[]> csvData = csvFile.getData();
+        final List<String[]> csvData = csvFile.getRows();
         final List<String> columns = new ArrayList<>();
         final List<RowWithCommands> table = new ArrayList<>(csvData.size()); //could be off by one, but that's fine
 

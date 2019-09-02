@@ -14,7 +14,7 @@ class CsvFileTest extends Specification {
         CsvFile csvDataFile = new CsvFile("src/test/resources/csv-test/table.csv", (char) ',');
 
         when:
-        final List<String[]> data = csvDataFile.getData();
+        final List<String[]> data = csvDataFile.getRows();
 
         then:
         final List<String[]> expected = GroovyTables.createListOfArrays {

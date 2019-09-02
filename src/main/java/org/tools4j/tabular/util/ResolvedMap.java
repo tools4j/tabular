@@ -106,10 +106,24 @@ public class ResolvedMap {
         }
 
         //Now just pull out items that were originally given in the primary map
-        final Map<String, String> returnMap = new LinkedHashMap<>(this.primaryMap.size() + this.secondaryMap.size());
+        Map<String, String> returnMap = new LinkedHashMap<>(this.primaryMap.size() + this.secondaryMap.size());
         for(final String key: primaryMap.keySet()){
             returnMap.put(key, map.get(key));
         }
+
+        returnMap = removeEscapeCharacters(returnMap);
         return returnMap;
+    }
+
+    static Map<String, String> removeEscapeCharacters(Map<String, String> map){
+        Map<String, String> returnMap = new LinkedHashMap<>();
+        for (Map.Entry<String, String> e : map.entrySet()) {
+            returnMap.put(e.getKey(), replaceAllEscapeCharsNotPrecededByEscapeChars(e.getValue()));
+        }
+        return returnMap;
+    }
+
+    static String replaceAllEscapeCharsNotPrecededByEscapeChars(String str){
+        return str.replaceAll("(?<!\\\\)\\\\", "");
     }
 }
