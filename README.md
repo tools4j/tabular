@@ -1,14 +1,11 @@
 ![alt text](src/main/dist/tabular-128.ico)
 # Tabular
 ## Introduction
-Tabular is a GUI providing searching of a static table of data, with the
-option of launching commands from selected rows.
+Tabular is a table based command launcher.
 
 ![alt text](img/launcher-initial-prompt.png)
 
-You provide the data via a CSV file, and configure the rules for viewing
-and searching the data via a properties file. There is also the option
-of launching commands from the data of a selected row.
+You provide the table as a CSV file, and commands are defined in a properties file.
 
 ![alt text](img/launcher-simple-search.png)
 

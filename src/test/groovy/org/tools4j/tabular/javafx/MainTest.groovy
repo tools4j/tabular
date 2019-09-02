@@ -15,10 +15,10 @@ class MainTest extends Specification {
         assert testDir.exists()
 
         when:
-        System.setProperty(Main.TABULAR_CONFIG_DIR_SYS_PROP, testDir.canonicalPath)
+        System.setProperty(Main.TABULAR_CONFIG_DIR_SYS_PROP, testDir.absolutePath)
 
         then:
-        assert Main.resolveWorkingDir() == testDir.canonicalPath;
+        assert Main.resolveWorkingDir() == testDir.absolutePath;
     }
 
     def "ResolveWorkingDir - system property defined, with path that does not exist"() {
@@ -26,7 +26,7 @@ class MainTest extends Specification {
         //Find a directory that exists, that we can inject into system property
         File testDir = new File(new File(this.getClass().getResource("/table_with_multiple_commands").toURI()).canonicalPath + "/blah-de-blah");
         assert !testDir.exists()
-        System.setProperty(Main.TABULAR_CONFIG_DIR_SYS_PROP, testDir.canonicalPath)
+        System.setProperty(Main.TABULAR_CONFIG_DIR_SYS_PROP, testDir.absolutePath)
 
         when:
         String exceptionMsg = null
@@ -37,6 +37,6 @@ class MainTest extends Specification {
         }
 
         then:
-        assert exceptionMsg == "Could not find config directory at [C:\\dev\\workspaces\\tabular\\out\\test\\resources\\table_with_multiple_commands\\blah-de-blah] defined by system property tabular.config.dir"
+        assert exceptionMsg == "Could not find config directory at [${testDir.absolutePath}] defined by system property tabular.config.dir"
     }
 }
