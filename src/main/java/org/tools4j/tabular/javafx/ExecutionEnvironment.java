@@ -3,6 +3,7 @@ package org.tools4j.tabular.javafx;
 import javafx.scene.control.TextArea;
 import org.tools4j.tabular.service.Command;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
+import org.tools4j.tabular.util.PropertiesRepo;
 
 /**
  * User: ben
@@ -13,9 +14,11 @@ public class ExecutionEnvironment {
     private final ExecutionService executionService;
     private final PostExecutionBehaviour postExecutionBehaviour;
     private final TextArea console;
+    private final PropertiesRepo properties;
 
-    public ExecutionEnvironment(final ExecutionService executionService, final TextArea console, final PostExecutionBehaviour postExecutionBehaviour) {
+    public ExecutionEnvironment(final ExecutionService executionService, final TextArea console, final PropertiesRepo properties, final PostExecutionBehaviour postExecutionBehaviour) {
         this.executionService = executionService;
+        this.properties = properties;
         this.console = console;
         this.postExecutionBehaviour = postExecutionBehaviour;
     }

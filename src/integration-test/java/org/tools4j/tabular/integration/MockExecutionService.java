@@ -34,7 +34,7 @@ public class MockExecutionService implements ExecutionService {
     @Override
     public DefaultExecutingCommand exec(final Command command, final TextArea outputConsole, final PostExecutionBehaviour postExecutionBehaviour) {
         outputConsole.appendText("Mocked Executor!\n");
-        outputConsole.appendText("Was instructed to execute this command: " + command.getCommandLineString() + "\n");
+        outputConsole.appendText("Was instructed to execute this command: " + command.resolveCommandLineString() + "\n");
         postExecutionBehaviour.onRunning.run();
         final DefaultExecutingCommand executingCommand = new DefaultExecutingCommand(process, postExecutionBehaviour.onFinish, postExecutionBehaviour.onFinishWithError, outputConsole);
         executingCommand.init();

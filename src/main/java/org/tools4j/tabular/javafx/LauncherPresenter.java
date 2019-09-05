@@ -139,7 +139,7 @@ public class LauncherPresenter implements Initializable {
             HBox.setHgrow(searchStackPane, Priority.ALWAYS);
             HBox.setHgrow(commandStackPane, Priority.ALWAYS);
 
-            final ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executionService, consoleOutput, new PostExecutionBehaviour(
+            final ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executionService, consoleOutput, dataSetContext.getProperties(), new PostExecutionBehaviour(
                     () -> {
                         //Running
                         Platform.runLater(() -> {

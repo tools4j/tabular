@@ -112,7 +112,7 @@ class ResolvedMapTest extends Specification {
         assert resolved == expected
     }
 
-    def "test replace"(String str, String expectedResult){
+    def "test replaceAllEscapeCharsNotPrecededByEscapeChars"(String str, String expectedResult){
         when:
         def result = ResolvedMap.replaceAllEscapeCharsNotPrecededByEscapeChars(str)
 
@@ -121,9 +121,10 @@ class ResolvedMapTest extends Specification {
 
         where:
          str                            | expectedResult
-        'hello there \\ mr \\\\warner'  | 'hello there  mr \\warner'
-        '\\\\'                          | '\\'
-        '\\'                            | ''
+        'hello there \\ mr \\\\warner'  | 'hello there \\ mr \\\\warner'
+        '\\\\'                          | '\\\\'
+        '\\'                            | '\\'
         '\\${escape}'                   | '${escape}'
+        '\\${escaped1}blah\\${escaped2}'| '${escaped1}blah${escaped2}'
     }
 }

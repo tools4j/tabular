@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ExecutionServiceImpl implements ExecutionService {
     private final static Logger LOG = Logger.getLogger(LauncherPresenter.class);
-    private List<ExecutingCommand> executedCommands;
+    private final List<ExecutingCommand> executedCommands;
 
     public ExecutionServiceImpl() {
         executedCommands = new ArrayList<>();
@@ -26,13 +26,13 @@ public class ExecutionServiceImpl implements ExecutionService {
         Runtime rt = Runtime.getRuntime();
         final Process pr;
         try {
-            LOG.info("Executing: " + command.getCommandLineString() + " in workingDir:" + System.getProperty("user.dir"));
-            outputConsole.appendText("$ " + command.getCommandLineString() + "\n");
+            LOG.info("Executing: " + command.resolveCommandLineString() + " in workingDir:" + System.getProperty("user.dir"));
+            outputConsole.appendText("$ " + command.resolveCommandLineString() + "\n");
 
             ExecutingCommand executingCommand;
             try {
                 postExecutionBehaviour.onRunning.run();
-                pr = rt.exec(command.getCommandLineString());
+                pr = rt.exec(command.resolveCommandLineString());
                 executingCommand = new DefaultExecutingCommand(pr, postExecutionBehaviour.onFinish, postExecutionBehaviour.onFinishWithError, outputConsole);
             } catch (Exception e){
                 LOG.error("Error running command '" + command + "' :" + e.getMessage());

@@ -27,7 +27,7 @@ public class MockExceptioningExecutionService implements ExecutionService {
     @Override
     public ExecutingCommand exec(final Command command, final TextArea outputConsole, final PostExecutionBehaviour postExecutionBehaviour) {
         outputConsole.appendText("Mocked Executor!\n");
-        outputConsole.appendText("Was instructed to execute this command: " + command.getCommandLineString() + "\n");
+        outputConsole.appendText("Was instructed to execute this command: " + command.resolveCommandLineString() + "\n");
         postExecutionBehaviour.onRunning.run();
         final ExecutingCommand executingCommand = new CommandExecutedWithException(new RuntimeException("Mock Exception"), outputConsole, postExecutionBehaviour);
         executingCommand.init();

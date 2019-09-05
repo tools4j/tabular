@@ -111,11 +111,11 @@ public class ResolvedMap {
             returnMap.put(key, map.get(key));
         }
 
-        returnMap = removeEscapeCharacters(returnMap);
+        returnMap = removeFirstEscapeFromEscapedVariableSymbols(returnMap);
         return returnMap;
     }
 
-    static Map<String, String> removeEscapeCharacters(Map<String, String> map){
+    static Map<String, String> removeFirstEscapeFromEscapedVariableSymbols(Map<String, String> map){
         Map<String, String> returnMap = new LinkedHashMap<>();
         for (Map.Entry<String, String> e : map.entrySet()) {
             returnMap.put(e.getKey(), replaceAllEscapeCharsNotPrecededByEscapeChars(e.getValue()));
@@ -124,6 +124,6 @@ public class ResolvedMap {
     }
 
     static String replaceAllEscapeCharsNotPrecededByEscapeChars(String str){
-        return str.replaceAll("(?<!\\\\)\\\\", "");
+        return str.replaceAll("(?<!\\\\)\\\\\\$", "\\$");
     }
 }

@@ -46,8 +46,8 @@ public class Command extends RowFromMap {
         return name;
     }
 
-    public String getCommandLineString() {
-        return commandLineString;
+    public String resolveCommandLineString() {
+        return new StringWithEmbeddedGroovy(commandLineString).resolve();
     }
 
     @Override
