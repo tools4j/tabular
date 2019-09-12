@@ -11,7 +11,7 @@ import spock.lang.Specification
 class CsvFileTest extends Specification {
     def "GetData"() {
         given:
-        CsvFile csvDataFile = new CsvFile("src/test/resources/csv-test/table.csv", (char) ',');
+        CsvFile csvDataFile = CsvFile.fromFileLocation("src/test/resources/csv-test/table.csv");
 
         when:
         final List<String[]> data = csvDataFile.getRows();

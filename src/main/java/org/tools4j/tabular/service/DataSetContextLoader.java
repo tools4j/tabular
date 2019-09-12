@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service;
 
 import org.apache.log4j.Logger;
-import org.tools4j.tabular.util.PropertiesRepo;
+import org.tools4j.tabular.properties.PropertiesRepo;
 
 /**
  * User: ben
@@ -15,7 +15,12 @@ public class DataSetContextLoader {
     private final PropertiesRepo environmentVariables;
     private final PropertiesRepo systemProperties;
 
-    public DataSetContextLoader(DataSet dataSet, PropertiesRepo allProperties, PropertiesRepo environmentVariables, PropertiesRepo systemProperties) {
+    public DataSetContextLoader(
+            DataSet dataSet,
+            PropertiesRepo allProperties,
+            PropertiesRepo environmentVariables,
+            PropertiesRepo systemProperties) {
+
         this.dataSet = dataSet;
         this.allProperties = allProperties;
         this.environmentVariables = environmentVariables;

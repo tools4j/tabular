@@ -35,7 +35,7 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
 
     def "test 1"() {
         given:
-        final DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(new CsvFile(new StringReader(csv)));
+        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
 
         when:
         final DataSet dataSet = csvDataFile.load();
@@ -49,7 +49,7 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
 
     def "test 2"() {
         given:
-        final DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(new CsvFile(new StringReader(csv)));
+        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
 
         when:
         final DataSet dataSet = csvDataFile.load();
@@ -64,7 +64,7 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
 
     def "test 3"() {
         given:
-        final DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(new CsvFile(new StringReader(csv)));
+        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
 
         when:
         final DataSet dataSet = csvDataFile.load();

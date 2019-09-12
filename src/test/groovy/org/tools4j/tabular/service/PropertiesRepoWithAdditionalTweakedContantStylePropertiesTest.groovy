@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service
 
-import org.tools4j.tabular.util.PropertiesRepo
-import org.tools4j.tabular.util.PropertiesRepoWithAdditionalTweakedContantStyleProperties
+import org.tools4j.tabular.properties.PropertiesRepo
+import org.tools4j.tabular.properties.PropertiesRepoWithAdditionalTweakedContantStyleProperties
 import spock.lang.Specification
 
 /**

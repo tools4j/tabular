@@ -1,15 +1,10 @@
 package org.tools4j.tabular.service;
 
 import org.tools4j.tabular.util.IndentableStringBuilder;
-import org.tools4j.tabular.util.PropertiesRepo;
-import org.tools4j.tabular.util.ResolvedMap;
+import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.properties.ResolvedMap;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: ben
@@ -75,21 +70,17 @@ public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Prett
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DataSet)) return false;
-
-        final DataSet dataSet = (DataSet) o;
-
-        if (!columns.equals(dataSet.columns)) return false;
-        return table.equals(dataSet.table);
+        if (o == null || getClass() != o.getClass()) return false;
+        DataSet<?> dataSet = (DataSet<?>) o;
+        return Objects.equals(columns, dataSet.columns) &&
+                Objects.equals(table, dataSet.table);
     }
 
     @Override
     public int hashCode() {
-        int result = columns.hashCode();
-        result = 31 * result + table.hashCode();
-        return result;
+        return Objects.hash(columns, table);
     }
 
     @Override

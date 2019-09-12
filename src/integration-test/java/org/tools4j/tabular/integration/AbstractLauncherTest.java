@@ -11,7 +11,7 @@ import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
 import org.tools4j.tabular.javafx.ExecutionService;
 import org.tools4j.tabular.javafx.Main;
-import org.tools4j.tabular.util.PropertiesRepo;
+import org.tools4j.tabular.config.ConfigResolver;
 
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -33,14 +33,14 @@ public class AbstractLauncherTest extends ApplicationTest {
 
     @Override
     public void init() throws TimeoutException {
-        System.setProperty("workingDir", getWorkingDir());
+        System.setProperty(ConfigResolver.TABULAR_CONFIG_DIR_PROP, getWorkingDir());
     }
 
     @Override
     public void start(Stage stage) throws TimeoutException {
         destroyCalled.set(false);
         executionService = getExecutionService();
-        final Main main = new Main(new PropertiesRepo(), executionService);
+        final Main main = new Main(executionService);
         try {
             main.start(stage);
         } catch (Exception e) {

@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service
 
-import org.tools4j.tabular.util.PropertiesFromString
-import org.tools4j.tabular.util.PropertiesRepo
+import org.tools4j.tabular.properties.PropertiesFromString
+import org.tools4j.tabular.properties.PropertiesRepo
 import spock.lang.Specification
 
 /**

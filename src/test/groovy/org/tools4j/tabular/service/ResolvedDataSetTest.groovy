@@ -2,6 +2,9 @@ package org.tools4j.tabular.service
 
 import org.tools4j.groovytables.GroovyTables
 import org.tools4j.groovytables.Rows
+import org.tools4j.tabular.config.ConfigReader
+import org.tools4j.tabular.config.ConfigResolver
+import org.tools4j.tabular.config.DummyDirResolver
 import spock.lang.Specification
 
 import static org.tools4j.tabular.util.TestUtils.dataSetFromRows
@@ -12,10 +15,19 @@ import static org.tools4j.tabular.util.TestUtils.dataSetFromRows
  * Time: 7:04 AM
  */
 class ResolvedDataSetTest extends Specification {
+    private final static String FILE_WHICH_DOES_NOT_EXIST = "src/test/resources/blah-blah-blah";
+
+    def setup() {
+        assert !(new File(FILE_WHICH_DOES_NOT_EXIST)).exists()
+    }
+
     def "test resolved dataset"(){
         when:
-        final String configDir = "src/test/resources/table_with_substitutions"
-        final DataSetContext dataSetContext = new DataSetContextFromDir(configDir).load();
+        final ConfigReader config = new ConfigResolver(
+                new DummyDirResolver("src/test/resources/table_with_substitutions"),
+                new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)
+        ).resolve()
+        final DataSetContext dataSetContext = new DataSetContextFromConfig(config).load();
 
         then:
         final Rows expectedData = GroovyTables.createRows {
@@ -31,9 +43,12 @@ class ResolvedDataSetTest extends Specification {
 
     def "test resolved dataset - when sysProperty exists matching column name"(){
         when:
-        final String configDir = "src/test/resources/table_with_substitutions"
         System.setProperty("number", "blah!")
-        final DataSetContext dataSetContext = new DataSetContextFromDir(configDir).load();
+        final ConfigReader config = new ConfigResolver(
+                new DummyDirResolver("src/test/resources/table_with_substitutions"),
+                new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)
+        ).resolve()
+        final DataSetContext dataSetContext = new DataSetContextFromConfig(config).load();
 
         then:
         final Rows expectedData = GroovyTables.createRows {

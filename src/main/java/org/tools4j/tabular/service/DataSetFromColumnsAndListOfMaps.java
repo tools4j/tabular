@@ -18,7 +18,7 @@ public class DataSetFromColumnsAndListOfMaps {
         this.table = table;
     }
 
-    public DataSet asDataSet(){
-        return new DataSet(columns, table.stream().map((row) -> new RowWithCommands(row)).collect(Collectors.toList()));
+    public DataSet<RowFromMap> asDataSet(){
+        return new DataSet<>(columns, table.stream().map((row) -> new RowFromMap(row)).collect(Collectors.toList()));
     }
 }

@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service;
 
 import org.tools4j.tabular.util.IndentableStringBuilder;
-import org.tools4j.tabular.util.PropertiesRepo;
+import org.tools4j.tabular.properties.PropertiesRepo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,10 +49,6 @@ public class DataSetContext {
         sb.decactivateIndent();
         sb.append("}");
         return sb.toString();
-    }
-
-    public String dataSetAsCsv() {
-        return dataSet.toCsv();
     }
 
     public DataSet getDataSet() {

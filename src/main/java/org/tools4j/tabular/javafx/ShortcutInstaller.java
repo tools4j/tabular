@@ -6,7 +6,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Control;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
-import org.tools4j.tabular.util.PropertiesRepo;
+import org.tools4j.tabular.properties.PropertiesRepo;
 
 import javax.swing.*;
 

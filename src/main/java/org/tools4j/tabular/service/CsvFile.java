@@ -1,11 +1,9 @@
 package org.tools4j.tabular.service;
 
-import com.opencsv.*;
+import com.opencsv.CSVIterator;
+import com.opencsv.CSVReader;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,30 +13,37 @@ import java.util.List;
  * Time: 6:58 AM
  */
 public class CsvFile {
+    public static final char DEFAULT_DELIMITER = ',';
+    public static final Character DEFAULT_QUOTE = null;
+
     private final Reader reader;
     private final char delimiter;
     private final Character quote;
 
-    public CsvFile(final Reader reader) throws FileNotFoundException {
-        this(reader, ',', null);
+    public static CsvFile fromReader(final Reader reader){
+        return new CsvFile(reader, DEFAULT_DELIMITER, DEFAULT_QUOTE);
     }
 
-    public CsvFile(final String fileLocation) throws FileNotFoundException {
-        this(new FileReader(fileLocation), ',', null);
+    public static CsvFile fromFileLocation(final String fileLocation){
+        try {
+            return new CsvFile(new FileReader(fileLocation), DEFAULT_DELIMITER, DEFAULT_QUOTE);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    public CsvFile(final String fileLocation, final char delimiter) throws FileNotFoundException {
-        this(new FileReader(fileLocation), delimiter, null);
+    public static CsvFile fromFile(final File file){
+        try {
+            return new CsvFile(new FileReader(file), DEFAULT_DELIMITER, DEFAULT_QUOTE);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    public CsvFile(final Reader reader, final char delimiter, final Character quote) {
+    private CsvFile(final Reader reader, final char delimiter, final Character quote) {
         this.reader = reader;
         this.delimiter = delimiter;
         this.quote = quote;
-    }
-
-    public CsvFile(final String fileLocation, final char delimiter, final Character quote) throws FileNotFoundException {
-        this(new FileReader(fileLocation), delimiter, quote);
     }
 
     public List<String[]> getRows(){

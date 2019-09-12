@@ -3,7 +3,6 @@ package org.tools4j.tabular.service;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.log4j.Logger;
-import org.tools4j.tabular.util.PropertiesRepo;
 
 /**
  * User: ben

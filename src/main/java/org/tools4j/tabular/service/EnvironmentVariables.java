@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service;
 
-import org.tools4j.tabular.util.PropertiesRepo;
-import org.tools4j.tabular.util.PropertiesRepoLoader;
+import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.properties.PropertiesRepoLoader;
 
 import java.util.HashMap;
 import java.util.Map;

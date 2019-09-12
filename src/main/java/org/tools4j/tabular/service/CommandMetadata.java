@@ -1,8 +1,8 @@
 package org.tools4j.tabular.service;
 
 import org.apache.log4j.Logger;
-import org.tools4j.tabular.util.PropertiesRepo;
-import org.tools4j.tabular.util.ResolvedString;
+import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.properties.ResolvedString;
 
 import java.util.Arrays;
 import java.util.HashMap;
