@@ -418,7 +418,7 @@ public class LauncherPresenter implements Initializable {
     private void updateDataSearchBackgroundText(){
         if(dataSearchBox.getText().isEmpty()){
             if(dataSearchBoxBackgroundLabel.getText().isEmpty()) {
-                dataSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("data.search.background.prompt.text", ""));
+                dataSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("app.data.search.background.prompt.text", ""));
             }
         } else {
             if(!dataSearchBoxBackgroundLabel.getText().isEmpty()){
@@ -430,7 +430,7 @@ public class LauncherPresenter implements Initializable {
     private void updateCommandSearchBackgroundText(){
         if(commandSearchBox.getText().isEmpty()){
             if(commandSearchBoxBackgroundLabel.getText().isEmpty()) {
-                commandSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("command.search.background.prompt.text", ""));
+                commandSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("app.command.search.background.prompt.text", ""));
             }
         } else {
             if(!commandSearchBoxBackgroundLabel.getText().isEmpty()){

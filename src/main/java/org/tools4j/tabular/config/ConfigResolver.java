@@ -19,7 +19,7 @@ public class ConfigResolver {
     public static final String TABULAR_LOCAL_CONFIG_FILE_PATH_PROP = "tabular_local_config_file_path";
     public static final String TABULAR_TABLE_CSV_PATH_PROP = "tabular_csv_path";
 
-    //Dir paths
+    //Config path prop
     public static final String TABULAR_CONFIG_DIR_PROP = "tabular_config_dir";
 
     //Defaults

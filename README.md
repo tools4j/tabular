@@ -1,7 +1,11 @@
-![alt text](src/main/dist/tabular-128.ico)
 # Tabular
 ## Introduction
 Tabular is a table based command launcher.
+
+As a software developer I always needed to manage a large number of our deployed applications across many environments. 
+Tabular allowed a table based lookup of host, port, config information for each deployed app.  
+As well as providing commands to ssh to hosts where our apps were running, opening a browser to view logs, etc.
+Saying that, tabular can be used to store and run commands from any type of data.
 
 ![alt text](img/launcher-initial-prompt.png)
 
@@ -9,8 +13,11 @@ You provide the table as a CSV file, and commands are defined in a properties fi
 
 ![alt text](img/launcher-simple-search.png)
 
-## Setup
+If you have commands defined, after selecting a data row, select the command you wish to run.
 
+![alt text](img/launcher-command-search.png)
+
+## Setup
 1. Ensure you have a version of a Java greater than or equal to Java 8.
 2. Download the latest version of the Tabular zip from [here](dist), and unzip
    into your directory of choice.
@@ -20,21 +27,15 @@ some guidance.
    If this does not work, you can run: `java -jar tabular.jar` in the directory where the jar file
    is located.
 
-## Usage
-There are 3 ways that Tabular can be used.
-1. To search across a table of data.  [See example.](src/test/resources/simple_table)
-2. To search across a table of data, select a row, and run a command using data from that row. [See example.](src/test/resources/table_with_single_command)
-3. To search across a table of data, select a row, search for an appropriate command, select a command to run. [See example.](src/test/resources/table_with_multiple_commands)
-
 ## Configuration reference
 ### General properties
 |property |description |
 |---|---|
-| hotkey.combinations.show | comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
-| app.csv.delimiter | allows you to specify the delimiter to use in the table.csv file.  By default this is a comma ',' |
-| app.csv.escapedCharacterQuote | allows you to specify a custom escape character when you want to include the delimiter in your cell text.  By default this is a double quote ".  See [OpenCSV Documentation](http://opencsv.sourceforge.net/) for more info. |
-| app.columns.to.display.in.data.table | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells. |
-| app.column.abbreviations.<ColumnName> | Can be used to specify abbreviations for column names.  e.g. `app.column.abbreviations.Host=h` Can make for more concise variable names. |
+| hotkey.combinations.show |Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
+| app.data.search.background.prompt.text |Prompt to display when searching for data |
+| app.command.search.background.prompt.text |Prompt to display when searching for command |
+| app.columns.to.display.in.data.table |A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells. |
+| app.column.abbreviations.<ColumnName> |Can be used to specify abbreviations for column names.  e.g. `app.column.abbreviations.Host=h` Can make for more concise variable names. |
 ### Properties relevant when using commands
 |property |description |
 |---|---|
@@ -48,25 +49,28 @@ There are 3 ways that Tabular can be used.
 |---|---|
 | app.commmands.<commandName>.name |Human readable name for the command. |
 | app.commmands.<commandName>.predicate |The predicate to use for whether the command is available for a certain data row. The value can be any valid groovy code. Any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation. See examples below under `app.commmands.startApplication.predicate` which checks to see that the environment is not prod. If no predicate is specified, then the command will always be displayed. |
-| app.commmands.<commandName>.command |The command to run.  Again any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation. |
+| app.commmands.<commandName>.command |The command to run.  Again any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation.  Also embedded groovy can be used to calcuate dynamic values using {{[groovy to execute}} syntax.  See example below whiich gets yesterdays date. |
 | app.commmands.<commandName>.description |Human readable description for the command. |
 
-#### Command definition examples
+#### Config example including commands
 ```
-app.commmands.displayInStockControl.name=Display in stock control
-app.commmands.displayInStockControl.predicate=true
-app.commmands.displayInStockControl.command=../stock-control-app.exe --show ${Id}
-app.commmands.displayInStockControl.description=Opens up the selected item in the stock control application
+hotkey.combinations.show=shift ctrl PLUS
 
-app.commmands.displayInWebsite.name=Display on website
-app.commmands.displayInWebsite.predicate=true
-app.commmands.displayInWebsite.command=firefox.exe 'http://www.acmeclothing.co.uk/item/${Id}'
-app.commmands.displayInWebsite.description=Open the item in a browser
+app.data.column.to.display.when.selected=App
+app.command.column.to.display.when.selected=Name
 
-app.commmands.orderLowStock.name=Order for low stock
-app.commmands.orderLowStock.predicate=${NumInStock} <= 5
-app.commmands.orderLowStock.command=./stock-control-app.exe --order ${Id}
-app.commmands.orderLowStock.description=Places order for items which are low in stock
+data.search.background.prompt.text=App Search
+command.search.background.prompt.text=Command Search
+
+app.commmands.openLog.name=display logs
+app.commmands.openLog.predicate=true
+app.commmands.openLog.command="C:\\Program Files\\Mozilla Firefox\\firefox.exe" http://${Host}:8080?from={{java.time.LocalDate.now().minusDays(1).toString()}}
+app.commmands.openLog.description=Display logs in browser since yesterday
+
+app.commmands.cmder.name=ssh to box
+app.commmands.cmder.predicate=true
+app.commmands.cmder.command=${CMDER_HOME}/cmder.bat ${Host} "ls -al"
+app.commmands.cmder.description=ssh to  host name
 ```
 
 ## CSV file format
@@ -89,7 +93,7 @@ alt shift X
 alt shift released X
 typed a
 ```
-### Capturing keystrokes
+### Capturing keystrokes to get a value for hotkey.combinations.show
 To 'capture' a keystroke combination to use within Tabular, you can run the jkeymaster 'key grabber' application.  You can start it by running something like this on the command line:
 ```
 java -cp lib/jkeymaster-1.2.jar com.tulskiy.keymaster.AWTTest
