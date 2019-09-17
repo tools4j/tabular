@@ -10,11 +10,10 @@ Saying that, tabular can be used to store and run commands from any type of data
 ![alt text](img/launcher-initial-prompt.png)
 
 You provide the table as a CSV file, and commands are defined in a properties file.
-
+Use free text search to filter data:
 ![alt text](img/launcher-simple-search.png)
 
 If you have commands defined, after selecting a data row, select the command you wish to run.
-
 ![alt text](img/launcher-command-search.png)
 
 ## Setup
@@ -47,10 +46,10 @@ some guidance.
 ### Command definitions
 |property |description |
 |---|---|
-| app.commmands.<commandName>.name |Human readable name for the command. |
-| app.commmands.<commandName>.predicate |The predicate to use for whether the command is available for a certain data row. The value can be any valid groovy code. Any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation. See examples below under `app.commmands.startApplication.predicate` which checks to see that the environment is not prod. If no predicate is specified, then the command will always be displayed. |
-| app.commmands.<commandName>.command |The command to run.  Again any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation.  Also embedded groovy can be used to calcuate dynamic values using {{[groovy to execute}} syntax.  See example below whiich gets yesterdays date. |
-| app.commmands.<commandName>.description |Human readable description for the command. |
+| app.commands.[commandName].name |Human readable name for the command. |
+| app.commands.[commandName].predicate |The predicate to use for whether the command is available for a certain data row. The value can be any valid groovy code. Any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation. See examples below under `app.commmands.startApplication.predicate` which checks to see that the environment is not prod. If no predicate is specified, then the command will always be displayed. |
+| app.commands.[commandName].command |The command to run.  Again any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation.  Also embedded groovy can be used to calcuate dynamic values using {{[groovy to execute}} syntax.  See example below whiich gets yesterdays date. |
+| app.commands.[commandName].description |Human readable description for the command. |
 
 #### Config example including commands
 ```

@@ -29,6 +29,7 @@ dependencies {
     compile 'com.github.tulskiy:jkeymaster:1.2'
     compile 'com.google.guava:guava:23.3-jre'
     compile 'org.codehaus.groovy:groovy-all:2.4.10'
+    compile 'commons-io:commons-io:2.6'
 
     testCompile 'junit:junit:4.4'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'

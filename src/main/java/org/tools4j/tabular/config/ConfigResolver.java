@@ -2,9 +2,14 @@ package org.tools4j.tabular.config;
 
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.net.URL;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class ConfigResolver {
     private final static Logger LOG = Logger.getLogger(ConfigResolver.class);
@@ -30,6 +35,7 @@ public class ConfigResolver {
     private final SysPropAndEnvVarResolver sysPropAndEnvVarResolver;
     private final DirResolver workingDirResolver;
     private final DirResolver userDirResolver;
+    private final ConfigUrlDownloader configUrlDownloader;
 
     public ConfigResolver(){
         this(new SysPropAndEnvVarResolverImpl(), new WorkingDirResolver(), new UserDirResolver());
@@ -50,6 +56,7 @@ public class ConfigResolver {
         this.sysPropAndEnvVarResolver = sysPropAndEnvVarResolver;
         this.workingDirResolver = workingDirResolver;
         this.userDirResolver = userDirResolver;
+        this.configUrlDownloader = new ConfigUrlDownloader(userDirResolver, sysPropAndEnvVarResolver);
     }
 
     public ConfigReader resolve(){
@@ -157,16 +164,9 @@ public class ConfigResolver {
         if(!urls.isPresent()){
             return Collections.emptyList();
         }
-
         List<Reader> files = new ArrayList<>();
-        for (String url : urls.get().split(",")) {
-            try {
-                Reader reader = new InputStreamReader(new URL(url.trim()).openStream());
-                LOG.info("Found file at url: " + url);
-                files.add(reader);
-            } catch (IOException e) {
-                throw new IllegalStateException("Error fetching from URL " + url, e);
-            }
+        for (String urlStr : urls.get().split(",")) {
+            files.add(configUrlDownloader.downloadFile(urlStr));
         }
         return files;
     }
@@ -198,5 +198,9 @@ public class ConfigResolver {
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public static String encodeUrlForFilename(String url){
+        return url.replaceAll("[^\\w]+", "_");
     }
 }
