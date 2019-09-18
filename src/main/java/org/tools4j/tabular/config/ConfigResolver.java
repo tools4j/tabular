@@ -41,10 +41,6 @@ public class ConfigResolver {
         this(new SysPropAndEnvVarResolverImpl(), new WorkingDirResolver(), new UserDirResolver());
     }
 
-    public ConfigResolver(SysPropAndEnvVarResolver sysPropAndEnvVarResolver){
-        this(sysPropAndEnvVarResolver, new WorkingDirResolver(), new UserDirResolver());
-    }
-
     public ConfigResolver(DirResolver workingDirResolver, DirResolver userDirResolver){
         this(new SysPropAndEnvVarResolverImpl(), workingDirResolver, userDirResolver);
     }

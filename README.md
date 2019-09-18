@@ -79,6 +79,35 @@ Variable substition can be used within the csv cell values.  Variables should be
 ## Per-user properties
 One way of distributing Tabular amongst a team is to check-in the Tabular distribution, along with your table.csv and config.properties into a Version Control System e.g. Git/SVN.  If users wish to configure any config overrides, they can create a 'config-local.properties' and add any config overrides there.  Be sure to add the file to the appropriate ignore file is not accidentally added to your VCS.
 
+## Config resolution
+There are three files which Tabular uses.
+* Config propperties (default file-name config.properties)
+* Local config properties (default file-name config-local.properties)
+* CSV file containnig table (default file-name table.csv)
+
+Each of these three config files are resolved (separately) in the following order:
+* URL system property/env variable.  This can contain a comma separated list of URLs.  
+* File path system property/env variable. This can contain a single relative or absolute path to a file.
+* Directory path system property/env variable.  This can contain a single relative or absolute path to a directory. Default filenames are looked for.
+* User directory.  This is located at (user-home)/.tabular  Default filenames are looked for.
+* Working directory. (From where you launched tabular).  Default filenames are looked for.
+
+Note:
+* If using URLs, more than one URL can be specified.  If more than one URL is specified, then config files are combined.  CSV files are also combined.  CSV files must have the same column headings.
+* Upper-case, or lower-case system properties / env variables can be used.  If both a system property and an environment variable is set, the system property takes precedence.
+
+System properties / env variables are below.  
+
+|property |system property / env var |
+|---|---|
+|Config properties file URL(s) |tabular_config_file_url |
+|Config local properties file URL(s) |tabular_local_config_file_url |
+|CSV table file URL(s) |tabular_csv_url |
+|Config properties file path |tabular_config_file_path |
+|Config local properties file path |tabular_local_config_file_path |
+|CSV table file path |tabular_csv_path |
+|Config directory path |tabular_config_dir |
+
 ## Troubleshooting
 * If you get an exception which looks like this: `Exception in thread "main" java.lang.UnsupportedClassVersionError: org/tools4j/tabular/javafx/Main : Unsupported major.minor version 52.0`, this probably means that you are using a version of Java < Java8.  Check your Java version by running `java -version`.
 

@@ -9,9 +9,19 @@ public class SysPropAndEnvVarResolverImpl implements SysPropAndEnvVarResolver {
 
     @Override
     public Optional<String> resolve(String propOrEnvVarName) {
-        if (System.getProperties().containsKey(propOrEnvVarName)) {
-            String value = System.getProperty(propOrEnvVarName);
-            LOG.info("Resolved system property [" + propOrEnvVarName + "] to [" + value + "]");
+        if (System.getProperties().containsKey(propOrEnvVarName.toLowerCase())) {
+            String value = System.getProperty(propOrEnvVarName.toLowerCase());
+            LOG.info("Resolved system property [" + propOrEnvVarName.toLowerCase() + "] to [" + value + "]");
+            return Optional.of(value);
+
+        } else if (System.getProperties().containsKey(propOrEnvVarName.toUpperCase())) {
+            String value = System.getProperty(propOrEnvVarName.toUpperCase());
+            LOG.info("Resolved system property [" + propOrEnvVarName.toUpperCase() + "] to [" + value + "]");
+            return Optional.of(value);
+
+        } else if (System.getenv(propOrEnvVarName.toLowerCase()) != null) {
+            String value = System.getenv(propOrEnvVarName.toLowerCase());
+            LOG.info("Resolved env variable [" + propOrEnvVarName.toLowerCase() + "] to [" + value + "]");
             return Optional.of(value);
 
         } else if (System.getenv(propOrEnvVarName.toUpperCase()) != null) {
