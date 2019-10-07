@@ -22,8 +22,12 @@ class ResolvedDataSetTest extends Specification {
     }
 
     def "test resolved dataset"(){
+        given:
+        MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
+
         when:
         final ConfigReader config = new ConfigResolver(
+                propOrEnvVarResolver,
                 new DummyDirResolver("src/test/resources/table_with_substitutions"),
                 new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)
         ).resolve()
@@ -42,9 +46,13 @@ class ResolvedDataSetTest extends Specification {
     }
 
     def "test resolved dataset - when sysProperty exists matching column name"(){
+        given:
+        MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
+
         when:
         System.setProperty("number", "blah!")
         final ConfigReader config = new ConfigResolver(
+                propOrEnvVarResolver,
                 new DummyDirResolver("src/test/resources/table_with_substitutions"),
                 new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)
         ).resolve()

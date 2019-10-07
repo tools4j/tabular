@@ -21,12 +21,17 @@ class ConfigResolverTest extends Specification {
     }
 
     def "test resolution - simple working dir"() {
-        expect:
+        given:
+        MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
         String workingDir = "$BASE_TEST_DIR/1"
+
+        when:
         ConfigReader config = new ConfigResolver(
+                propOrEnvVarResolver,
                 new DummyDirResolver(workingDir),
                 new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)).resolve();
 
+        then:
         assertHasFiles(config.configPropertiesFiles, "$workingDir/$ConfigResolver.TABULAR_CONFIG_FILE_NAME_DEFAULT")
         assertHasFiles(config.localConfigPropertiesFiles, "$workingDir/$ConfigResolver.TABULAR_LOCAL_CONFIG_FILE_NAME_DEFAULT")
         assertHasFiles(config.tableCsvFiles, "$workingDir/$ConfigResolver.TABULAR_TABLE_CSV_FILE_NAME_DEFAULT")
@@ -34,12 +39,17 @@ class ConfigResolverTest extends Specification {
     }
 
     def "test resolution - user dir"() {
-        expect:
+        given:
+        MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
         String userDir = "$BASE_TEST_DIR/1"
+
+        when:
         ConfigReader config = new ConfigResolver(
+                propOrEnvVarResolver,
                 new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
                 new DummyDirResolver(userDir)).resolve();
 
+        then:
         assertHasFiles(config.configPropertiesFiles, "$userDir/$ConfigResolver.TABULAR_CONFIG_FILE_NAME_DEFAULT")
         assertHasFiles(config.localConfigPropertiesFiles, "$userDir/$ConfigResolver.TABULAR_LOCAL_CONFIG_FILE_NAME_DEFAULT")
         assertHasFiles(config.tableCsvFiles, "$userDir/$ConfigResolver.TABULAR_TABLE_CSV_FILE_NAME_DEFAULT")
@@ -47,15 +57,18 @@ class ConfigResolverTest extends Specification {
     }
 
     def "test resolution - config directory property"() {
-        expect:
+        given:
         String configDir = "$BASE_TEST_DIR/2"
         MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
         propOrEnvVarResolver.put(ConfigResolver.TABULAR_CONFIG_DIR_PROP, configDir)
+
+        when:
         ConfigReader config = new ConfigResolver(
                 propOrEnvVarResolver,
                 new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
                 new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)).resolve();
 
+        then:
         assertHasFiles(config.configPropertiesFiles, "$configDir/$ConfigResolver.TABULAR_CONFIG_FILE_NAME_DEFAULT")
         assertHasFiles(config.localConfigPropertiesFiles, "$configDir/$ConfigResolver.TABULAR_LOCAL_CONFIG_FILE_NAME_DEFAULT")
         assertHasFiles(config.tableCsvFiles, "$configDir/$ConfigResolver.TABULAR_TABLE_CSV_FILE_NAME_DEFAULT")
@@ -225,7 +238,7 @@ class ConfigResolverTest extends Specification {
         for(String expectedPath: expectedAbsolutePaths) {
             String expectedFileContent = new File(expectedPath).text
             if(!actualFilesContent.contains(expectedFileContent)){
-                fail("Content of file [$expectedPath] not found");
+                fail("Content of expected file [$expectedPath] not found, actual file(s) content: " + actualFilesContent);
             }
         }
     }

@@ -21,7 +21,7 @@ public class GroovyExpression<T> {
 
     public T resolveExpression() {
         final Binding sharedData = new Binding();
-        final GroovyShell shell = new GroovyShell(sharedData);
+        final GroovyShell shell = new GroovyShell(this.getClass().getClassLoader(), sharedData);
         final Object evaluatedResult;
         try {
             evaluatedResult = shell.evaluate(groovyExpression);
