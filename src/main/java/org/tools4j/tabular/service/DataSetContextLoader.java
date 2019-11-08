@@ -10,13 +10,13 @@ import org.tools4j.tabular.properties.PropertiesRepo;
  */
 public class DataSetContextLoader {
     private final static Logger LOG = Logger.getLogger(DataSetContextLoader.class);
-    private final DataSet dataSet;
+    private final DataSet<RowFromMap> dataSet;
     private final PropertiesRepo allProperties;
     private final PropertiesRepo environmentVariables;
     private final PropertiesRepo systemProperties;
 
     public DataSetContextLoader(
-            DataSet dataSet,
+            DataSet<RowFromMap> dataSet,
             PropertiesRepo allProperties,
             PropertiesRepo environmentVariables,
             PropertiesRepo systemProperties) {
@@ -56,16 +56,16 @@ public class DataSetContextLoader {
         LOG.info(resolvedProperties.toPrettyString());
 
         LOG.info("Resolving variables in dataset table cells");
-        DataSet<?> returnDataSet = dataSet.resolveVariablesInCells(allProperties, resolvedProperties);
+        DataSet<RowFromMap> returnDataSet = dataSet.resolveVariablesInCells(allProperties, resolvedProperties);
 
         LOG.info("Loading commandMetadata from properties");
         CommandMetadataFromProperties commandMetadataFromProperties = new CommandMetadataFromProperties(resolvedProperties);
         CommandMetadatas commandMetadatas = commandMetadataFromProperties.load();
 
         LOG.info("Resolving commands for dataset rows");
-        returnDataSet = returnDataSet.resolveCommands(commandMetadatas, resolvedProperties);
+        DataSet<RowWithCommands> rowsWithCommands = returnDataSet.resolveCommands(commandMetadatas, resolvedProperties);
 
         LOG.info("Finished loading dataset");
-        return new DataSetContext(returnDataSet, commandMetadatas, resolvedProperties);
+        return new DataSetContext(rowsWithCommands, commandMetadatas, resolvedProperties);
     }
 }

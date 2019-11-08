@@ -22,13 +22,14 @@ public class CommandMetadataFromProperties {
         final PropertiesRepo commandsProperties = propertiesRepo.getWithPrefix("app.commmands");
         for(final String commandKey: commandsProperties.getNextUniqueKeyParts()){
             final PropertiesRepo commandProperties = commandsProperties.getWithPrefix(commandKey);
+            final String id = commandKey;
             final String name = commandProperties.getMandatory("name", "name property must be specified for command " + commandKey);
             final String predicateGroovyStr = commandProperties.getMandatory("predicate", "predicate property must be specified for command " + commandKey);
             final String command = commandProperties.getMandatory("command", "command property must be specified for command " + commandKey);
             final String description = commandProperties.get("description", "");
 
             //Instantiate an expression instance now for fail-fast-ness
-            commandMetadata.add(new CommandMetadata(name, new GroovyExpressionPredicate(predicateGroovyStr, propertiesRepo), command, description));
+            commandMetadata.add(new CommandMetadata(id, name, new GroovyExpressionPredicate(predicateGroovyStr, propertiesRepo), command, description));
         }
         return new CommandMetadatas(commandMetadata);
     }

@@ -3,6 +3,7 @@ package org.tools4j.tabular.service;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,31 +16,31 @@ import java.util.stream.Stream;
  * Time: 5:45 PM
  */
 public class CommandMetadatas implements Pretty {
-    private final Map<String, CommandMetadata> commandMetadataByCommandName;
+    private final Map<String, CommandMetadata> commandMetadataById;
 
     public CommandMetadatas(final List<CommandMetadata> commands) {
-        this.commandMetadataByCommandName = new LinkedHashMap<>();
-        commands.forEach((commandMetadata -> commandMetadataByCommandName.put(commandMetadata.getName(), commandMetadata)));
+        this.commandMetadataById = new LinkedHashMap<>();
+        commands.forEach((commandMetadata -> commandMetadataById.put(commandMetadata.getId(), commandMetadata)));
     }
 
     public CommandMetadatas getCommandsFor(final Row row){
-        return new CommandMetadatas(commandMetadataByCommandName.values().stream().filter((commandMetadata -> commandMetadata.test(row))).collect(Collectors.toList()));
+        return new CommandMetadatas(commandMetadataById.values().stream().filter((commandMetadata -> commandMetadata.test(row))).collect(Collectors.toList()));
     }
 
     public int size() {
-        return commandMetadataByCommandName.size();
+        return commandMetadataById.size();
     }
 
-    public boolean containsCommands(final String ... commandNames) {
-        return Stream.of(commandNames).allMatch((command) -> commandMetadataByCommandName.containsKey(command));
+    public boolean containsCommands(final String ... commandIds) {
+        return Stream.of(commandIds).allMatch((id) -> commandMetadataById.containsKey(id));
     }
 
-    public CommandMetadata get(final String commandName) {
-        return commandMetadataByCommandName.get(commandName);
+    public CommandMetadata get(final String id) {
+        return commandMetadataById.get(id);
     }
 
     public List<Command> getCommandInstances(final Row row, final PropertiesRepo properties) {
-        return getCommandsFor(row).commandMetadataByCommandName.values().stream().map((commandMetadata -> commandMetadata.getCommandInstance(row, properties))).collect(Collectors.toList());
+        return getCommandsFor(row).commandMetadataById.values().stream().map((commandMetadata -> commandMetadata.getCommandInstance(row, properties))).collect(Collectors.toList());
     }
 
     @Override
@@ -47,7 +48,7 @@ public class CommandMetadatas implements Pretty {
         final IndentableStringBuilder sb = new IndentableStringBuilder(indent);
         sb.append("commandMetadatas{\n");
         sb.activateIndent();
-        for(final CommandMetadata commandMetadata: commandMetadataByCommandName.values()){
+        for(final CommandMetadata commandMetadata: commandMetadataById.values()){
             sb.append(commandMetadata.toPrettyString(indent));
         }
         sb.decactivateIndent();
@@ -56,6 +57,10 @@ public class CommandMetadatas implements Pretty {
     }
 
     public boolean isEmpty() {
-        return commandMetadataByCommandName.isEmpty();
+        return commandMetadataById.isEmpty();
+    }
+
+    public List<CommandMetadata> getCommandMetadatas() {
+        return new ArrayList<>(this.commandMetadataById.values());
     }
 }

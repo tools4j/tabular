@@ -13,11 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -27,18 +23,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
-import org.tools4j.tabular.service.Command;
-import org.tools4j.tabular.service.DataSetContext;
-import org.tools4j.tabular.service.MutablePartIndex;
-import org.tools4j.tabular.service.PartIndex;
-import org.tools4j.tabular.service.PostExecutionBehaviour;
-import org.tools4j.tabular.service.Result;
-import org.tools4j.tabular.service.Results;
-import org.tools4j.tabular.service.Row;
-import org.tools4j.tabular.service.RowWithCommands;
+import org.tools4j.tabular.service.*;
 
 import javax.inject.Inject;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -86,9 +76,9 @@ public class LauncherPresenter implements Initializable {
     @FXML
     private TextField commandSearchBox;
     @FXML
-    private TableView<Result<RowWithCommands>> dataTableView;
+    private TableView<RowWithCommands> dataTableView;
     @FXML
-    private TableView<Result<Command>> commandTableView;
+    private TableView<Command> commandTableView;
     @FXML
     private Pane dataTableContentPane;
     @FXML
@@ -116,8 +106,9 @@ public class LauncherPresenter implements Initializable {
     @Inject
     private ExecutionService executionService;
 
-    private ObservableList<Result<RowWithCommands>> dataTableItems;
-    private ObservableList<Result<Command>> commandTableItems;
+    private ObservableList<RowWithCommands> dataTableItems;
+    private ObservableList<Command> commandTableItems;
+    private RowWithCommands selectedRow;
 
     private ExpandCollapseHelper expandCollapseHelper;
     private boolean skipCommandSearch;
@@ -187,35 +178,75 @@ public class LauncherPresenter implements Initializable {
             dataTableItems = FXCollections.observableArrayList();
             dataTableView.setItems(dataTableItems);
             for(final String columnName: dataSetContext.getDataColumnsToDisplay()){
-                final TableColumn<Result<RowWithCommands>, String> column = new TableColumn<>(columnName);
+                final TableColumn<RowWithCommands, String> column = new TableColumn<>(columnName);
                 column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(param.getTableColumn().getText())));
                 dataTableView.getColumns().add(column);
             }
-            final PropertySaveTableHelper<Result<RowWithCommands>> dataTableSaveHelper = new PropertySaveTableHelper<>(dataTableView, "dataTableView", tablePropertySaveService);
+            final PropertySaveTableHelper<RowWithCommands> dataTableSaveHelper = new PropertySaveTableHelper<>(dataTableView, "dataTableView", tablePropertySaveService);
             dataTableSaveHelper.init();
 
             //Setup commandTableView
             commandTableItems = FXCollections.observableArrayList();
             commandTableView.setItems(commandTableItems);
             for(final String columnName: dataSetContext.getCommandColumnsToDisplay()){
-                final TableColumn<Result<Command>, String> column = new TableColumn<>(columnName);
+                final TableColumn<Command, String> column = new TableColumn<>(columnName);
                 column.setPrefWidth(200.0);
                 column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(param.getTableColumn().getText())));
                 commandTableView.getColumns().add(column);
             }
-            final PropertySaveTableHelper<Result<Command>> commandTableSaveHelper = new PropertySaveTableHelper<>(commandTableView, "commandTableView", tablePropertySaveService);
+            final PropertySaveTableHelper<Command> commandTableSaveHelper = new PropertySaveTableHelper<>(commandTableView, "commandTableView", tablePropertySaveService);
             commandTableSaveHelper.init();
 
             //Indexes
-            final PartIndex<RowWithCommands> dataIndex = new PartIndex<>(dataSetContext.getDataSet());
-            final MutablePartIndex<Command> commandIndex = new MutablePartIndex<>();
+            final AsyncIndex<RowWithCommands> tableIndex = new AsyncIndex<>(
+                    new LuceneIndex<>(dataSetContext.getDataSet().getRows()), results -> {
+                if (results.size() > 0) {
+                    Platform.runLater(() -> {
+                        dataTableItems.clear();
+                        if (!expandCollapseHelper.isContentVisible()) {
+                            expandCollapseHelper.setExpandedMode(true);
+                        }
+                        for (final RowWithCommands result : results) {
+                            try {
+                                dataTableItems.add(result);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        dataTableView.getSelectionModel().selectFirst();
+                    });
+                }
+            });
+            tableIndex.init();
+
+            final AsyncIndex<CommandMetadata> commandIndex = new AsyncIndex<>(
+                    new LuceneIndex<>(dataSetContext.getCommandMetadatas()), results -> {
+                if (results.size() > 0) {
+                    Platform.runLater(() -> {
+                        Map<String, Command> rowCommandsById = selectedRow.getCommands().stream().collect(Collectors.toMap(c -> c.getId(), c -> c));
+                        commandTableItems.clear();
+                        for (final CommandMetadata result: results) {
+                            try {
+                                Command rowCommand = rowCommandsById.get(result.getId());
+                                if(rowCommand != null){
+                                    commandTableItems.add(rowCommand);
+                                }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        dataTableView.getSelectionModel().selectFirst();
+                    });
+                }
+            });
+            commandIndex.init();
 
             dataSearchBox.setOnKeyReleased((keyEvent) -> {
-                LOG.debug("dataSearchBox.onKeyReleased " + keyEvent);
+                //LOG.debug("dataSearchBox.onKeyReleased " + keyEvent);
                 if(!keyEvent.getCode().equals(KeyCode.ESCAPE)
                     && !keyEvent.getCode().equals(KeyCode.CONTROL)) {
                     updateDataSearchBackgroundText();
-                    searchDataTable(dataIndex);
+                    searchDataTable(tableIndex);
                 }
             });
 
@@ -299,7 +330,6 @@ public class LauncherPresenter implements Initializable {
                 }
             });
 
-
             dataTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     LOG.debug("New value selected");
@@ -317,20 +347,22 @@ public class LauncherPresenter implements Initializable {
             dataTableView.setOnMouseClicked(event -> {
                 if(event.getClickCount() >= 2){
                     if( event.getTarget() instanceof Text ){
-//                        saveToClipboard(((Text) event.getTarget()).getText());
                         LOG.debug("Double click.");
                         selectCurrentDatatableRow(executingCommand, executionEnvironment, commandIndex);
                     }
+                } else if(event.getButton().equals(MouseButton.SECONDARY)){
+                    saveToClipboard(((Text) event.getTarget()).getText());
                 }
             });
 
             commandTableView.setOnMouseClicked(event -> {
                 if(event.getClickCount() >= 2){
                     if( event.getTarget() instanceof Text ){
-//                        saveToClipboard(((Text) event.getTarget()).getText());
                         LOG.debug("Double click.");
                         selectCurrentCommandTableRow(executingCommand, executionEnvironment);
                     }
+                } else if(event.getButton().equals(MouseButton.SECONDARY)){
+                    saveToClipboard(((Text) event.getTarget()).getText());
                 }
             });
 
@@ -340,7 +372,7 @@ public class LauncherPresenter implements Initializable {
                     saveToClipboard(tableAsCsv);
 
                 } else if( e.getCode() == KeyCode.C && e.isControlDown() && !e.isAltDown() && !e.isShiftDown()){
-                    final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem().getRow();
+                    final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem();
                     final String rowAsCsv = selectedRow.toCsv();
                     saveToClipboard(rowAsCsv);
 
@@ -359,7 +391,7 @@ public class LauncherPresenter implements Initializable {
                     saveToClipboard(tableAsCsv);
 
                 } else if( e.getCode() == KeyCode.C && e.isControlDown() && !e.isAltDown() && !e.isShiftDown()){
-                    final Row selectedRow = commandTableView.getSelectionModel().getSelectedItem().getRow();
+                    final Row selectedRow = commandTableView.getSelectionModel().getSelectedItem();
                     final String rowAsCsv = selectedRow.toCsv();
                     saveToClipboard(rowAsCsv);
 
@@ -439,63 +471,34 @@ public class LauncherPresenter implements Initializable {
         }
     }
 
-    private void searchCommandTable(final MutablePartIndex<Command> commandIndex) {
+    private void searchCommandTable(final AsyncIndex<CommandMetadata> commandIndex) {
         if (commandSearchBox.getText() != null
                 && commandSearchBox.getText().length() > 0
                     && !(commandSearchBox.getSelectedText() != null
                     && commandSearchBox.getSelectedText().length() > 0
                     && commandSearchBox.getSelectedText().equals(commandSearchBox.getText()))) {
 
-            final Results<Command> results = commandIndex.search(commandSearchBox.getText()).withAllWordsMatching();
-            LOG.debug(results.toPrettyString());
-            if (results.size() > 0) {
-                commandTableItems.clear();
-                for (final Result<Command> result: results) {
-                    try {
-                        commandTableItems.add(result);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                dataTableView.getSelectionModel().selectFirst();
-            }
+            commandIndex.search(commandSearchBox.getText());
         }
     }
 
-    private void searchDataTable(final PartIndex<RowWithCommands> dataIndex) {
-        final Results<RowWithCommands> results;
+    private void searchDataTable(final AsyncIndex<RowWithCommands> tableIndex) {
+        final List<RowWithCommands> results;
         if (dataSearchBox.getText() == null || dataSearchBox.getText().length() == 0) {
-            results = dataIndex.returnAll();
+            tableIndex.search("");
         } else {
-            results = dataIndex.search(dataSearchBox.getText()).withAllWordsMatching();
-        }
-
-        LOG.debug(results.toPrettyString());
-
-        if (results.size() > 0) {
-            dataTableItems.clear();
-            if (!expandCollapseHelper.isContentVisible()) {
-                expandCollapseHelper.setExpandedMode(true);
-            }
-            for (final Result<RowWithCommands> result : results) {
-                try {
-                    dataTableItems.add(result);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            dataTableView.getSelectionModel().selectFirst();
+            tableIndex.search(dataSearchBox.getText());
         }
     }
 
     private void selectCurrentCommandTableRow(final AtomicReference<ExecutingCommand> executingCommand, final ExecutionEnvironment executionEnvironment) {
-        final Command selectedRow = commandTableView.getSelectionModel().getSelectedItem().getRow();
+        final Command selectedRow = commandTableView.getSelectionModel().getSelectedItem();
         enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, selectedRow);
     }
 
-    private void selectCurrentDatatableRow(final AtomicReference<ExecutingCommand> executingCommand, final ExecutionEnvironment executionEnvironment, final MutablePartIndex<Command> commandIndex) {
+    private void selectCurrentDatatableRow(final AtomicReference<ExecutingCommand> executingCommand, final ExecutionEnvironment executionEnvironment, final AsyncIndex<CommandMetadata> commandIndex) {
         if(!zeroCommandsConfigured) {
-            final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem().getRow();
+            final RowWithCommands selectedRow = dataTableView.getSelectionModel().getSelectedItem();
             selectedDataLabel.setText(dataSetContext.getValueToDisplayWhenDataRowSelected(selectedRow, dataSearchBox.getText()));
             dataSearchPane.setVisible(false);
             dataTableContentPane.setVisible(false);
@@ -508,9 +511,8 @@ public class LauncherPresenter implements Initializable {
                 enterConsoleModeAndExecuteCommand(executingCommand, executionEnvironment, command);
 
             } else {
-                commandIndex.update(selectedRow.getCommandsTable());
                 commandTableItems.clear();
-                commandTableItems.setAll(commandIndex.returnAll());
+                commandTableItems.setAll(selectedRow.getCommands());
                 commandTableContentPane.setVisible(true);
                 commandSearchBox.clear();
                 updateDataSearchBackgroundText();

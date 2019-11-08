@@ -7,7 +7,7 @@ import spock.lang.Specification
  * Date: 2/11/17
  * Time: 6:45 AM
  */
-class RowIndexTest extends Specification {
+class LuceneTest extends Specification {
     final String csv = """h,f,e,g,a,d,l,c,n
 haud0001,haud0001.tools4j.com,dev,dev-1,webserver,~/webserver,~/webserver/logs,Australia,DevWebAustralia
 haud0001,haud0001.tools4j.com,dev,dev-1,mailserver,~/mailserver,~/mailserver/logs,Australia,DevMailAustralia1
@@ -38,27 +38,46 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
         final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
 
         when:
-        final DataSet dataSet = csvDataFile.load();
-        final RowIndex rowIndex = new RowIndex(dataSet)
-        final Results results = rowIndex.search("dev").withAllWordsMatching()
+        final DataSet<RowFromMap> dataSet = csvDataFile.load();
+        final LuceneIndex index = new LuceneIndex(dataSet.getRows())
+        final List<RowFromMap> results = index.search("dev")
 
         then:
         assert results.size() == 5
-        assert results.getIndexes() == [0,1,2,3,4]
+        assert results.containsAll(
+               [dataSet.getRow(0),
+                dataSet.getRow(1),
+                dataSet.getRow(2),
+                dataSet.getRow(3),
+                dataSet.getRow(4)]);
     }
 
-    def "test"() {
+    def "test with two terms"() {
         given:
         final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
 
         when:
-        final DataSet dataSet = csvDataFile.load();
-        final RowIndex rowIndex = new RowIndex(dataSet)
-        final Results results = rowIndex.search("dev messaging").withAllWordsMatching()
-        println results.toPrettyString()
+        final DataSet<RowFromMap> dataSet = csvDataFile.load();
+        final LuceneIndex index = new LuceneIndex(dataSet.getRows())
+        final List<RowFromMap> results = index.search("dev messaging")
 
         then:
         assert results.size() == 1
-        assert results.getIndexes() == [4]
+        assert results.containsAll([dataSet.getRow(4)]);
+    }
+
+    def "test with one term, and a partial second term"() {
+        given:
+        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
+
+        when:
+        final DataSet<RowFromMap> dataSet = csvDataFile.load();
+        final LuceneIndex index = new LuceneIndex(dataSet.getRows())
+        final List<RowFromMap> results = index.search("dev Mail")
+
+        then:
+        assert results.size() == 2
+        assert results.containsAll([dataSet.getRow(1),
+                                    dataSet.getRow(3)]);
     }
 }

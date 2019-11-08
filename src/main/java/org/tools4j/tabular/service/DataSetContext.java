@@ -16,11 +16,11 @@ public class DataSetContext {
     public static final String APP_COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED = "app.command.column.to.display.when.selected";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE = "app.columns.to.display.in.command.table";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "app.columns.to.display.in.data.table";
-    private final DataSet dataSet;
+    private final DataSet<RowWithCommands> dataSet;
     private final PropertiesRepo properties;
     private final CommandMetadatas commandMetadatas;
 
-    public DataSetContext(final DataSet dataSet, final CommandMetadatas commandMetadatas, final PropertiesRepo properties) {
+    public DataSetContext(final DataSet<RowWithCommands> dataSet, final CommandMetadatas commandMetadatas, final PropertiesRepo properties) {
         this.dataSet = dataSet;
         this.properties = properties;
         this.commandMetadatas = commandMetadatas;
@@ -51,7 +51,7 @@ public class DataSetContext {
         return sb.toString();
     }
 
-    public DataSet getDataSet() {
+    public DataSet<RowWithCommands> getDataSet() {
         return dataSet;
     }
 
@@ -119,5 +119,9 @@ public class DataSetContext {
 
     public String getValueToDisplayWhenCommandRowSelected(final Row selectedRow) {
         return getValueToDisplayWhenCommandRowSelected(selectedRow, null);
+    }
+
+    public List<CommandMetadata> getCommandMetadatas() {
+        return commandMetadatas.getCommandMetadatas();
     }
 }

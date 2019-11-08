@@ -1,9 +1,6 @@
 package org.tools4j.tabular.service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -12,11 +9,13 @@ import java.util.stream.Collectors;
  * Time: 6:22 PM
  */
 public class Command extends RowFromMap {
+    private final String id;
     private final String name;
     private final String commandLineString;
 
-    public Command(final String name, final String description, final String commandLineString) {
+    public Command(String id, final String name, final String description, final String commandLineString) {
         super(asMap(name, description, commandLineString));
+        this.id = id;
         this.name = name;
         this.commandLineString = commandLineString;
     }
@@ -46,25 +45,27 @@ public class Command extends RowFromMap {
         return name;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String resolveCommandLineString() {
         return new StringWithEmbeddedGroovy(commandLineString).resolve();
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Command)) return false;
-
-        final Command command = (Command) o;
-
-        if (name != null ? !name.equals(command.name) : command.name != null) return false;
-        return commandLineString != null ? commandLineString.equals(command.commandLineString) : command.commandLineString == null;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Command command = (Command) o;
+        return Objects.equals(id, command.id) &&
+                Objects.equals(name, command.name) &&
+                Objects.equals(commandLineString, command.commandLineString);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (commandLineString != null ? commandLineString.hashCode() : 0);
-        return result;
+        return Objects.hash(super.hashCode(), id, name, commandLineString);
     }
 }

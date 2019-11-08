@@ -44,13 +44,13 @@ class CommandMetadataTest extends Specification {
         given:
         final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
         assert commandsForRow.size() == 2
-        assert commandsForRow.containsCommands("Open Home Dir", "Tail App Log")
+        assert commandsForRow.containsCommands("openHomeDir", "tailAppLog")
     }
 
     def "get command 1"() {
         given:
         final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
-        final CommandMetadata commandMetadata = commandsForRow.get("Open Home Dir");
+        final CommandMetadata commandMetadata = commandsForRow.get("openHomeDir");
         final Command command = commandMetadata.getCommandInstance(row, propertiesRepo);
         assert command.toString() == 'ssh myhostname && cd ~/'
     }
@@ -58,7 +58,7 @@ class CommandMetadataTest extends Specification {
     def "get command 2"() {
         given:
         final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
-        final CommandMetadata commandMetadata = commandsForRow.get("Tail App Log");
+        final CommandMetadata commandMetadata = commandsForRow.get("tailAppLog");
         final Command command = commandMetadata.getCommandInstance(row, propertiesRepo);
         assert command.toString() == 'ssh myhostname && cd ~/logs/ && tail -f app.log'
     }
