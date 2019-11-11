@@ -154,6 +154,10 @@ Label#textTitle {
     -fx-border-width: 0;
 }
 
+.searchBoxNoResults {
+    -fx-text-fill: red;
+}
+
 #dataTableView, #commandsTableView {
     /* These three elements profide a 'bottom margin' so as to not overlay the curved bottom left corner */
     -fx-padding: 0 0 10 0;
