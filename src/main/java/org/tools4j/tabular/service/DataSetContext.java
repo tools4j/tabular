@@ -5,6 +5,7 @@ import org.tools4j.tabular.properties.PropertiesRepo;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * User: ben
@@ -15,7 +16,9 @@ public class DataSetContext {
     public static final String APP_DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED = "app.data.column.to.display.when.selected";
     public static final String APP_COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED = "app.command.column.to.display.when.selected";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE = "app.columns.to.display.in.command.table";
+    public static final String APP_COLUMNS_TO_INDEX_IN_COMMAND_TABLE = "app.columns.to.index.in.command.table";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "app.columns.to.display.in.data.table";
+    public static final String APP_COLUMNS_TO_INDEX_IN_DATA_TABLE = "app.columns.to.index.in.data.table";
     private final DataSet<RowWithCommands> dataSet;
     private final PropertiesRepo properties;
     private final CommandMetadatas commandMetadatas;
@@ -76,6 +79,15 @@ public class DataSetContext {
         }
     }
 
+    public List<String> getDataColumnsToIndex() {
+        final String configuredColumnsToDisplayInTable = properties.get(APP_COLUMNS_TO_INDEX_IN_DATA_TABLE);
+        if(configuredColumnsToDisplayInTable != null){
+            return Arrays.asList(configuredColumnsToDisplayInTable.split(","));
+        } else {
+            return dataSet.getColumnHeadings();
+        }
+    }
+
     public List<String> getCommandColumnsToDisplay() {
         final String configuredColumnsToDisplayInTable = properties.get(APP_COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE);
         if(configuredColumnsToDisplayInTable != null){
@@ -83,6 +95,23 @@ public class DataSetContext {
         } else {
             return Command.getCommandTableColumnHeadings();
         }
+    }
+
+    public List<String> getCommandColumnsToIndex() {
+        final String configuredColumnsToDisplayInTable = properties.get(APP_COLUMNS_TO_INDEX_IN_COMMAND_TABLE);
+        if(configuredColumnsToDisplayInTable != null){
+            return Arrays.asList(configuredColumnsToDisplayInTable.split(","));
+        } else {
+            return Command.getCommandTableColumnHeadings();
+        }
+    }
+
+    public Predicate<String> getDataColumnToIndexPredicate(){
+        return columnName -> getDataColumnsToIndex().contains(columnName);
+    }
+
+    public Predicate<String> getCommandColumnToIndexPredicate(){
+        return columnName -> getCommandColumnsToIndex().contains(columnName);
     }
 
     public String getValueToDisplayWhenDataRowSelected(final Row selectedRow, final String query) {

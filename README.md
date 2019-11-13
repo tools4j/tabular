@@ -34,11 +34,13 @@ some guidance.
 | app.data.search.background.prompt.text |Prompt to display when searching for data |
 | app.command.search.background.prompt.text |Prompt to display when searching for command |
 | app.columns.to.display.in.data.table |A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells. |
+| app.columns.to.index.in.data.table |A comma seperated list of columns names to index.  If property is not given, then all columns are indexed. |
 | app.column.abbreviations.<ColumnName> |Can be used to specify abbreviations for column names.  e.g. `app.column.abbreviations.Host=h` Can make for more concise variable names. |
 ### Properties relevant when using commands
 |property |description |
 |---|---|
 | app.columns.to.display.in.command.table |  Can be used to dictate which columns to show in the command table, and in what order.  Options are: Name & Description. |
+| app.columns.to.index.in.command.table |A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed. |
 | app.data.column.to.display.when.selected | Dictates the column to display in the main prompt box when a row is selected. |
 | app.command.column.to.display.when.selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'. |
 | app.close.console.on.command.finish | Close Tabular once the command has finished running. Defaults to false. |

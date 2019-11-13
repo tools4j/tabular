@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -198,7 +199,7 @@ public class LauncherPresenter implements Initializable {
 
             //Indexes
             final AsyncIndex<RowWithCommands> tableIndex = new AsyncIndex<>(
-                    new LuceneIndex<>(dataSetContext.getDataSet().getRows()), results -> {
+                    new LuceneIndex<>(dataSetContext.getDataSet().getRows(), dataSetContext.getDataColumnToIndexPredicate() ), results -> {
                         Platform.runLater(() -> {
                             if (results.size() > 0) {
                                 dataTableItems.clear();
@@ -222,7 +223,7 @@ public class LauncherPresenter implements Initializable {
             tableIndex.init();
 
             final AsyncIndex<CommandMetadata> commandIndex = new AsyncIndex<>(
-                    new LuceneIndex<>(dataSetContext.getCommandMetadatas()), results -> {
+                    new LuceneIndex<>(dataSetContext.getCommandMetadatas(), dataSetContext.getCommandColumnToIndexPredicate()), results -> {
                         Platform.runLater(() -> {
                             if (results.size() > 0) {
                                 RowWithCommands selectedItem = dataTableView.getSelectionModel().getSelectedItem();

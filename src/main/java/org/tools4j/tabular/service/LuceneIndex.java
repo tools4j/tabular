@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class LuceneIndex<T extends Row> {
@@ -29,6 +30,10 @@ public class LuceneIndex<T extends Row> {
     private List<T> table;
 
     public LuceneIndex(List<T> table){
+        this(table, columnName -> true);
+    }
+
+    public LuceneIndex(List<T> table, Predicate<String> columnsToIndexPredicate){
         try {
             this.table = table;
             index = new RAMDirectory();
@@ -36,7 +41,7 @@ public class LuceneIndex<T extends Row> {
             queryParser = new QueryParser("data", analyzer);
             queryParser.setAllowLeadingWildcard(true);
             queryParser.setDefaultOperator(QueryParser.Operator.AND);
-            loadData();
+            loadData(columnsToIndexPredicate);
             reader = DirectoryReader.open(index);
             searcher = new IndexSearcher(reader);
         } catch (Exception e) {
@@ -44,13 +49,13 @@ public class LuceneIndex<T extends Row> {
         }
     }
 
-    private void loadData() throws IOException {
+    private void loadData(Predicate<String> columnsToIndexPredicate) throws IOException {
         IndexWriter writer;
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setMaxBufferedDocs(100);
         config.setRAMBufferSizeMB(50.0);
         writer = new IndexWriter(index, config);
-        for (Document doc: new DocsFromTable(table).getDocs()) {
+        for (Document doc: new DocsFromTable(table, columnsToIndexPredicate).getDocs()) {
             writer.addDocument(doc);
         }
         writer.commit();
