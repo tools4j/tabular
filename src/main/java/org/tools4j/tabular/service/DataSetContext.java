@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service;
 
-import org.tools4j.tabular.util.IndentableStringBuilder;
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +19,8 @@ public class DataSetContext {
     public static final String APP_COLUMNS_TO_INDEX_IN_COMMAND_TABLE = "app.columns.to.index.in.command.table";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "app.columns.to.display.in.data.table";
     public static final String APP_COLUMNS_TO_INDEX_IN_DATA_TABLE = "app.columns.to.index.in.data.table";
+    public static final String APP_DATA_SEARCH_ABBREVIATION_PREFIX = "app.data.search.abbreviation.";
+    public static final String APP_COMMAND_SEARCH_ABBREVIATION_PREFIX = "app.command.search.abbreviation.";
     private final DataSet<RowWithCommands> dataSet;
     private final PropertiesRepo properties;
     private final CommandMetadatas commandMetadatas;
@@ -77,6 +79,14 @@ public class DataSetContext {
         } else {
             return dataSet.getColumnHeadings();
         }
+    }
+
+    public String getDataSearchAbbreviation(String text){
+        return properties.get(APP_DATA_SEARCH_ABBREVIATION_PREFIX + text);
+    }
+
+    public String getCommandSearchAbbreviation(String text){
+        return properties.get(APP_COMMAND_SEARCH_ABBREVIATION_PREFIX + text);
     }
 
     public List<String> getDataColumnsToIndex() {

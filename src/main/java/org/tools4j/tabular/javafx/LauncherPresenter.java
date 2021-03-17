@@ -8,30 +8,22 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.service.*;
+import org.tools4j.tabular.util.Utils;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -290,6 +282,19 @@ public class LauncherPresenter implements Initializable {
                     LOG.debug("Escape key pressed from dataSearchBox");
                     onDataSearchEscapeKeyPressed();
 
+                } else if (e.getCode() == KeyCode.SPACE) {
+                    LOG.debug("Space key pressed");
+                    String searchText = dataSearchBox.getText();
+                    Optional<String> lastWordInSearchText = Utils.getLastWordInText(searchText);
+                    if(lastWordInSearchText.isPresent()){
+                        String replacement = dataSetContext.getDataSearchAbbreviation(lastWordInSearchText.get());
+                        if(replacement != null){
+                            String newText = Utils.replaceLastWordWith(searchText, replacement);
+                            dataSearchBox.setText(newText);
+                            dataSearchBox.positionCaret(dataSearchBox.getText().length());
+                        }
+                    }
+
                 } else if (e.isControlDown() && !e.isShiftDown()) {
                     if (e.getCode() == KeyCode.R) {
                         LOG.debug("TODO: rebuild indexes");
@@ -323,9 +328,23 @@ public class LauncherPresenter implements Initializable {
                     if(commandTableItems.size() == 1) {
                         onSelectCurrentCommandTableRow(executingCommand, executionEnvironment);
                     }
+
                 } else if (e.getCode() == KeyCode.ESCAPE) {
                     LOG.debug("Escape key pressed from commandSearchBox");
                     returnToDataSearchMode();
+
+                } else if (e.getCode() == KeyCode.SPACE) {
+                    LOG.debug("Space key pressed");
+                    String searchText = commandSearchBox.getText();
+                    Optional<String> lastWordInSearchText = Utils.getLastWordInText(searchText);
+                    if(lastWordInSearchText.isPresent()){
+                        String replacement = dataSetContext.getCommandSearchAbbreviation(lastWordInSearchText.get());
+                        if(replacement != null){
+                            String newText = Utils.replaceLastWordWith(searchText, replacement);
+                            commandSearchBox.setText(newText);
+                            commandSearchBox.positionCaret(commandSearchBox.getText().length());
+                        }
+                    }
 
                 } else if (e.isControlDown() && !e.isShiftDown()) {
                     if (e.getCode() == KeyCode.R) {
