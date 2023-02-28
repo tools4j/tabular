@@ -85,7 +85,7 @@ public class MapResolver {
         for(int i=0; i<1000; i++) {
             int numberOfReplacementsInThisLoop = 0;
             for (final String key : unresolvedKeys) {
-                numberOfReplacementsInThisLoop = getNumberOfReplacementsInThisLoop(resolvedKeys, map, numberOfReplacementsInThisLoop, key);
+                numberOfReplacementsInThisLoop += resolveKey(resolvedKeys, map, key);
             }
             unresolvedKeys.removeAll(resolvedKeys);
             if(numberOfReplacementsInThisLoop == 0){
@@ -106,7 +106,8 @@ public class MapResolver {
         return returnMap;
     }
 
-    private int getNumberOfReplacementsInThisLoop(Set<String> resolved, Map<String, String> map, int numberOfReplacementsInThisLoop, String key) {
+    private int resolveKey(Set<String> resolved, Map<String, String> map, String key) {
+        int numberOfReplacementsForThisKey = 0;
         while (true) {
             int numberOfReplacementsForThisKeyInThisLoop = 0;
             int findFrom = 0;
@@ -132,8 +133,8 @@ public class MapResolver {
                 } else {
                     final String newValue = value.replace(matcher.group(0), variableValue);
                     map.put(key, newValue);
-                    numberOfReplacementsInThisLoop++;
                     numberOfReplacementsForThisKeyInThisLoop++;
+                    numberOfReplacementsForThisKey++;
                 }
                 findFrom = matcher.end();
             }
@@ -141,7 +142,7 @@ public class MapResolver {
                 break;
             }
         }
-        return numberOfReplacementsInThisLoop;
+        return numberOfReplacementsForThisKey;
     }
 
     static Map<String, String> removeFirstEscapeFromEscapedVariableSymbols(Map<String, String> map){
