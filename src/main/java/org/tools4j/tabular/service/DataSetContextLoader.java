@@ -63,8 +63,11 @@ public class DataSetContextLoader {
         CommandMetadatas commandMetadatas = commandMetadataFromProperties.load();
 
         LOG.info("Resolving commands for dataset rows");
+        long startTimeMs = System.currentTimeMillis();
         DataSet<RowWithCommands> rowsWithCommands = returnDataSet.resolveCommands(commandMetadatas, resolvedProperties);
-
+        long endTimeMs = System.currentTimeMillis();
+        LOG.info("Finished resolving commands for dataset rows, took: " + (endTimeMs - startTimeMs) + "ms");
+        
         LOG.info("Finished loading dataset");
         return new DataSetContext(rowsWithCommands, commandMetadatas, resolvedProperties);
     }

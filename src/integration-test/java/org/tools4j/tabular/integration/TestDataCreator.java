@@ -12,12 +12,12 @@ public class TestDataCreator {
     }
 
     private static void createTestConfig() {
-        for (int i = 0; i < 1000; i++) {
-            System.out.println("<command" +
-                    " id='command" + i + "'" +
-                    " name='Command " + i + "'" +
-                    " description='Runs command " + i + "'" +
-                    " command_line='exec command" + i + "'/>");
+        for (int i = 0; i < 200; i++) {
+            System.out.println("app.commmands.command" + i + ".name=Command " + i);
+            System.out.println("app.commmands.command" + i + ".predicate='${env}' != 'prod'");
+            System.out.println("app.commmands.command" + i + ".command=/path/to/my/command ${env}");
+            System.out.println("app.commmands.command" + i + ".description=Runs command " + i);
+            System.out.println("");
         }
     }
 

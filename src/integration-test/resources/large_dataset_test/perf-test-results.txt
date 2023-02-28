@@ -1,0 +1,12 @@
+TEST 1: 2022-02-28
+- Using groovy predicates
+- Using full map resolution on every command/row resolution
+- 100 rows
+- 50 commands with a predicate of env != prod
+- 100 * 50 = 5,000 command instances
+Results: 77,683ms
+
+TEST 2: 2022-02-28
+- Same as TEST 1, but with a re-used Groovy shell
+Results: 83,835ms
+(Rolling change back)
