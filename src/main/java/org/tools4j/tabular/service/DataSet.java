@@ -2,6 +2,8 @@ package org.tools4j.tabular.service;
 
 import org.tools4j.tabular.properties.MapResolver;
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.commands.Command;
+import org.tools4j.tabular.service.commands.CommandMetadatas;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.ArrayList;
@@ -66,12 +68,16 @@ public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Prett
 
     public DataSet<RowWithCommands> resolveCommands(final CommandMetadatas commandMetadatas, final PropertiesRepo propertiesRepo){
         final List<RowWithCommands> rowWithCommands = new ArrayList<>(table.size());
-        for(final T row: table){
+        System.out.print("Linking commands with rows...");
+        for (int i = 0; i < table.size(); i++) {
+            System.out.print("\rProcessing row: " + i + " of " + table.size());
+            T row = table.get(i);
             final CommandMetadatas commandMetadatasForRow = commandMetadatas.getCommandsFor(row);
             final List<Command> commandInstancesForRow = commandMetadatasForRow.getCommandInstances(row, propertiesRepo);
             final RowWithCommands rowWithResolvedCells = new RowWithCommands(row, commandInstancesForRow);
             rowWithCommands.add(rowWithResolvedCells);
         }
+        System.out.println("");
         return new DataSet(columns, rowWithCommands);
     }
 

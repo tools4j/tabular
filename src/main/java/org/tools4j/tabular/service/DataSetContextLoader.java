@@ -2,7 +2,9 @@ package org.tools4j.tabular.service;
 
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.commands.CommandMetadataFromProperties;
 import org.tools4j.tabular.service.commands.CommandMetadataFromXml;
+import org.tools4j.tabular.service.commands.CommandMetadatas;
 
 import static org.tools4j.tabular.util.Constants.COMMAND_XML_FILE;
 

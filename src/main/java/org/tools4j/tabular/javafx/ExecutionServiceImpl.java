@@ -2,8 +2,8 @@ package org.tools4j.tabular.javafx;
 
 import javafx.scene.control.TextArea;
 import org.apache.log4j.Logger;
-import org.tools4j.tabular.service.Command;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
+import org.tools4j.tabular.service.commands.Command;
 
 import java.util.ArrayList;
 import java.util.List;

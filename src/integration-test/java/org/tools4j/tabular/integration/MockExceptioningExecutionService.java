@@ -5,8 +5,8 @@ import org.apache.log4j.Logger;
 import org.tools4j.tabular.javafx.CommandExecutedWithException;
 import org.tools4j.tabular.javafx.ExecutingCommand;
 import org.tools4j.tabular.javafx.ExecutionService;
-import org.tools4j.tabular.service.Command;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
+import org.tools4j.tabular.service.commands.Command;
 
 import java.util.ArrayList;
 import java.util.List;

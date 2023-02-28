@@ -10,3 +10,7 @@ TEST 2: 2022-02-28
 - Same as TEST 1, but with a re-used Groovy shell
 Results: 83,835ms
 (Rolling change back)
+
+TEST 3: 2022-02-28
+- Same as TEST 1, but with smarter map resolution, i.e. don't solve complete map every time a command is resolved
+Results: 54913ms

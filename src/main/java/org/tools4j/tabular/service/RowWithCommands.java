@@ -1,5 +1,7 @@
 package org.tools4j.tabular.service;
 
+import org.tools4j.tabular.service.commands.Command;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

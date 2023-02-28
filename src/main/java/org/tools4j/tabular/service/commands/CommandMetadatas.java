@@ -1,7 +1,9 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.service.commands;
 
-import org.tools4j.tabular.util.IndentableStringBuilder;
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.Pretty;
+import org.tools4j.tabular.service.Row;
+import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

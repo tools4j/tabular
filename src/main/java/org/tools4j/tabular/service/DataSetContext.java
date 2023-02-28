@@ -1,6 +1,9 @@
 package org.tools4j.tabular.service;
 
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.commands.Command;
+import org.tools4j.tabular.service.commands.CommandMetadata;
+import org.tools4j.tabular.service.commands.CommandMetadatas;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.Arrays;
