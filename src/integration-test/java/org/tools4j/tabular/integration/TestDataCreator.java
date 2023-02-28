@@ -8,11 +8,11 @@ public class TestDataCreator {
     private static final String[] INSTANCES = new String[]{"1", "2", "3", "4"};
         
     public static void main(String[] args) {
-        createTestConfig();
+        createTestCsv();
     }
 
-    private static void createTestConfig() {
-        for (int i = 0; i < 200; i++) {
+    private static void createPropertiesTestConfig() {
+        for (int i = 0; i < 1000; i++) {
             System.out.println("app.commmands.command" + i + ".name=Command " + i);
             System.out.println("app.commmands.command" + i + ".predicate='${env}' != 'prod'");
             System.out.println("app.commmands.command" + i + ".command=/path/to/my/command ${env}");
@@ -21,6 +21,24 @@ public class TestDataCreator {
         }
     }
 
+    private static void createXmlTestConfig() {
+        System.out.println("<commands>");
+        for (int i = 0; i < 200; i++) {
+            System.out.println("  <command " +
+                    "id='command" + i + "' " +
+                    "name='Command " + i + "' " +
+                    "description='Runs command " + i + "' " +
+                    "command_line='/path/to/my/command" + i + "${env}'>");
+            System.out.println("    <condition>");        
+            System.out.println("      <not>");        
+            System.out.println("        <equals col_name='env' value='prod'/>");
+            System.out.println("      </not>");        
+            System.out.println("    </condition>");        
+            System.out.println("  </command>");
+        }
+        System.out.println("</commands>");
+    }
+    
     private static void createTestCsv() {
         System.out.println("id,app,instance,host,region,env,dc");
         int i=0;

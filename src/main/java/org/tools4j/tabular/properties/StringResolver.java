@@ -1,5 +1,7 @@
 package org.tools4j.tabular.properties;
 
+import org.apache.commons.text.StringSubstitutor;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,17 +11,22 @@ import java.util.Map;
  * Time: 4:51 PM
  */
 public class StringResolver {
-    public static final String THE_KEY = "THE_STRING";
-    private final MapResolver mapResolver;
+    private final StringSubstitutor stringSubstitutor;
 
     public StringResolver(final Map<String, String> ... otherResources) {
-        this.mapResolver = new MapResolver(otherResources);
+        Map<String, String> allProperties;
+        if(otherResources.length > 1){
+            allProperties = new HashMap<>();
+            for (Map<String, String> otherResource : otherResources) {
+                allProperties.putAll(otherResource);
+            }
+        } else {
+            allProperties = otherResources[0];
+        }
+        stringSubstitutor = new StringSubstitutor(allProperties);
     }
 
     public String resolve(String str){
-        final Map<String, String> primaryMap = new HashMap<>();
-        primaryMap.put(THE_KEY, str);
-        final Map<String, String> resolvedMap = mapResolver.resolve(primaryMap);
-        return resolvedMap.get(THE_KEY);
+        return stringSubstitutor.replace(str);
     }
 }

@@ -52,6 +52,7 @@ public class CommandMetadatas implements Pretty {
         sb.activateIndent();
         for(final CommandMetadata commandMetadata: commandMetadataById.values()){
             sb.append(commandMetadata.toPrettyString(indent));
+            sb.append("\n");
         }
         sb.decactivateIndent();
         sb.append("}");

@@ -28,4 +28,11 @@ public class GroovyExpressionPredicate implements Predicate<Row> {
         final String groovyScriptWithResolvedVariables = new StringResolver(propertiesRepo.asMap(), row).resolve(groovyExpressionStr);
         return new GroovyExpression<>(groovyScriptWithResolvedVariables, Boolean.class).resolveExpression();
     }
+
+    @Override
+    public String toString() {
+        return "GroovyExpressionPredicate{" +
+                "groovyExpressionStr='" + groovyExpressionStr + '\'' +
+                '}';
+    }
 }
