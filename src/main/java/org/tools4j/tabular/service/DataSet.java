@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service;
 
+import org.tools4j.tabular.properties.MapResolver;
 import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.properties.ResolvedMap;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.ArrayList;
@@ -58,24 +58,20 @@ public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Prett
         }
         final List<RowFromMap> tableWithResolvedCells = new ArrayList<>();
         for(final T row: table){
-            final RowFromMap rowWithResolvedCells = new RowFromMap(new ResolvedMap(row, additionalProperties).resolve());
-            tableWithResolvedCells.add(rowWithResolvedCells);
+            final RowFromMap rowFromMap = new RowFromMap(new MapResolver(additionalProperties).resolve(row));
+            tableWithResolvedCells.add(rowFromMap);
         }
         return new DataSet<>(columns, tableWithResolvedCells);
     }
 
     public DataSet<RowWithCommands> resolveCommands(final CommandMetadatas commandMetadatas, final PropertiesRepo propertiesRepo){
         final List<RowWithCommands> rowWithCommands = new ArrayList<>(table.size());
-        System.out.print("Linking commands with rows...");
-        for (int i = 0; i < table.size(); i++) {
-            System.out.print("\rProcessing row: " + i + " of " + table.size());
-            T row = table.get(i);
+        for(final T row: table){
             final CommandMetadatas commandMetadatasForRow = commandMetadatas.getCommandsFor(row);
             final List<Command> commandInstancesForRow = commandMetadatasForRow.getCommandInstances(row, propertiesRepo);
             final RowWithCommands rowWithResolvedCells = new RowWithCommands(row, commandInstancesForRow);
             rowWithCommands.add(rowWithResolvedCells);
         }
-        System.out.println("");
         return new DataSet(columns, rowWithCommands);
     }
 

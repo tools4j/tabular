@@ -1,10 +1,17 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.service.commands;
 
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.properties.ResolvedString;
+import org.tools4j.tabular.properties.StringResolver;
+import org.tools4j.tabular.service.Pretty;
+import org.tools4j.tabular.service.Row;
+import org.tools4j.tabular.service.RowFromMap;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -29,12 +36,20 @@ public class CommandMetadata extends RowFromMap implements Predicate<Row>, Prett
         this.description = description;
     }
 
-    public Command getCommandInstance(final Row result, final PropertiesRepo properties){
-        return new Command(id, name, description, new ResolvedString(command, properties.asMap(), result).resolve());
+    public Command getCommandInstance(final Row row, final PropertiesRepo properties){
+        return new Command(id, name, description, new StringResolver(properties.asMap(), row).resolve(command));
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override
@@ -85,5 +100,51 @@ public class CommandMetadata extends RowFromMap implements Predicate<Row>, Prett
 
     public String getId() {
         return id;
+    }
+
+    public Predicate<Row> getPredicate() {
+        return predicate;
+    }
+
+    public static class Builder {
+        private String id;
+        private String name;
+        private Predicate<Row> predicate;
+        private String command;
+        private String description;
+
+        public Builder withId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder withPredicate(Predicate<Row> predicate) {
+            this.predicate = predicate;
+            return this;
+        }
+
+        public Builder withCommand(String command) {
+            this.command = command;
+            return this;
+        }
+
+        public Builder withDescription(String description) {
+            this.description = description;
+            return this;
+        }
+        
+        public CommandMetadata build(){
+            if(id == null) throw new IllegalStateException("id must not be null");
+            if(name == null) throw new IllegalStateException("id must not be null");
+            if(predicate == null) throw new IllegalStateException("id must not be null");
+            if(command == null) throw new IllegalStateException("id must not be null");
+            if(description == null) throw new IllegalStateException("id must not be null");
+            return new CommandMetadata(id, name, predicate, command, description);
+        }
     }
 }

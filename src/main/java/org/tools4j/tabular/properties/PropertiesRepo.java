@@ -4,7 +4,13 @@ import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.io.File;
 import java.io.Reader;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 
 /**
@@ -158,15 +164,7 @@ public class PropertiesRepo {
     }
 
     public PropertiesRepo resolveVariablesWithinValues() {
-        return new PropertiesRepo(new ResolvedMap(asMap()).resolve());
-    }
-
-    public PropertiesRepo resolveVariablesWithinValues(final PropertiesRepo ... additionalPropertiesToHelpWithResolution) {
-        final Map<String, String> additionalProperties = new HashMap<>();
-        for(int i=0; i<additionalPropertiesToHelpWithResolution.length; i++){
-            additionalProperties.putAll(additionalPropertiesToHelpWithResolution[i].asMap());
-        }
-        return new PropertiesRepo(new ResolvedMap(asMap(), additionalProperties).resolve());
+        return new PropertiesRepo(new MapResolver().resolve(asMap()));
     }
 
     public String toPrettyString() {
@@ -206,6 +204,6 @@ public class PropertiesRepo {
     }
 
     public boolean isEmpty() {
-        return size() > 0;
+        return size() == 0;
     }
 }

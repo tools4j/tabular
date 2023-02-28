@@ -1,7 +1,7 @@
 package org.tools4j.tabular.service;
 
 import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.properties.ResolvedString;
+import org.tools4j.tabular.properties.StringResolver;
 
 import java.util.function.Predicate;
 
@@ -25,8 +25,7 @@ public class GroovyExpressionPredicate implements Predicate<Row> {
         if(groovyExpressionStr.trim().equalsIgnoreCase("true") || groovyExpressionStr.trim().length() == 0){
             return true;
         }
-        final String groovyScriptWithResolvedVariables = new ResolvedString(groovyExpressionStr, propertiesRepo.asMap(), row).resolve();
-        final Object evaluatedResult = new GroovyExpression(groovyScriptWithResolvedVariables, Boolean.class).resolveExpression();
-        return (Boolean) evaluatedResult;
+        final String groovyScriptWithResolvedVariables = new StringResolver(propertiesRepo.asMap(), row).resolve(groovyExpressionStr);
+        return new GroovyExpression<>(groovyScriptWithResolvedVariables, Boolean.class).resolveExpression();
     }
 }

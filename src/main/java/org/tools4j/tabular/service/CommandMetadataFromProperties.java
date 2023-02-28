@@ -1,5 +1,6 @@
 package org.tools4j.tabular.service;
 
+import org.apache.log4j.Logger;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
  * Time: 6:15 PM
  */
 public class CommandMetadataFromProperties {
+    private final static Logger LOG = Logger.getLogger(CommandMetadata.class);
     private final PropertiesRepo propertiesRepo;
 
     public CommandMetadataFromProperties(final PropertiesRepo propertiesRepo) {
@@ -19,7 +21,14 @@ public class CommandMetadataFromProperties {
 
     public CommandMetadatas load(){
         final List<CommandMetadata> commandMetadata = new ArrayList<>();
-        final PropertiesRepo commandsProperties = propertiesRepo.getWithPrefix("app.commmands");
+        PropertiesRepo commandsProperties = propertiesRepo.getWithPrefix("app.commands");
+        if(commandsProperties.isEmpty()){
+            PropertiesRepo withLegacyPrefix = propertiesRepo.getWithPrefix("app.commmands");
+            if(!withLegacyPrefix.isEmpty()){
+                LOG.warn("It appears that your commands are defined in your property file with prefix 'app.commmands' (three m's). This may not continue to be supported.  Please update to be prefixed with 'app.commands' (two m's)");
+                commandsProperties = withLegacyPrefix;
+            }
+        }
         for(final String commandKey: commandsProperties.getNextUniqueKeyParts()){
             final PropertiesRepo commandProperties = commandsProperties.getWithPrefix(commandKey);
             final String id = commandKey;

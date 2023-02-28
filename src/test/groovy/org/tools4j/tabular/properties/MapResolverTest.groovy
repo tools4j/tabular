@@ -1,6 +1,6 @@
 package org.tools4j.tabular.properties
 
-import org.tools4j.tabular.properties.ResolvedMap
+
 import spock.lang.Specification
 
 /**
@@ -8,7 +8,7 @@ import spock.lang.Specification
  * Date: 26/10/17
  * Time: 5:58 PM
  */
-class ResolvedMapTest extends Specification {
+class MapResolverTest extends Specification {
     private Map<String, String> map;
 
     def setup(){
@@ -32,7 +32,7 @@ class ResolvedMapTest extends Specification {
 
     def "test Resolve"() {
         when:
-        final Map<String, String> resolved = new ResolvedMap(map).resolve();
+        final Map<String, String> resolved = new MapResolver().resolve(map);
 
         then:
         final Map<String, String> expected = [
@@ -58,7 +58,7 @@ class ResolvedMapTest extends Specification {
     def "test Resolve - does not override column values with property value with the same name as column heading (bug I have seen)"() {
         when:
         final Map<String, String> properties = ['password': 'this should not be substituted into table']
-        final Map<String, String> resolved = new ResolvedMap(map, properties).resolve();
+        final Map<String, String> resolved = new MapResolver(properties).resolve(map);
 
         then:
         final Map<String, String> expected = [
@@ -83,14 +83,15 @@ class ResolvedMapTest extends Specification {
 
     def "test Resolve using secondaryMap"() {
         given:
-        final Map<String, String> secondaryMap = [
+        final Map<String, String> resourcesMap = [
                 'missing1': 'howdy',
-                'missing2': 'partner',
+                //These two values below will NOT be resolved.  ResourceMaps do not undergo variable resolution
+                'missing2': '${partner}',
                 'howdy.partner': '${username.and.password}'
         ]
 
         when:
-        final Map<String, String> resolved = new ResolvedMap(map, secondaryMap).resolve();
+        final Map<String, String> resolved = new MapResolver(resourcesMap).resolve(map);
 
         then:
         final Map<String, String> expected = [
@@ -105,7 +106,7 @@ class ResolvedMapTest extends Specification {
                 'username.and.password'        : 'me:secret',
                 'fullUrl'                      : 'haud0001:8080:me:secret',
                 'fullUrl.with.nested.variables': 'haud0001:8080:me:secret',
-                'missing.variables1'           : 'me:secret:haud0001:${missing3}:8080',
+                'missing.variables1'           : '${howdy.${partner}}:haud0001:${missing3}:8080',
                 'missing.variables2'           : '${and.port.host}:haud0001:${missing3}:8080',
                 'escaped.dollar'               : 'blah ${connection.host} blah'
         ]
@@ -115,7 +116,7 @@ class ResolvedMapTest extends Specification {
 
     def "test replaceAllEscapeCharsNotPrecededByEscapeChars"(String str, String expectedResult){
         when:
-        def result = ResolvedMap.replaceAllEscapeCharsNotPrecededByEscapeChars(str)
+        def result = MapResolver.replaceAllEscapeCharsNotPrecededByEscapeChars(str)
 
         then:
         assert result == expectedResult

@@ -1,0 +1,36 @@
+<commands>
+    <command id='list_files' name='list files' description='list files in current dir' command_line='ls'
+             condition_type='groovy' groovy_expression='true'/>
+    <command id='hello_world' name='hello world' description='prints out hello world'
+             command_line='echo Hello World!'>
+        <condition>
+            <or>
+                <equals col_name='Item' value='Skirt'/>
+                <not>
+                    <matches col_name='Item' regex='.*?Jacket'/>
+                </not>
+                <and>
+                    <greater_than col_name='price' value='18'/>
+                    <less_than col_name='price' value='21'/>
+                </and>
+            </or>
+        </condition>
+    </command>
+    <command id='cheap_stuff' name='cheap stuff' description='prints out Cheap Stuff!'
+             command_line='echo Cheap Stuff!'>
+        <condition>
+            <not>
+                <greater_than_or_equal_to col_name='price' value='6'/>
+            </not>
+        </condition>
+    </command>
+    <command id='kinda_cheap_stuff' name='kinda_cheap_stuff' description='prints out Kinda cheap stuff!'
+             command_line='echo Kinda cheap stuff!'>
+        <condition>
+            <and>
+                <greater_than_or_equal_to col_name='price' value='6'/>
+                <less_than_or_equal_to col_name='price' value='15'/>
+            </and>
+        </condition>
+    </command>
+</commands>

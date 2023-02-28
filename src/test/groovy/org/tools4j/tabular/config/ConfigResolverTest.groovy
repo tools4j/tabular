@@ -14,7 +14,7 @@ import static org.tools4j.tabular.config.ConfigUrlDownloader.encodeUrlToUseAsFil
 
 class ConfigResolverTest extends Specification {
     private static final String BASE_TEST_DIR = "src/test/resources/config-resolver"
-    private final static String FILE_WHICH_DOES_NOT_EXIST = "src/test/resources/blah-blah-blah";
+    private static final String FILE_WHICH_DOES_NOT_EXIST = "src/test/resources/blah-blah-blah";
 
     def setup() {
         assert !(new File(FILE_WHICH_DOES_NOT_EXIST)).exists()
