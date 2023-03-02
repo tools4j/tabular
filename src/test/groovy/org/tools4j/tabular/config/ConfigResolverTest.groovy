@@ -3,6 +3,7 @@ package org.tools4j.tabular.config
 import org.apache.commons.io.FileUtils
 import org.tools4j.tabular.properties.PropertiesRepo
 import org.tools4j.tabular.service.MapBackedSysPropOrEnvVarResolver
+import org.tools4j.tabular.util.CachingFileDownloaderImpl
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -10,7 +11,7 @@ import java.nio.file.Files
 import java.util.stream.Collectors
 
 import static org.spockframework.util.Assert.fail
-import static org.tools4j.tabular.config.ConfigUrlDownloader.encodeUrlToUseAsFilename
+import static org.tools4j.tabular.util.CachingFileDownloaderImpl.encodeUrlToUseAsFilename
 
 class ConfigResolverTest extends Specification {
     private static final String BASE_TEST_DIR = "src/test/resources/config-resolver"
@@ -112,7 +113,7 @@ class ConfigResolverTest extends Specification {
         propOrEnvVarResolver.put(ConfigResolver.TABULAR_CONFIG_FILE_URL_PROP, configFile1.toURI().toString())
         propOrEnvVarResolver.put(ConfigResolver.TABULAR_LOCAL_CONFIG_FILE_URL_PROP, "${configLocalFile1.toURI().toString()},${configLocalFile2.toURI().toString()}")
         propOrEnvVarResolver.put(ConfigResolver.TABULAR_TABLE_CSV_URL_PROP, "${tableCsvFile1.toURI().toString()},${tableCsvFile2.toURI().toString()}")
-        propOrEnvVarResolver.put(ConfigUrlDownloader.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
+        propOrEnvVarResolver.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
 
         when:
         ConfigReader config = new ConfigResolver(
@@ -177,7 +178,7 @@ class ConfigResolverTest extends Specification {
         propOrEnvVarResolver.put(ConfigResolver.TABULAR_CONFIG_FILE_URL_PROP, nonExistentConfigFile1Url)
         propOrEnvVarResolver.put(ConfigResolver.TABULAR_LOCAL_CONFIG_FILE_URL_PROP, nonExistentConfigLocalFile1Url)
         propOrEnvVarResolver.put(ConfigResolver.TABULAR_TABLE_CSV_URL_PROP, "$nonExistentTableCsvFile1Url,$nonExistentTableCsvFile2Url")
-        propOrEnvVarResolver.put(ConfigUrlDownloader.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
+        propOrEnvVarResolver.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
 
         when:
         ConfigReader config = new ConfigResolver(

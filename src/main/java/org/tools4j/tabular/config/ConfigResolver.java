@@ -1,6 +1,8 @@
 package org.tools4j.tabular.config;
 
 import org.apache.log4j.Logger;
+import org.tools4j.tabular.util.CachingFileDownloaderImpl;
+import org.tools4j.tabular.util.FileDownloader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +37,7 @@ public class ConfigResolver {
     private final SysPropAndEnvVarResolver sysPropAndEnvVarResolver;
     private final DirResolver workingDirResolver;
     private final DirResolver userDirResolver;
-    private final ConfigUrlDownloader configUrlDownloader;
+    private final FileDownloader fileDownloader;
 
     public ConfigResolver(){
         this(new SysPropAndEnvVarResolverImpl(), new WorkingDirResolver(), new UserDirResolver());
@@ -52,7 +54,7 @@ public class ConfigResolver {
         this.sysPropAndEnvVarResolver = sysPropAndEnvVarResolver;
         this.workingDirResolver = workingDirResolver;
         this.userDirResolver = userDirResolver;
-        this.configUrlDownloader = new ConfigUrlDownloader(userDirResolver, sysPropAndEnvVarResolver);
+        this.fileDownloader = new CachingFileDownloaderImpl(userDirResolver, sysPropAndEnvVarResolver);
     }
 
     public ConfigReader resolve(){
@@ -162,7 +164,7 @@ public class ConfigResolver {
         }
         List<Reader> files = new ArrayList<>();
         for (String urlStr : urls.get().split(",")) {
-            files.add(configUrlDownloader.downloadFile(urlStr));
+            files.add(fileDownloader.downloadFile(urlStr));
         }
         return files;
     }

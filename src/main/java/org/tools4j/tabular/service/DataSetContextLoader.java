@@ -5,6 +5,7 @@ import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.service.commands.CommandMetadataFromProperties;
 import org.tools4j.tabular.service.commands.CommandMetadataFromXml;
 import org.tools4j.tabular.service.commands.CommandMetadatas;
+import org.tools4j.tabular.service.datasets.DataSet;
 
 import static org.tools4j.tabular.util.Constants.COMMAND_XML_FILE;
 
@@ -15,13 +16,13 @@ import static org.tools4j.tabular.util.Constants.COMMAND_XML_FILE;
  */
 public class DataSetContextLoader {
     private final static Logger LOG = Logger.getLogger(DataSetContextLoader.class);
-    private final DataSet<RowFromMap> dataSet;
+    private final DataSet<? extends Row> dataSet;
     private final PropertiesRepo allProperties;
     private final PropertiesRepo environmentVariables;
     private final PropertiesRepo systemProperties;
 
     public DataSetContextLoader(
-            DataSet<RowFromMap> dataSet,
+            DataSet<? extends Row> dataSet,
             PropertiesRepo allProperties,
             PropertiesRepo environmentVariables,
             PropertiesRepo systemProperties) {
@@ -33,15 +34,6 @@ public class DataSetContextLoader {
     }
 
     public DataSetContext load() {
-        LOG.info("Loading column abbreviations");
-        final PropertiesRepo columnAbbreviations = allProperties.getWithPrefix("app.column.abbreviations");
-
-        final PropertiesRepo dataSetPropertiesWithAddedColumnAbbreviations = new PropertiesRepo();
-        for (final String columnName : columnAbbreviations.keySet()) {
-            final String abbreviation = columnAbbreviations.get(columnName);
-            dataSetPropertiesWithAddedColumnAbbreviations.put(abbreviation, "${" + columnName + "}");
-        }
-
         LOG.info("==================== Environment Variables ====================");
         LOG.info(environmentVariables.toPrettyString());
         allProperties.putAll(environmentVariables);
@@ -53,14 +45,10 @@ public class DataSetContextLoader {
         LOG.info("==================== Resolving all variables in properties ====================");
         final PropertiesRepo resolvedProperties = allProperties.resolveVariablesWithinValues();
 
-        LOG.info("==================== Configured abbreviations ====================");
-        LOG.info(dataSetPropertiesWithAddedColumnAbbreviations.toPrettyString());
-        resolvedProperties.putAll(dataSetPropertiesWithAddedColumnAbbreviations);
-
         LOG.info("==================== Final Resolved Properties ====================");
         LOG.info(resolvedProperties.toPrettyString());
 
-        LOG.info("Resolving variables in dataset table cells");
+        LOG.info("==================== Resolving variables in dataset table cells ====================");
         DataSet<RowFromMap> returnDataSet = dataSet.resolveVariablesInCells(allProperties, resolvedProperties);
 
         LOG.info("==================== Loading Command Metadata ====================");
@@ -81,7 +69,7 @@ public class DataSetContextLoader {
         DataSet<RowWithCommands> rowsWithCommands = returnDataSet.resolveCommands(commandMetadatas, resolvedProperties);
 
         long endTime = System.currentTimeMillis();
-        LOG.info("Finished loading dataset, took " + (endTime - startTime) + "ms");
+        LOG.info("Finished resolving commands, took " + (endTime - startTime) + "ms");
         return new DataSetContext(rowsWithCommands, commandMetadatas, resolvedProperties);
     }
 }

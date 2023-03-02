@@ -1,8 +1,8 @@
 package org.tools4j.tabular.service
 
+import org.tools4j.tabular.service.datasets.DataSet
+import org.tools4j.tabular.service.datasets.DataSetFromCsvFiles
 import spock.lang.Specification
-
-import java.util.function.Predicate
 
 /**
  * User: ben

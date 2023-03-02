@@ -1,9 +1,11 @@
 package org.tools4j.tabular.properties;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -29,15 +31,12 @@ public class MapResolver {
     private final java.util.regex.Pattern VARIABLE_PATTERN = java.util.regex.Pattern.compile("(?<!\\\\)\\$\\{([^\\}^(?:\\$\\{)]+)\\}");
     private final Map<String, String> otherResources;
 
-    public MapResolver(final Map<String, String> ... secondaryMaps) {
-        if(secondaryMaps.length == 0) otherResources = Collections.emptyMap();
-        else if(secondaryMaps.length == 1) otherResources = secondaryMaps[0];
-        else {
-            this.otherResources = new HashMap<>();
-            for (final Map<String, String> secondaryMap : secondaryMaps) {
-                this.otherResources.putAll(secondaryMap);
-            }
-        }    
+    public MapResolver() {
+        this(Collections.emptyMap());
+    }
+    
+    public MapResolver(final Map<String, String> otherResources) {
+        this.otherResources = otherResources;
     }
 
     /**
@@ -72,9 +71,10 @@ public class MapResolver {
      * </p>
      */
     public Map<String,String> resolve(Map<String, String> unresolvedMap){
+        final List<String> originalColumnNamesInOrder = new ArrayList<>(unresolvedMap.keySet()); 
         final Set<String> resolvedKeys = new HashSet<>(unresolvedMap.size());
         final Set<String> unresolvedKeys = new HashSet<>(unresolvedMap.size());
-        final Map<String, String> map = new LinkedHashMap<>(unresolvedMap.size() + otherResources.size());
+        final Map<String, String> map = new HashMap<>(unresolvedMap.size() + otherResources.size());
 
         //Initialize the maps and sets
         map.putAll(otherResources);
@@ -95,13 +95,9 @@ public class MapResolver {
 
         //Now just pull out items that were originally given in the unresolved map
         Map<String, String> returnMap = new LinkedHashMap<>(unresolvedMap.size());
-        for(final String key: resolvedKeys){
+        for(final String key: originalColumnNamesInOrder){
             returnMap.put(key, map.get(key));
         }
-        for(final String key: unresolvedKeys){
-            returnMap.put(key, map.get(key));
-        }
-
         returnMap = removeFirstEscapeFromEscapedVariableSymbols(returnMap);
         return returnMap;
     }

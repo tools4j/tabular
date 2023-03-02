@@ -1,15 +1,21 @@
-package org.tools4j.tabular.config;
+package org.tools4j.tabular.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.tools4j.tabular.config.DirResolver;
+import org.tools4j.tabular.config.SysPropAndEnvVarResolver;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class ConfigUrlDownloader {
-    private final static Logger LOG = Logger.getLogger(ConfigUrlDownloader.class);
+public class CachingFileDownloaderImpl implements FileDownloader {
+    private final static Logger LOG = Logger.getLogger(CachingFileDownloaderImpl.class);
 
     //Config
     public static final String TABULAR_CACHE_URL_DOWNLOADS_PROP = "tabular_cache_url_downloads";
@@ -17,11 +23,12 @@ public class ConfigUrlDownloader {
     private final SysPropAndEnvVarResolver sysPropAndEnvVarResolver;
     private final DirResolver userDirResolver;
 
-    public ConfigUrlDownloader(DirResolver userDirResolver, SysPropAndEnvVarResolver sysPropAndEnvVarResolver) {
+    public CachingFileDownloaderImpl(DirResolver userDirResolver, SysPropAndEnvVarResolver sysPropAndEnvVarResolver) {
         this.userDirResolver = userDirResolver;
         this.sysPropAndEnvVarResolver = sysPropAndEnvVarResolver;
     }
 
+    @Override
     public Reader downloadFile(String urlStr) {
         urlStr = urlStr.trim();
         try {

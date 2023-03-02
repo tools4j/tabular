@@ -1,9 +1,7 @@
 package org.tools4j.tabular.service
 
+import org.tools4j.tabular.service.commands.StringWithEmbeddedGroovy
 import spock.lang.Specification
-
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class StringWithEmbeddedGroovyTest extends Specification {
     def "Resolve simple"(String expression, String expectedResult) {

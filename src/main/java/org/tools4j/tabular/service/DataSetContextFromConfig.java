@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.tools4j.tabular.config.ConfigReader;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.properties.PropertiesRepoWithAdditionalTweakedContantStyleProperties;
+import org.tools4j.tabular.service.datasets.DataSet;
+import org.tools4j.tabular.service.datasets.DataSetFromFiles;
 
 /**
  * User: ben
@@ -40,7 +42,7 @@ public class DataSetContextFromConfig {
     private DataSetContext load(PropertiesRepo properties) {
         LOG.info("Loading DataSet CSV");
         final DataSetFromFiles dataSetFromFiles = new DataSetFromFiles(config.getTableCsvFiles());
-        DataSet dataSet = dataSetFromFiles.get();
+        DataSet<? extends Row> dataSet = dataSetFromFiles.load();
         final PropertiesRepo environmentVariables = new PropertiesRepoWithAdditionalTweakedContantStyleProperties(new EnvironmentVariables().load()).load();
         final PropertiesRepo systemProperties = new PropertiesRepoWithAdditionalTweakedContantStyleProperties(new SystemVariables().load()).load();
         return new DataSetContextLoader(dataSet, properties, environmentVariables, systemProperties).load();

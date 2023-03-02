@@ -1,7 +1,6 @@
 package org.tools4j.tabular.service.commands;
 
 import org.tools4j.tabular.service.RowFromMap;
-import org.tools4j.tabular.service.StringWithEmbeddedGroovy;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,13 +1,22 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.service.datasets;
 
-import java.util.*;
+import org.tools4j.tabular.service.CsvFile;
+import org.tools4j.tabular.service.RowFromMap;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * User: ben
  * Date: 25/10/17
  * Time: 6:37 AM
  */
-public class DataSetFromCsvFiles {
+public class DataSetFromCsvFiles implements DataSetLoader {
     private final List<CsvFile> csvFiles;
 
     public DataSetFromCsvFiles(CsvFile ... csvFiles) {
@@ -18,6 +27,7 @@ public class DataSetFromCsvFiles {
         this.csvFiles = csvFiles;
     }
 
+    @Override
     public DataSet<RowFromMap> load(){
         CsvFileData csvFileData = CsvFileData.EMPTY;
         for (CsvFile csvFile : csvFiles) {

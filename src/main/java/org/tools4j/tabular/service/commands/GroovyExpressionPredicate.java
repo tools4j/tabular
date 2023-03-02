@@ -1,7 +1,8 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.service.commands;
 
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.properties.StringResolver;
+import org.tools4j.tabular.service.Row;
 
 import java.util.function.Predicate;
 

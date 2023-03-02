@@ -1,15 +1,20 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.service.datasets;
 
 import org.tools4j.tabular.properties.MapResolver;
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.Pretty;
+import org.tools4j.tabular.service.Row;
+import org.tools4j.tabular.service.RowFromMap;
+import org.tools4j.tabular.service.RowWithCommands;
+import org.tools4j.tabular.service.TableWithColumnHeadings;
 import org.tools4j.tabular.service.commands.Command;
 import org.tools4j.tabular.service.commands.CommandMetadatas;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,7 +24,7 @@ import java.util.Objects;
  * Date: 24/10/17
  * Time: 6:57 AM
  */
-public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Pretty{
+public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Pretty {
     private final List<String> columns;
     private final List<T> table;
 
@@ -54,7 +59,7 @@ public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Prett
     }
 
     public DataSet<RowFromMap> resolveVariablesInCells(final PropertiesRepo... usingAdditionalProperties){
-        final Map<String, String> additionalProperties = new HashMap<>();
+        final Map<String, String> additionalProperties = new LinkedHashMap<>();
         for(int i=0; i<usingAdditionalProperties.length; i++){
             additionalProperties.putAll(usingAdditionalProperties[i].asMap());
         }
@@ -78,11 +83,15 @@ public class DataSet<T extends Row> implements TableWithColumnHeadings<T>, Prett
             rowWithCommands.add(rowWithResolvedCells);
         }
         System.out.println("");
-        return new DataSet(columns, rowWithCommands);
+        return new DataSet<>(columns, rowWithCommands);
     }
 
     @Override
     public boolean equals(Object o) {
+        return hasSameColumnsAndRowsAs(o);
+    }
+
+    public boolean hasSameColumnsAndRowsAs(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DataSet<?> dataSet = (DataSet<?>) o;

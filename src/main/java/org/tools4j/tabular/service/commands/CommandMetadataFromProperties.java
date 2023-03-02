@@ -2,7 +2,6 @@ package org.tools4j.tabular.service.commands;
 
 import org.apache.log4j.Logger;
 import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.service.GroovyExpressionPredicate;
 
 import java.util.ArrayList;
 import java.util.List;

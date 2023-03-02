@@ -1,4 +1,4 @@
-package org.tools4j.tabular.service;
+package org.tools4j.tabular.service.commands;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
