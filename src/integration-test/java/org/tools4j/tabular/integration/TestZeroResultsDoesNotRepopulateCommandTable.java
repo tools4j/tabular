@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.tools4j.tabular.javafx.ExecutionService;
 
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.hasText;
+import static org.testfx.matcher.control.TextMatchers.hasText;
 import static org.tools4j.tabular.integration.LauncherUtils.verifyCommandSearchMode;
 import static org.tools4j.tabular.integration.LauncherUtils.verifyDataSearchMode;
 
@@ -30,6 +30,7 @@ public class TestZeroResultsDoesNotRepopulateCommandTable extends AbstractLaunch
     @Test
     public void testZeroResultsDoesNotRepopulateCommandTable() throws InterruptedException {
         verifyDataSearchMode(false);
+        sleep(500);
         clickOn(Ids.dataSearchBox).write("Uat").type(KeyCode.ENTER, 2);
         verifyCommandSearchMode("hauu0001");
         clickOn(Ids.commandSearchBox).write("Open");

@@ -1,22 +1,42 @@
-# Tabular
-## Introduction
+# Introduction
 Tabular is a table based command launcher.
 
-As a software developer I always needed to manage a large number of our deployed applications across many environments. 
-Tabular allowed a table based lookup of host, port, config information for each deployed app.  
-As well as providing commands to ssh to hosts where our apps were running, opening a browser to view logs, etc.
-Saying that, tabular can be used to store and run commands from any type of data.
+## Managing Infrastructure
+It was primarily built as a way of managing a large number of deployed applications across many environments.  
 
-![alt text](img/launcher-initial-prompt.png)
+It allows a free-text based search across hosts, instances, environments application types, etc.
 
-You provide the table as a CSV file, and commands are defined in a properties file.
-Use free text search to filter data:
-![alt text](img/launcher-simple-search.png)
+Once a host/instance has been selected, a list of preconfigured commands is displayed and can be searched across,
+and executed.
 
-If you have commands defined, after selecting a data row, select the command you wish to run.
-![alt text](img/launcher-command-search.png)
+## Other uses
+Tabular is totally agnostic to the data it is given! 
 
-## Setup
+Although it was built for managing infrastructure,
+it can provide for free text searching across any sort of data, and provide a list of configured commands
+to execute using that data
+
+# Three step search and execute
+## Launch Tabular
+Tabular is launched via pre-configured hot-keys.  Once launched, a prompt is displayed.
+
+![launch initial prompt](img/launcher-initial-prompt.png)
+
+## Search Data
+The user can then use free-text based searching across the CSV dataset provided to tabular on startup.
+
+The user can then select a row to execute a command on.  (Or ESC to hide tabular again.)
+
+![search data](img/launcher-simple-search.png)
+
+## Search Command and Execute
+
+After a row is selected, a set of configured commands are displayed.  The user can search
+across these commands, and execute a chosen command (or ESC to return back to the data table search.)
+
+![search command and execute](img/launcher-command-search.png)
+
+# Setup
 1. Ensure you have a version of a Java greater than or equal to Java 8.
 2. Download the latest version of the Tabular zip from [here](dist), and unzip
    into your directory of choice.
@@ -26,8 +46,8 @@ some guidance.
    If this does not work, you can run: `java -jar tabular.jar` in the directory where the jar file
    is located.
 
-## Configuration reference
-### General properties
+# Configuration reference
+## General properties
 |property |description |
 |---|---|
 | hotkey.combinations.show |Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
@@ -36,16 +56,19 @@ some guidance.
 | app.columns.to.display.in.data.table |A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells. |
 | app.columns.to.index.in.data.table |A comma seperated list of columns names to index.  If property is not given, then all columns are indexed. |
 | app.column.abbreviations.<ColumnName> |Can be used to specify abbreviations for column names.  e.g. `app.column.abbreviations.Host=h` Can make for more concise variable names. |
-### Properties relevant when using commands
-|property |description |
-|---|---|
 | app.columns.to.display.in.command.table |  Can be used to dictate which columns to show in the command table, and in what order.  Options are: Name & Description. |
 | app.columns.to.index.in.command.table |A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed. |
 | app.data.column.to.display.when.selected | Dictates the column to display in the main prompt box when a row is selected. |
 | app.command.column.to.display.when.selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'. |
 | app.close.console.on.command.finish | Close Tabular once the command has finished running. Defaults to false. |
 | app.skip.command.browse.if.only.one.command.configured |  Defaults to false. |
-### Command definitions
+
+## Command definitions using properties (for small datasets)
+This method of configuring commands is fine when working with a small number of data rows, against a small number of commands.
+If you wish to work with a large dataset (e.g. > 500) against a large number of commands (e.g. > 20) then commands configured
+via XML is preferred as startup of Tabular will be much quicker.  This is down to the groovy predicate used to decide
+whether to display a command against particular row.  Executing thousands of
+groovy interpreters can take time.
 |property |description |
 |---|---|
 | app.commands.[commandName].name |Human readable name for the command. |
@@ -53,8 +76,8 @@ some guidance.
 | app.commands.[commandName].command |The command to run.  Again any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation.  Also embedded groovy can be used to calcuate dynamic values using {{[groovy to execute}} syntax.  See example below whiich gets yesterdays date. |
 | app.commands.[commandName].description |Human readable description for the command. |
 
-#### Config example including commands
-```
+### Properties config example including commands
+```properties
 hotkey.combinations.show=shift ctrl PLUS
 
 app.data.column.to.display.when.selected=App
@@ -72,6 +95,111 @@ app.commmands.cmder.name=ssh to box
 app.commmands.cmder.predicate=true
 app.commmands.cmder.command=${CMDER_HOME}/cmder.bat ${Host} "ls -al"
 app.commmands.cmder.description=ssh to  host name
+```
+
+## Command definitions using xml (preferred for large datasets)
+### Properties config example including commands
+#### config.properties
+```properties
+hotkey.combinations.show=shift ctrl PLUS
+
+app.data.column.to.display.when.selected=instance
+
+command.xml.file=commands.xml
+app.columns.to.display.in.data.table=app,instance,host,region,env,dc
+app.columns.to.display.in.command.table=Name,Description
+app.data.search.background.prompt.text=Search Infrastructure
+```
+#### commands.xml
+```xml
+<commands>
+  <command id='ssh_ro' name='ssh ro' description='Opens a read-only ssh shell' command_line='dummycommand ${host}'/>
+  <command id='ssh_rw' name='ssh rw' description='Opens a read-only ssh shell' command_line='dummycommand ${host}'/>
+  <command id='admin' name='admin' description='Opens admin command for host' command_line='dummycommand ${host}'/>
+  <command id='cron' name='cron' description='Opens cron admin tool' command_line='dummycommand ${host} ${instance}'/>
+  <command id='gui' name='gui' description='Opens web gui' command_line='dummycommand ${host}'>
+    <condition><equals col_name='app' value='http_server'/></condition>        
+  </command>        
+  <command id='proxy_admin' name='proxy admin' description='Opens proxy admin for the application' command_line='dummycommand ${host} ${instance}'>
+    <condition><equals col_name='app' value='http_server'/></condition>        
+  </command>
+  <command id='metrics' name='metrics' description='Opens metrics server portal for the app' command_line='dummycommand ${host} ${instance}'/>
+  <command id='deploy' name='deploy' description='Deploys this instance' command_line='dummycommand ${host} ${instance}'>
+    <not><equals col_name='env' value='prod'/></not>            
+  </command>
+  <command id='docs' name='docs' description='Opens documentation' command_line='dummycommand ${host} ${instance}'/>
+</commands>
+```
+### Conditional predicates
+If no ```condition``` tag is specified within a command definition, then the command 
+will be available for _every_ row.  If the ```condition``` tag is displayed, one or 
+more of the following logic tags can be used.
+
+#### equals
+Checks the value of a column
+```xml
+<equals col_name="env" value="prod"/>
+```
+
+#### matches
+Matches against the value of a column using regex (Java regex syntax is used.)
+```xml
+<matches col_name="host" regex=".*?tools4j.org"/>
+```
+
+#### greater_than_or_equal_to
+Checks if the numeric value of a cell in the row is greater than or equal
+to a given value.  The value can be a whole or decimal number.
+```xml
+<greater_than_or_equal_to col_name='price' value='6'/>
+```
+
+#### less_than_or_equal_to
+Checks if the numeric value of a cell in the row is less than or equal
+to a given value.  The value can be a whole or decimal number.
+```xml
+<less_than_or_equal_to col_name='price' value='3.2'/>
+```
+
+#### greater_than
+Checks if the numeric value of a cell in the row is greater than a given 
+value.  The value can be a whole or decimal number.
+```xml
+<greater_than col_name='price' value='6'/>
+```
+
+#### less_than
+Checks if the numeric value of a cell in the row is less than a given 
+value.  The value can be a whole or decimal number.
+```xml
+<less_than col_name='price' value='6'/>
+```
+
+#### and
+A 'parent' tag, resolves to true if _all_ of the child tags resolve to true.
+```xml
+<and>
+   <matches col_name='host' regex='.*?tools4j.org'/>
+   <greater_than_or_equal_to col_name='price' value='3'/>
+   <less_than col_name='price' value='6'/>
+</and>
+```
+
+#### or
+A 'parent' tag, resolves to true if _any_ of the child tags resolve to true.
+```xml
+<or>
+   <matches col_name='host' regex='.*?tools4j.org'/>
+   <greater_than col_name='price' value='400.25'/>
+</or>
+```
+
+#### not
+A 'parent' tag that can only have a single child, resolves to true if it's child resolves to false.
+```xml
+<not>
+   <matches col_name='host' regex='.*?tools4j.org'/>
+</not>
 ```
 
 ## CSV file format

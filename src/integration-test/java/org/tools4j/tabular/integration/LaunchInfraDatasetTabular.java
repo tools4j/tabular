@@ -2,9 +2,9 @@ package org.tools4j.tabular.integration;
 
 import java.io.File;
 
-public class LaunchLargeDatasetTabular {
+public class LaunchInfraDatasetTabular {
     public static void main(String[] args) {
-        File configDirFile = new File("src/integration-test/resources/table_large");
+        File configDirFile = new File("src/integration-test/resources/table_infra");
         String configDir = configDirFile.getAbsolutePath();
         System.out.println("Using config dir of: " + configDir);
         System.setProperty("tabular_config_dir", configDir);
