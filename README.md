@@ -1,5 +1,5 @@
 # Introduction
-Tabular is a table based command launcher.
+Tabular is a free-text searchable table based command launcher.
 
 ## Managing Infrastructure
 It was primarily built as a way of managing a large number of deployed applications across many environments.  
