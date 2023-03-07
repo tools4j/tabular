@@ -2,6 +2,10 @@ package org.tools4j.tabular.service
 
 import org.tools4j.tabular.properties.PropertiesFromString
 import org.tools4j.tabular.properties.PropertiesRepo
+import org.tools4j.tabular.service.commands.Command
+import org.tools4j.tabular.service.commands.CommandMetadata
+import org.tools4j.tabular.service.commands.CommandMetadataFromProperties
+import org.tools4j.tabular.service.commands.CommandMetadatas
 import spock.lang.Specification
 
 /**

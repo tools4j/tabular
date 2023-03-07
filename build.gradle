@@ -1,16 +1,20 @@
-group 'org.tools4j'
-version '3.2'
-
-apply plugin: 'groovy'
-apply plugin: 'java'
-apply plugin: 'javafx-gradle-plugin'
-
 buildscript {
     repositories { jcenter() }
     dependencies {
         classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2'
     }
 }
+
+plugins {
+  id 'com.github.jk1.dependency-license-report' version '1.17'
+}
+
+group 'org.tools4j'
+version '4.0'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'javafx-gradle-plugin'
 
 repositories {
     mavenCentral()
@@ -32,32 +36,15 @@ dependencies {
     compile 'commons-io:commons-io:2.6'
     compile 'org.apache.lucene:lucene-core:8.3.0'
     compile 'org.apache.lucene:lucene-queryparser:8.3.0'
+    compile 'org.apache.commons:commons-text:1.10.0'
 
     testCompile 'junit:junit:4.4'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'org.hamcrest:hamcrest-core:1.3'
     testCompile 'org.tools4j:groovy-tables:1.6'
-    testCompile 'org.testfx:testfx-core:4.0.8-alpha'
-    testCompile 'org.testfx:testfx-junit:4.0.8-alpha'
 
     testRuntime 'cglib:cglib-nodep:3.1'          // allows mocking of classes (in addition to interfaces)
     testRuntime 'org.objenesis:objenesis:2.1'    // allows mocking of classes without default constructor (together with CGLIB)
-}
-
-sourceSets {
-    integrationTest {
-        java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir file('src/integration-test/java')
-        }
-        resources.srcDir file('src/integration-test/resources')
-    }
-}
-
-configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
 }
 
 task copyAdditionalResources(type: Copy) {
@@ -82,7 +69,6 @@ task createTabularZip(type: Zip) {
     archiveName "tabular-${version}.zip"
     destinationDir(file('build/dist/zip/'))
 }
-
 
 task buildTabularZip {
     group 'build'

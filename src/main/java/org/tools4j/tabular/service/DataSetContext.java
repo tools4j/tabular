@@ -1,6 +1,10 @@
 package org.tools4j.tabular.service;
 
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.commands.Command;
+import org.tools4j.tabular.service.commands.CommandMetadata;
+import org.tools4j.tabular.service.commands.CommandMetadatas;
+import org.tools4j.tabular.service.datasets.DataSet;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.Arrays;
@@ -17,7 +21,7 @@ public class DataSetContext {
     public static final String APP_COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED = "app.command.column.to.display.when.selected";
     public static final String APP_COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE = "app.columns.to.display.in.command.table";
     public static final String APP_COLUMNS_TO_INDEX_IN_COMMAND_TABLE = "app.columns.to.index.in.command.table";
-    public static final String APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "app.columns.to.display.in.data.table";
+    public static final String APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "<matcheapp.columns.to.display.in.data.table";
     public static final String APP_COLUMNS_TO_INDEX_IN_DATA_TABLE = "app.columns.to.index.in.data.table";
     public static final String APP_DATA_SEARCH_ABBREVIATION_PREFIX = "app.data.search.abbreviation.";
     public static final String APP_COMMAND_SEARCH_ABBREVIATION_PREFIX = "app.command.search.abbreviation.";

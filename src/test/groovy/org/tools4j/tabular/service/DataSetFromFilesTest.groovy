@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service
 
-
+import org.tools4j.tabular.service.datasets.DataSet
+import org.tools4j.tabular.service.datasets.DataSetFromFiles
 import spock.lang.Specification
 
 class DataSetFromFilesTest extends Specification {
@@ -10,7 +11,7 @@ class DataSetFromFilesTest extends Specification {
         expect:
         DataSet<RowFromMap> dataSet = new DataSetFromFiles([
                 new FileReader(new File("$BASE_TEST_DIR/1/table.csv")),
-        ]).get()
+        ]).load()
 
         assert dataSet.columnHeadings == ["columnA", "columnB"]
         assert dataSet.size() == 2
@@ -25,7 +26,7 @@ class DataSetFromFilesTest extends Specification {
                 new FileReader(new File("$BASE_TEST_DIR/1/table.csv")),
                 new FileReader(new File("$BASE_TEST_DIR/2/table.csv")),
                 new FileReader(new File("$BASE_TEST_DIR/2/non-default-named-table.csv"))
-        ]).get()
+        ]).load()
 
         assert dataSet.columnHeadings == ["columnA", "columnB"]
         assert dataSet.size() == 6
@@ -44,7 +45,7 @@ class DataSetFromFilesTest extends Specification {
                 new FileReader(new File("$BASE_TEST_DIR/1/table.csv")),
                 new FileReader(new File("$BASE_TEST_DIR/2/table-with-different-column-headings.csv")),
                 new FileReader(new File("$BASE_TEST_DIR/2/non-default-named-table.csv"))
-        ]).get()
+        ]).load()
 
         then:
         Exception e = thrown()
