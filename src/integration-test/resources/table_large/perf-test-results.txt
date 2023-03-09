@@ -1,0 +1,35 @@
+TEST 1: 2022-02-28
+- Using groovy predicates
+- Using full map resolution on every command/row resolution
+- 100 rows
+- 50 commands with a predicate of env != prod
+- 100 * 50 = 5,000 command instances
+Results: 77,683ms
+
+TEST 2: 2022-02-28
+- Same as TEST 1, but with a re-used Groovy shell
+Results: 83,835ms
+(Rolling change back)
+
+TEST 3: 2022-02-28
+- Same as TEST 1, but with smarter map resolution, i.e. don't solve complete map every time a command is resolved
+Results: 54913ms
+
+TEST 4: 2022-02-28
+- Same as TEST 1, but:
+  with smarter map resolution
+  using xml to define commands
+Results 305ms  
+
+TEST 5: 2022-08-28
+- 2160 rows
+- 1000 commands
+= 1000 * 2160 = 2,160,000
+= 9953ms
+
+TEST 6: 2022-08-28
+As with TEST 5, except using Apache StringSubstitutor
+- 2160 rows
+- 1000 commands
+= 1000 * 2160 = 2,160,000
+= 4841ms
