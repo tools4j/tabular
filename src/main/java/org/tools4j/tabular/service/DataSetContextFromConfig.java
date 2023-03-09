@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.config.ConfigReader;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.properties.PropertiesRepoWithAdditionalTweakedContantStyleProperties;
@@ -13,7 +14,7 @@ import org.tools4j.tabular.service.datasets.DataSetFromFiles;
  * Time: 4:36 PM
  */
 public class DataSetContextFromConfig {
-    private final static Logger LOG = Logger.getLogger(DataSetContextFromConfig.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DataSetContextFromConfig.class);
     private final ConfigReader config;
 
     public DataSetContextFromConfig(final ConfigReader config) {

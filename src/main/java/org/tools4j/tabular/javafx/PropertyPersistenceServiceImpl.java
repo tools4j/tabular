@@ -1,6 +1,7 @@
 package org.tools4j.tabular.javafx;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +14,7 @@ import java.util.Properties;
  * Time: 6:43 AM
  */
 public class PropertyPersistenceServiceImpl implements PropertyPersistenceService {
-    private final static Logger LOG = Logger.getLogger(PropertyPersistenceServiceImpl.class);
+    private final static Logger LOG = LoggerFactory.getLogger(PropertyPersistenceServiceImpl.class);
     private final String propertiesFileNameWithoutExtension;
     private final Properties properties;
     

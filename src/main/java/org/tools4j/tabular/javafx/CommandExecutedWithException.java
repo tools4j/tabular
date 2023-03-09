@@ -1,7 +1,8 @@
 package org.tools4j.tabular.javafx;
 
 import javafx.scene.control.TextArea;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
 
 /**
@@ -10,7 +11,7 @@ import org.tools4j.tabular.service.PostExecutionBehaviour;
  * Time: 7:04 AM
  */
 public class CommandExecutedWithException implements ExecutingCommand {
-    private final static Logger LOG = Logger.getLogger(CommandExecutedWithException.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CommandExecutedWithException.class);
     private final TextArea outputConsole;
     private final PostExecutionBehaviour postExecutionBehaviour;
     private final Throwable exception;

@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.service.commands.CommandMetadataFromProperties;
 import org.tools4j.tabular.service.commands.CommandMetadataFromXml;
@@ -15,7 +16,7 @@ import static org.tools4j.tabular.util.Constants.COMMAND_XML_FILE;
  * Time: 4:36 PM
  */
 public class DataSetContextLoader {
-    private final static Logger LOG = Logger.getLogger(DataSetContextLoader.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DataSetContextLoader.class);
     private final DataSet<? extends Row> dataSet;
     private final PropertiesRepo allProperties;
     private final PropertiesRepo environmentVariables;

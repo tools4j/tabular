@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service.commands;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
  * Time: 6:15 PM
  */
 public class CommandMetadataFromProperties {
-    private final static Logger LOG = Logger.getLogger(CommandMetadata.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CommandMetadata.class);
     private final PropertiesRepo propertiesRepo;
 
     public CommandMetadataFromProperties(final PropertiesRepo propertiesRepo) {

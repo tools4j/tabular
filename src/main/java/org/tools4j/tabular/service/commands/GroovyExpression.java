@@ -2,7 +2,8 @@ package org.tools4j.tabular.service.commands;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * User: ben
@@ -10,7 +11,7 @@ import org.apache.log4j.Logger;
  * Time: 5:14 PM
  */
 public class GroovyExpression<T> {
-    private final static Logger LOG = Logger.getLogger(GroovyExpression.class);
+    private final static Logger LOG = LoggerFactory.getLogger(GroovyExpression.class);
     private final String groovyExpression;
     private final Class<?> expectedReturnType;
 

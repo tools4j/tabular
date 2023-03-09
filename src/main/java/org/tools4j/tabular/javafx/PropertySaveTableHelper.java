@@ -4,14 +4,15 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PropertySaveTableHelper<T> {
-    private final static Logger LOG = Logger.getLogger(PropertySaveTableHelper.class);
+    private final static Logger LOG = LoggerFactory.getLogger(PropertySaveTableHelper.class);
 
     private final PropertyPersistenceService propertyPersistenceService;
     private final String tableName;

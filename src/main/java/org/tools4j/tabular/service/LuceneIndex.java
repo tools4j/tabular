@@ -1,6 +1,5 @@
 package org.tools4j.tabular.service;
 
-import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -9,9 +8,15 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +26,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class LuceneIndex<T extends Row> {
-    private final static Logger LOG = Logger.getLogger(LuceneIndex.class);
+    private final static Logger LOG = LoggerFactory.getLogger(LuceneIndex.class);
     private Analyzer analyzer;
     private QueryParser queryParser;
     private Directory index;

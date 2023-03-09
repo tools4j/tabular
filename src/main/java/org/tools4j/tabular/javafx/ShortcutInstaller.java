@@ -5,7 +5,8 @@ import com.tulskiy.keymaster.common.Provider;
 import javafx.application.Platform;
 import javafx.scene.control.Control;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ import javax.swing.*;
  * Time: 6:53 AM
  */
 public class ShortcutInstaller {
-    private final static Logger LOG = Logger.getLogger(ShortcutInstaller.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ShortcutInstaller.class);
     private final Stage stage;
     private final Control componentToFocus;
     private final String[] hotKeyCombinations;

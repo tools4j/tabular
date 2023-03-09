@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service.commands;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.properties.StringResolver;
 import org.tools4j.tabular.service.Pretty;
@@ -20,7 +21,7 @@ import java.util.function.Predicate;
  * Time: 6:15 PM
  */
 public class CommandMetadata extends RowFromMap implements Predicate<Row>, Pretty {
-    private final static Logger LOG = Logger.getLogger(CommandMetadata.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CommandMetadata.class);
     private final String id;
     private final String name;
     private final Predicate<Row> predicate;

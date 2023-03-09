@@ -27,7 +27,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.service.AsyncIndex;
 import org.tools4j.tabular.service.DataSetContext;
 import org.tools4j.tabular.service.LuceneIndex;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
  * Time: 7:14 AM
  */
 public class LauncherPresenter implements Initializable {
-    private final static Logger LOG = Logger.getLogger(LauncherPresenter.class);
+    private final static Logger LOG = LoggerFactory.getLogger(LauncherPresenter.class);
 
     @FXML
     public Label textTitle;
