@@ -15,7 +15,7 @@ import java.util.List;
  * Time: 5:52 PM
  */
 public class ExecutionServiceImpl implements ExecutionService {
-    private final static Logger LOG = LoggerFactory.getLogger(LauncherPresenter.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ExecutionServiceImpl.class);
     private final List<ExecutingCommand> executedCommands;
 
     public ExecutionServiceImpl() {
