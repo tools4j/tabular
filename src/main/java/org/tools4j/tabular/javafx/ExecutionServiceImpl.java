@@ -1,7 +1,8 @@
 package org.tools4j.tabular.javafx;
 
 import javafx.scene.control.TextArea;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
 import org.tools4j.tabular.service.commands.Command;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * Time: 5:52 PM
  */
 public class ExecutionServiceImpl implements ExecutionService {
-    private final static Logger LOG = Logger.getLogger(LauncherPresenter.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ExecutionServiceImpl.class);
     private final List<ExecutingCommand> executedCommands;
 
     public ExecutionServiceImpl() {
@@ -43,7 +44,7 @@ public class ExecutionServiceImpl implements ExecutionService {
             return executingCommand;
 
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Exception:",e);
             throw e;
         }
     }

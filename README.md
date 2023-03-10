@@ -254,7 +254,7 @@ typed a
 ### Capturing keystrokes to get a value for hotkey.combinations.show
 To 'capture' a keystroke combination to use within Tabular, you can run the jkeymaster 'key grabber' application.  You can start it by running something like this on the command line:
 ```
-java -cp lib/jkeymaster-1.2.jar com.tulskiy.keymaster.AWTTest
+java -cp lib/jkeymaster-1.3.jar com.tulskiy.keymaster.AWTTest
 ```
 (jkeymaster jar is distributed with Tabular)
 If you're running on Windows, I've provided a key-grabber.bat file in the distribution which you can use.

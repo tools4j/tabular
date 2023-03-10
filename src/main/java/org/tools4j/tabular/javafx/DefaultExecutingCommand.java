@@ -1,7 +1,8 @@
 package org.tools4j.tabular.javafx;
 
 import javafx.scene.control.TextArea;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +11,6 @@ import java.io.InputStreamReader;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 
 /**
  * User: ben
@@ -18,7 +18,7 @@ import java.util.function.Function;
  * Time: 6:35 AM
  */
 public class DefaultExecutingCommand implements ExecutingCommand {
-    private final static Logger LOG = Logger.getLogger(DefaultExecutingCommand.class);
+    private final static Logger LOG = LoggerFactory.getLogger(DefaultExecutingCommand.class);
 
     private final Process process;
     private final Runnable onFinish;
@@ -88,7 +88,7 @@ public class DefaultExecutingCommand implements ExecutingCommand {
             });
 
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error("Exception:", e);
         }
     }
 

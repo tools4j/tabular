@@ -1,7 +1,8 @@
 package org.tools4j.tabular.util;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.config.DirResolver;
 import org.tools4j.tabular.config.SysPropAndEnvVarResolver;
 
@@ -15,7 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class CachingFileDownloaderImpl implements FileDownloader {
-    private final static Logger LOG = Logger.getLogger(CachingFileDownloaderImpl.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CachingFileDownloaderImpl.class);
 
     //Config
     public static final String TABULAR_CACHE_URL_DOWNLOADS_PROP = "tabular_cache_url_downloads";

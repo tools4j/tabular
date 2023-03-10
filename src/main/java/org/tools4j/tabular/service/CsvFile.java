@@ -1,9 +1,16 @@
 package org.tools4j.tabular.service;
 
-import com.opencsv.CSVIterator;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +20,7 @@ import java.util.List;
  * Time: 6:58 AM
  */
 public class CsvFile {
+    private final static Logger LOG = LoggerFactory.getLogger(CsvFile.class);
     public static final char DEFAULT_DELIMITER = ',';
     public static final Character DEFAULT_QUOTE = null;
 
@@ -49,18 +57,20 @@ public class CsvFile {
     public List<String[]> getRows(){
         final List<String[]> rows = new ArrayList<>();
         try {
-            final CSVReader csvReader;
+            CSVParserBuilder csvParserBuilder = new CSVParserBuilder().withSeparator(delimiter);
             if(quote != null){
-                csvReader = new CSVReader(reader, delimiter, quote);
-            } else {
-                csvReader = new CSVReader(reader, delimiter);
+                csvParserBuilder.withQuoteChar(quote);
             }
-            final CSVIterator iterator = new CSVIterator(csvReader);
-            while(iterator.hasNext()) {
-                rows.add(iterator.next());
+            final CSVParser csvParser = csvParserBuilder.build();
+            try(CSVReader csvReader = new CSVReaderBuilder(reader).withCSVParser(csvParser).build()){
+                while(csvReader.peek() != null) {
+                    rows.add(csvReader.readNext());
+                }
+            } catch (Exception e){
+                throw new IllegalStateException(e);        
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.error("Exception whilst parsing CSV file", e);
         }
         return rows;
     }

@@ -1,11 +1,12 @@
 package org.tools4j.tabular.config;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 public class SysPropAndEnvVarResolverImpl implements SysPropAndEnvVarResolver {
-    private final static Logger LOG = Logger.getLogger(SysPropAndEnvVarResolverImpl.class);
+    private final static Logger LOG = LoggerFactory.getLogger(SysPropAndEnvVarResolverImpl.class);
 
     @Override
     public Optional<String> resolve(String propOrEnvVarName) {

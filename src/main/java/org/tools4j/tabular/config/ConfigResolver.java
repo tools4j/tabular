@@ -1,6 +1,7 @@
 package org.tools4j.tabular.config;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.util.CachingFileDownloaderImpl;
 import org.tools4j.tabular.util.FileDownloader;
 
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ConfigResolver {
-    private final static Logger LOG = Logger.getLogger(ConfigResolver.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ConfigResolver.class);
 
     //File urls
     public static final String TABULAR_CONFIG_FILE_URL_PROP = "tabular_config_file_url";

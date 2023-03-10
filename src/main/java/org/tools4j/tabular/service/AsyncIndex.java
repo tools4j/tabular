@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -8,7 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 public class AsyncIndex<T extends Row> {
-    private final static Logger LOG = Logger.getLogger(LuceneIndex.class);
+    private final static Logger LOG = LoggerFactory.getLogger(LuceneIndex.class);
     private final LuceneIndex<T> luceneIndex;
     private final BlockingQueue<String> queryQueue;
     private final Consumer<List<T>> callback;

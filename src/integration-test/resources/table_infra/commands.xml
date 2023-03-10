@@ -1,0 +1,17 @@
+<commands>
+  <command id='ssh_ro' name='ssh ro' description='Opens a read-only ssh shell' command_line='dummycommand ${host}'/>
+  <command id='ssh_rw' name='ssh rw' description='Opens a read-only ssh shell' command_line='dummycommand ${host}'/>
+  <command id='admin' name='admin' description='Opens admin command for host' command_line='dummycommand ${host}'/>
+  <command id='cron' name='cron' description='Opens cron admin tool' command_line='dummycommand ${host} ${instance}'/>
+  <command id='gui' name='gui' description='Opens web gui' command_line='dummycommand ${host}'>
+    <condition><equals col_name='app' value='http_server'/></condition>        
+  </command>        
+  <command id='proxy_admin' name='proxy admin' description='Opens proxy admin for the application' command_line='dummycommand ${host} ${instance}'>
+    <condition><equals col_name='app' value='http_server'/></condition>        
+  </command>
+  <command id='metrics' name='metrics' description='Opens metrics server portal for the app' command_line='dummycommand ${host} ${instance}'/>
+  <command id='deploy' name='deploy' description='Deploys this instance' command_line='dummycommand ${host} ${instance}'>
+    <not><equals col_name='env' value='prod'/></not>            
+  </command>
+  <command id='docs' name='docs' description='Opens documentation' command_line='dummycommand ${host} ${instance}'/>
+</commands>
