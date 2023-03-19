@@ -1,6 +1,6 @@
 package org.tools4j.tabular.service
 
-import org.tools4j.tabular.service.commands.StringWithEmbeddedGroovy
+import org.tools4j.tabular.commands.StringWithEmbeddedGroovy
 import spock.lang.Specification
 
 class StringWithEmbeddedGroovyTest extends Specification {

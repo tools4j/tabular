@@ -2,11 +2,11 @@ package org.tools4j.tabular.util
 
 import org.tools4j.groovytables.Row
 import org.tools4j.groovytables.Rows
-import org.tools4j.tabular.service.datasets.DataSet
-import org.tools4j.tabular.service.datasets.DataSetFromListOfMaps
+import org.tools4j.tabular.datasets.DataSet
+import org.tools4j.tabular.datasets.DataSetFromListOfMaps
 
 class TestUtils {
-    public static DataSet<org.tools4j.tabular.service.Row> dataSetFromRows(Rows rows) {
+    public static DataSet<org.tools4j.tabular.datasets.Row> dataSetFromRows(Rows rows) {
         List<Map<String, String>> table = new ArrayList<>();
         Iterator<Row> rowsIterator = rows.iterator()
         while(rowsIterator.hasNext()){

@@ -4,7 +4,7 @@ import javafx.scene.control.TextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
-import org.tools4j.tabular.service.commands.Command;
+import org.tools4j.tabular.commands.Command;
 
 import java.util.ArrayList;
 import java.util.List;

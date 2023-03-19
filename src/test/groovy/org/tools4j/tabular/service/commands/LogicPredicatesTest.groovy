@@ -1,8 +1,8 @@
 package org.tools4j.tabular.service.commands
 
-
-import org.tools4j.tabular.service.Row
-import org.tools4j.tabular.service.RowFromMap
+import org.tools4j.tabular.commands.LogicPredicate
+import org.tools4j.tabular.datasets.Row
+import org.tools4j.tabular.datasets.RowFromMap
 import spock.lang.Specification
 import spock.lang.Unroll
 

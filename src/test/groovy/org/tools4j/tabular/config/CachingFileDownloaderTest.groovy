@@ -1,7 +1,7 @@
 package org.tools4j.tabular.config
 
 import org.apache.commons.io.FileUtils
-import org.tools4j.tabular.service.MapBackedSysPropOrEnvVarResolver
+import org.tools4j.tabular.properties.PropertiesRepo
 import org.tools4j.tabular.util.CachingFileDownloaderImpl
 import org.tools4j.tabular.util.FileDownloader
 import spock.lang.Specification
@@ -23,12 +23,12 @@ class CachingFileDownloaderTest extends Specification {
         File tempUserDir = createTempDir()
         File file = new File("$BASE_TEST_DIR/1/non-default-named-config.properties");
         String fileUrl = file.toURI().toString()
-        MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
-        propOrEnvVarResolver.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
+        PropertiesRepo propertiesRepo = new PropertiesRepo();
+        propertiesRepo.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
 
         FileDownloader fileDownloader = new CachingFileDownloaderImpl(
                 new DummyDirResolver(tempUserDir.absolutePath),
-                propOrEnvVarResolver)
+                propertiesRepo)
 
         when:
         Reader downloadedFile = fileDownloader.downloadFile(fileUrl)
@@ -43,12 +43,12 @@ class CachingFileDownloaderTest extends Specification {
         File tempUserDir = createTempDir()
         File file = new File(FILE_WHICH_DOES_NOT_EXIST);
         String fileUrl = file.toURI().toString()
-        MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
-        propOrEnvVarResolver.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "false")
+        PropertiesRepo propertiesRepo = new PropertiesRepo();
+        propertiesRepo.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "false")
 
         FileDownloader fileDownloader = new CachingFileDownloaderImpl(
                 new DummyDirResolver(tempUserDir.absolutePath),
-                propOrEnvVarResolver)
+                propertiesRepo)
 
         when:
         fileDownloader.downloadFile(fileUrl)
@@ -69,11 +69,11 @@ class CachingFileDownloaderTest extends Specification {
         File cachedFile = new File("$cacheDir.absolutePath/${encodeUrlToUseAsFilename(nonExistentFileUrl)}.cached");
         FileUtils.copyFile(realFileToCopyToCache, cachedFile)
 
-        MapBackedSysPropOrEnvVarResolver propOrEnvVarResolver = new MapBackedSysPropOrEnvVarResolver();
-        propOrEnvVarResolver.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
+        PropertiesRepo propertiesRepo = new PropertiesRepo();
+        propertiesRepo.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
         FileDownloader fileDownloader = new CachingFileDownloaderImpl(
                 new DummyDirResolver(tempUserDir.absolutePath),
-                propOrEnvVarResolver
+                propertiesRepo
         )
 
         when:

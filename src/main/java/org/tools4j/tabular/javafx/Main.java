@@ -14,10 +14,8 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tools4j.tabular.config.ConfigReader;
-import org.tools4j.tabular.config.ConfigResolver;
-import org.tools4j.tabular.service.DataSetContext;
-import org.tools4j.tabular.service.DataSetContextFromConfig;
+import org.tools4j.tabular.datasets.DataSetContext;
+import org.tools4j.tabular.datasets.DataSetContextLoader;
 
 public class Main extends Application {
     private final static Logger LOG = LoggerFactory.getLogger(Main.class);
@@ -37,16 +35,15 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         if(System.getProperties().containsKey("logging.level")){
             setLoggingLevel(Level.toLevel(System.getProperty("logging.level")));
         }
 
-        final DataSetContext appContext;
-        try(ConfigReader config = new ConfigResolver().resolve()) {
-            appContext = new DataSetContextFromConfig(config).load();
-        }
+        LOG.info("==================== Loading config and csv ====================");
+        DataSetContext appContext = new DataSetContextLoader().load();
 
+        LOG.info("==================== Starting GUI ====================");
         Injector.setModelOrService(DataSetContext.class, appContext);
         Injector.setModelOrService(Stage.class, primaryStage);
         Injector.setModelOrService(ExecutionService.class, executionService);

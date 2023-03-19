@@ -1,11 +1,13 @@
 package org.tools4j.tabular.service
 
+import org.tools4j.tabular.datasets.Row
+import org.tools4j.tabular.datasets.RowFromMap
 import org.tools4j.tabular.properties.PropertiesFromString
 import org.tools4j.tabular.properties.PropertiesRepo
-import org.tools4j.tabular.service.commands.Command
-import org.tools4j.tabular.service.commands.CommandMetadata
-import org.tools4j.tabular.service.commands.CommandMetadataFromProperties
-import org.tools4j.tabular.service.commands.CommandMetadatas
+import org.tools4j.tabular.commands.Command
+import org.tools4j.tabular.commands.CommandMetadata
+import org.tools4j.tabular.commands.CommandMetadataFromProperties
+import org.tools4j.tabular.commands.CommandMetadatas
 import spock.lang.Specification
 
 /**

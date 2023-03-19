@@ -7,7 +7,6 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -42,8 +41,8 @@ public class PropertiesRepo {
         this(new PropertiesFromFile(file).resolve());
     }
 
-    public PropertiesRepo(final List<Reader> files) {
-        this(new PropertiesFromReaders(files).resolve());
+    public PropertiesRepo(final Reader files) {
+        this(new PropertiesFromReader(files).resolve());
     }
 
     public PropertiesRepo(final String pathAndFilenameOfPropertiesFileWithoutExtension) {

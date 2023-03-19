@@ -1,8 +1,9 @@
 package org.tools4j.tabular.service
 
-import org.tools4j.tabular.service.datasets.DataSet
-import org.tools4j.tabular.service.datasets.DataSetFromColumnsAndListOfMaps
-import org.tools4j.tabular.service.datasets.DataSetFromCsvFiles
+import org.tools4j.tabular.datasets.CsvFile
+import org.tools4j.tabular.datasets.DataSet
+import org.tools4j.tabular.datasets.DataSetFromColumnsAndListOfMaps
+import org.tools4j.tabular.datasets.DataSetFromCsvFile
 import spock.lang.Specification
 
 /**
@@ -13,7 +14,7 @@ import spock.lang.Specification
 class DataSetFromCsvFileTest extends Specification {
     def "GetData with column headings"() {
         given:
-        DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromFileLocation("src/test/resources/csv-test/table.csv"));
+        DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(CsvFile.fromFileLocation("src/test/resources/csv-test/table.csv"));
 
         when:
         DataSet data = csvDataFile.load();

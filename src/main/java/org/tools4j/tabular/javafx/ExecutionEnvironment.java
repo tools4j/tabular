@@ -3,7 +3,7 @@ package org.tools4j.tabular.javafx;
 import javafx.scene.control.TextArea;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
-import org.tools4j.tabular.service.commands.Command;
+import org.tools4j.tabular.commands.Command;
 
 /**
  * User: ben

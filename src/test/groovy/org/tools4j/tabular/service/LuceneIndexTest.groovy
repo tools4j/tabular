@@ -1,7 +1,9 @@
 package org.tools4j.tabular.service
 
-import org.tools4j.tabular.service.datasets.DataSet
-import org.tools4j.tabular.service.datasets.DataSetFromCsvFiles
+import org.tools4j.tabular.datasets.CsvFile
+import org.tools4j.tabular.datasets.RowFromMap
+import org.tools4j.tabular.datasets.DataSet
+import org.tools4j.tabular.datasets.DataSetFromCsvFile
 import spock.lang.Specification
 
 /**
@@ -37,7 +39,7 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
 
     def "test search basic"() {
         given:
-        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
+        final DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(CsvFile.fromReader(new StringReader(csv)));
 
         when:
         final DataSet<RowFromMap> dataSet = csvDataFile.load();
@@ -56,7 +58,7 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
 
     def "test with two terms"() {
         given:
-        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
+        final DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(CsvFile.fromReader(new StringReader(csv)));
 
         when:
         final DataSet<RowFromMap> dataSet = csvDataFile.load();
@@ -70,7 +72,7 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
 
     def "test with one term, and a partial second term"() {
         given:
-        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
+        final DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(CsvFile.fromReader(new StringReader(csv)));
 
         when:
         final DataSet<RowFromMap> dataSet = csvDataFile.load();
@@ -85,7 +87,7 @@ hauu0012,hauu0012.tools4j.com,uat,uat-12,messaging,~/messaging,~/messaging/logs,
 
     def "test with two terms, filter on columns to index"() {
         given:
-        final DataSetFromCsvFiles csvDataFile = new DataSetFromCsvFiles(CsvFile.fromReader(new StringReader(csv)));
+        final DataSetFromCsvFile csvDataFile = new DataSetFromCsvFile(CsvFile.fromReader(new StringReader(csv)));
 
         final DataSet<RowFromMap> dataSet = csvDataFile.load();
         final LuceneIndex index = new LuceneIndex(

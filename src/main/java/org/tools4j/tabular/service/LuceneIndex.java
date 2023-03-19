@@ -17,6 +17,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tools4j.tabular.datasets.Row;
 
 import java.io.IOException;
 import java.util.ArrayList;

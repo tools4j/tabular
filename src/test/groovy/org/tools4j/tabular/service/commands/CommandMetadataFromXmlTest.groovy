@@ -1,8 +1,13 @@
 package org.tools4j.tabular.service.commands
 
+import org.tools4j.tabular.commands.CommandMetadata
+import org.tools4j.tabular.commands.CommandMetadataFromXml
+import org.tools4j.tabular.commands.CommandMetadatas
+import org.tools4j.tabular.commands.GroovyExpressionPredicate
+import org.tools4j.tabular.commands.LogicPredicate
 import org.tools4j.tabular.properties.PropertiesRepo
-import org.tools4j.tabular.service.Row
-import org.tools4j.tabular.service.RowFromMap
+import org.tools4j.tabular.datasets.Row
+import org.tools4j.tabular.datasets.RowFromMap
 import org.tools4j.tabular.util.Constants
 import spock.lang.Specification
 

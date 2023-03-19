@@ -1,8 +1,10 @@
 package org.tools4j.tabular.service
 
+import org.tools4j.tabular.datasets.Row
+import org.tools4j.tabular.datasets.RowFromMap
 import org.tools4j.tabular.properties.PropertiesFromString
 import org.tools4j.tabular.properties.PropertiesRepo
-import org.tools4j.tabular.service.commands.GroovyExpressionPredicate
+import org.tools4j.tabular.commands.GroovyExpressionPredicate
 import spock.lang.Specification
 
 /**
