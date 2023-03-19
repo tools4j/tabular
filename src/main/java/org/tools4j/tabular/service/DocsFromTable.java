@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service;
 
 import org.apache.lucene.document.*;
+import org.tools4j.tabular.datasets.Row;
 
 import java.util.ArrayList;
 import java.util.List;

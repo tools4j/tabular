@@ -1,6 +1,7 @@
 package org.tools4j.tabular.service
 
 import org.tools4j.groovytables.GroovyTables
+import org.tools4j.tabular.datasets.CsvFile
 import spock.lang.Specification
 
 /**

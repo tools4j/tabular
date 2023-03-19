@@ -4,7 +4,6 @@ import java.io.Reader;
 import java.util.List;
 
 public interface ConfigReader extends AutoCloseable {
-    List<Reader> getTableCsvFiles();
     List<Reader> getConfigPropertiesFiles();
     List<Reader> getLocalConfigPropertiesFiles();
 }

@@ -30,13 +30,13 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.service.AsyncIndex;
-import org.tools4j.tabular.service.DataSetContext;
+import org.tools4j.tabular.datasets.DataSetContext;
 import org.tools4j.tabular.service.LuceneIndex;
 import org.tools4j.tabular.service.PostExecutionBehaviour;
-import org.tools4j.tabular.service.Row;
-import org.tools4j.tabular.service.RowWithCommands;
-import org.tools4j.tabular.service.commands.Command;
-import org.tools4j.tabular.service.commands.CommandMetadata;
+import org.tools4j.tabular.datasets.Row;
+import org.tools4j.tabular.datasets.RowWithCommands;
+import org.tools4j.tabular.commands.Command;
+import org.tools4j.tabular.commands.CommandMetadata;
 import org.tools4j.tabular.util.Utils;
 
 import javax.inject.Inject;
