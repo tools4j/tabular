@@ -63,18 +63,32 @@ some guidance.
 | app.close.console.on.command.finish | Close Tabular once the command has finished running. Defaults to false. |
 | app.skip.command.browse.if.only.one.command.configured |  Defaults to false. |
 
-## Command definitions using properties (for small datasets)
+# Command definitions
+## Using properties or xml to define commands
+Command definitions can be defined in the older deprecated method of using properties.  Or by using the preferred method 
+of defining commands in an xml file.  The disadvantage of using properties to define commands is that the predicate (the
+expression to decide if a command is valid for a row) is run as a groovy expression. Executing thousands of groovy 
+(one-per-row-per-command) can take time.  The xml predicates are translated to pure java and run much faster.
+
+## Expressions
+Command expressions are compiled using freemarker.  Within your expression, you can use variables from:
+* Columns from the current row.
+* Properties defined within config.properties
+* Properties defined within config-local.properties (if it exists)
+* Any system properties
+* Any environment variables
+
+## Command definitions using properties (deprecated)
 This method of configuring commands is fine when working with a small number of data rows, against a small number of commands.
 If you wish to work with a large dataset (e.g. > 500) against a large number of commands (e.g. > 20) then commands configured
-via XML is preferred as startup of Tabular will be much quicker.  This is down to the groovy predicate used to decide
-whether to display a command against particular row.  Executing thousands of
-groovy interpreters can take time.
+via XML is preferred as startup of Tabular will be much quicker.
 |property |description |
 |---|---|
 | app.commands.[commandName].name |Human readable name for the command. |
 | app.commands.[commandName].predicate |The predicate to use for whether the command is available for a certain data row. The value can be any valid groovy code. Any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation. See examples below under `app.commmands.startApplication.predicate` which checks to see that the environment is not prod. If no predicate is specified, then the command will always be displayed. |
 | app.commands.[commandName].command |The command to run.  Again any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation.  Also embedded groovy can be used to calcuate dynamic values using {{[groovy to execute}} syntax.  See example below whiich gets yesterdays date. |
 | app.commands.[commandName].description |Human readable description for the command. |
+
 
 ### Properties config example including commands
 ```properties
@@ -97,7 +111,7 @@ app.commmands.cmder.command=${CMDER_HOME}/cmder.bat ${Host} "ls -al"
 app.commmands.cmder.description=ssh to  host name
 ```
 
-## Command definitions using xml (preferred for large datasets)
+## Command definitions using xml
 ### Properties config example including commands
 #### config.properties
 ```properties
@@ -259,7 +273,3 @@ java -cp lib/jkeymaster-1.3.jar com.tulskiy.keymaster.AWTTest
 (jkeymaster jar is distributed with Tabular)
 If you're running on Windows, I've provided a key-grabber.bat file in the distribution which you can use.
 It will create a small window, with a small edit box which you can click into, and enter your keystrokes of choice.  The keystrokes are printed out in the format required to configure Tabular's hotkey.
-
-## Acknowledgements
-- jkeymaster is used to provide hotkey support.  https://github.com/tulskiy/jkeymaster
-- OpenCSV is used to parse the table.csv file: http://opencsv.sourceforge.net/

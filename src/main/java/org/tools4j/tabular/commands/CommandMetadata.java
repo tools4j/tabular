@@ -2,11 +2,11 @@ package org.tools4j.tabular.commands;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.properties.StringResolver;
 import org.tools4j.tabular.service.Pretty;
 import org.tools4j.tabular.datasets.Row;
 import org.tools4j.tabular.datasets.RowFromMap;
+import org.tools4j.tabular.service.datasets.Expression;
+import org.tools4j.tabular.service.datasets.ExpressionCompiler;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ public class CommandMetadata extends RowFromMap implements Predicate<Row>, Prett
     private final Predicate<Row> predicate;
     private final String command;
     private final String description;
+    private Expression commandExpression;
 
     public CommandMetadata(String id, final String name, final Predicate<Row> predicate, final String command, final String description) {
         super(asMap(name, command, description));
@@ -37,8 +38,15 @@ public class CommandMetadata extends RowFromMap implements Predicate<Row>, Prett
         this.description = description;
     }
 
-    public Command getCommandInstance(final Row row, final PropertiesRepo properties){
-        return new Command(id, name, description, new StringResolver(properties.asMap(), row).resolve(command));
+    public void compile(ExpressionCompiler commandCompiler){
+        commandExpression = commandCompiler.compile(command);
+    }
+    
+    public Command getCommandInstance(final Row row){
+        if(commandExpression == null){
+            throw new IllegalStateException("commandExpression has not yet been compiled for expression [" + command + "]");
+        }
+        return new Command(id, name, description, commandExpression.resolve(row));
     }
 
     public String getName() {
