@@ -1,8 +1,8 @@
 package org.tools4j.tabular.service.datasets;
 
 import freemarker.template.Template;
+import org.tools4j.tabular.datasets.Row;
 import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.service.Row;
 
 import java.io.StringWriter;
 import java.util.Map;

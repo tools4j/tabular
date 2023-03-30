@@ -5,10 +5,10 @@ import org.tools4j.tabular.commands.CommandMetadataFromXml
 import org.tools4j.tabular.commands.CommandMetadatas
 import org.tools4j.tabular.commands.GroovyExpressionPredicate
 import org.tools4j.tabular.commands.LogicPredicate
-import org.tools4j.tabular.properties.PropertiesRepo
+import org.tools4j.tabular.config.TabularProperties
 import org.tools4j.tabular.datasets.Row
 import org.tools4j.tabular.datasets.RowFromMap
-import org.tools4j.tabular.util.Constants
+import org.tools4j.tabular.properties.PropertiesRepo
 import spock.lang.Specification
 
 import java.util.function.Predicate
@@ -17,7 +17,7 @@ class CommandMetadataFromXmlTest extends Specification {
     def "Load"() {
         given:
         PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(Constants.COMMAND_XML_FILE, "src/test/resources/table_with_xml_config/commands.xml")
+        propertiesRepo.put(TabularProperties.COMMAND_XML_FILE, "src/test/resources/table_with_xml_config/commands.xml")
         CommandMetadataFromXml commandMetadataFromXml = new CommandMetadataFromXml(propertiesRepo);
         CommandMetadatas commands = commandMetadataFromXml.load();
         

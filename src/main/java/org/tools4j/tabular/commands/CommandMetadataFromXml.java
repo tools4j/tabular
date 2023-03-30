@@ -1,7 +1,7 @@
 package org.tools4j.tabular.commands;
 
+import org.tools4j.tabular.config.TabularProperties;
 import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.util.Constants;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -25,9 +25,9 @@ public class CommandMetadataFromXml {
     }
 
     private static InputStream loadFile(PropertiesRepo propertiesRepo) {
-        String commandXmlFilePath = propertiesRepo.get(Constants.COMMAND_XML_FILE, null);
+        String commandXmlFilePath = propertiesRepo.get(TabularProperties.COMMAND_XML_FILE, null);
         if(commandXmlFilePath == null){
-            throw new IllegalStateException("Property must be specified with path to xml file '" + Constants.COMMAND_XML_FILE + "'");
+            throw new IllegalStateException("Property must be specified with path to xml file '" + TabularProperties.COMMAND_XML_FILE + "'");
         }
         try {
             return new FileInputStream(new File(commandXmlFilePath));

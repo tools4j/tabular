@@ -24,7 +24,7 @@ class CachingFileDownloaderTest extends Specification {
         File file = new File("$BASE_TEST_DIR/1/non-default-named-config.properties");
         String fileUrl = file.toURI().toString()
         PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
+        propertiesRepo.put(TabularProperties.CACHE_URL_DOWNLOADS, "true")
 
         FileDownloader fileDownloader = new CachingFileDownloaderImpl(
                 new DummyDirResolver(tempUserDir.absolutePath),
@@ -44,7 +44,7 @@ class CachingFileDownloaderTest extends Specification {
         File file = new File(FILE_WHICH_DOES_NOT_EXIST);
         String fileUrl = file.toURI().toString()
         PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "false")
+        propertiesRepo.put(TabularProperties.CACHE_URL_DOWNLOADS, "false")
 
         FileDownloader fileDownloader = new CachingFileDownloaderImpl(
                 new DummyDirResolver(tempUserDir.absolutePath),
@@ -70,7 +70,7 @@ class CachingFileDownloaderTest extends Specification {
         FileUtils.copyFile(realFileToCopyToCache, cachedFile)
 
         PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(CachingFileDownloaderImpl.TABULAR_CACHE_URL_DOWNLOADS_PROP, "true")
+        propertiesRepo.put(TabularProperties.CACHE_URL_DOWNLOADS, "true")
         FileDownloader fileDownloader = new CachingFileDownloaderImpl(
                 new DummyDirResolver(tempUserDir.absolutePath),
                 propertiesRepo

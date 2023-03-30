@@ -7,6 +7,7 @@ import javafx.scene.control.Control;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tools4j.tabular.config.TabularProperties;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import javax.swing.*;
@@ -23,7 +24,7 @@ public class ShortcutInstaller {
     private final String[] hotKeyCombinations;
 
     public ShortcutInstaller(final Stage stage, final Control componentToFocus, final PropertiesRepo propertiesRepo) {
-        this(stage, componentToFocus, propertiesRepo.get("hotkey.combinations.show").split(","));
+        this(stage, componentToFocus, propertiesRepo.get(TabularProperties.HOTKEY_COMBINATIONS_SHOW).split(","));
     }
 
     public ShortcutInstaller(final Stage stage, final Control componentToFocus, final String[] hotKeyCombinations) {

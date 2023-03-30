@@ -1,13 +1,13 @@
 package org.tools4j.tabular.service
 
-import org.tools4j.tabular.datasets.Row
-import org.tools4j.tabular.datasets.RowFromMap
-import org.tools4j.tabular.properties.PropertiesFromString
-import org.tools4j.tabular.properties.PropertiesRepo
 import org.tools4j.tabular.commands.Command
 import org.tools4j.tabular.commands.CommandMetadata
 import org.tools4j.tabular.commands.CommandMetadataFromProperties
 import org.tools4j.tabular.commands.CommandMetadatas
+import org.tools4j.tabular.datasets.Row
+import org.tools4j.tabular.datasets.RowFromMap
+import org.tools4j.tabular.properties.PropertiesFromString
+import org.tools4j.tabular.properties.PropertiesRepo
 import org.tools4j.tabular.service.datasets.ExpressionCompiler
 import org.tools4j.tabular.service.datasets.FreemarkerCompiler
 import spock.lang.Specification
@@ -36,7 +36,7 @@ class CommandMetadataTest extends Specification {
             app.commmands.tailAppLog.predicate='${e}' == 'prod'
             app.commmands.tailAppLog.command=ssh ${h} && cd ${l} && tail -f ${.data_model["app.log.filename"]}
             
-            app.log.filename=app.log
+            log_filename=app.log
         ''').load());
 
         commandsMetadata = new CommandMetadataFromProperties(propertiesRepo).load()

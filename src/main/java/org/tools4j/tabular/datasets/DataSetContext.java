@@ -1,14 +1,22 @@
 package org.tools4j.tabular.datasets;
 
-import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.commands.Command;
 import org.tools4j.tabular.commands.CommandMetadata;
 import org.tools4j.tabular.commands.CommandMetadatas;
+import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+
+import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE;
+import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_DISPLAY_IN_DATA_TABLE;
+import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_INDEX_IN_COMMAND_TABLE;
+import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_INDEX_IN_DATA_TABLE;
+import static org.tools4j.tabular.config.TabularProperties.COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED;
+import static org.tools4j.tabular.config.TabularProperties.DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED;
+import static org.tools4j.tabular.config.TabularProperties.SKIP_COMMAND_BROWSE_IF_ONLY_ONE_COMMAND_CONFIGURED;
 
 /**
  * User: ben
@@ -16,14 +24,6 @@ import java.util.function.Predicate;
  * Time: 5:25 PM
  */
 public class DataSetContext {
-    public static final String APP_DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED = "app.data.column.to.display.when.selected";
-    public static final String APP_COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED = "app.command.column.to.display.when.selected";
-    public static final String APP_COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE = "app.columns.to.display.in.command.table";
-    public static final String APP_COLUMNS_TO_INDEX_IN_COMMAND_TABLE = "app.columns.to.index.in.command.table";
-    public static final String APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "<matcheapp.columns.to.display.in.data.table";
-    public static final String APP_COLUMNS_TO_INDEX_IN_DATA_TABLE = "app.columns.to.index.in.data.table";
-    public static final String APP_DATA_SEARCH_ABBREVIATION_PREFIX = "app.data.search.abbreviation.";
-    public static final String APP_COMMAND_SEARCH_ABBREVIATION_PREFIX = "app.command.search.abbreviation.";
     private final DataSet<RowWithCommands> dataSet;
     private final PropertiesRepo properties;
     private final CommandMetadatas commandMetadatas;
@@ -68,7 +68,7 @@ public class DataSetContext {
     }
 
     public boolean skipCommandSearch() {
-        return (commandMetadatas.size() == 1 && properties.getAsBoolean("app.skip.command.browse.if.only.one.command.configured", false));
+        return (commandMetadatas.size() == 1 && properties.getAsBoolean(SKIP_COMMAND_BROWSE_IF_ONLY_ONE_COMMAND_CONFIGURED, false));
     }
 
     public boolean zeroCommandsConfigured() {
@@ -76,7 +76,7 @@ public class DataSetContext {
     }
 
     public List<String> getDataColumnsToDisplay() {
-        final String configuredColumnsToDisplayInTable = properties.get(APP_COLUMNS_TO_DISPLAY_IN_DATA_TABLE);
+        final String configuredColumnsToDisplayInTable = properties.get(COLUMNS_TO_DISPLAY_IN_DATA_TABLE);
         if(configuredColumnsToDisplayInTable != null){
             return Arrays.asList(configuredColumnsToDisplayInTable.split(","));
         } else {
@@ -84,16 +84,8 @@ public class DataSetContext {
         }
     }
 
-    public String getDataSearchAbbreviation(String text){
-        return properties.get(APP_DATA_SEARCH_ABBREVIATION_PREFIX + text);
-    }
-
-    public String getCommandSearchAbbreviation(String text){
-        return properties.get(APP_COMMAND_SEARCH_ABBREVIATION_PREFIX + text);
-    }
-
     public List<String> getDataColumnsToIndex() {
-        final String configuredColumnsToDisplayInTable = properties.get(APP_COLUMNS_TO_INDEX_IN_DATA_TABLE);
+        final String configuredColumnsToDisplayInTable = properties.get(COLUMNS_TO_INDEX_IN_DATA_TABLE);
         if(configuredColumnsToDisplayInTable != null){
             return Arrays.asList(configuredColumnsToDisplayInTable.split(","));
         } else {
@@ -102,7 +94,7 @@ public class DataSetContext {
     }
 
     public List<String> getCommandColumnsToDisplay() {
-        final String configuredColumnsToDisplayInTable = properties.get(APP_COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE);
+        final String configuredColumnsToDisplayInTable = properties.get(COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE);
         if(configuredColumnsToDisplayInTable != null){
             return Arrays.asList(configuredColumnsToDisplayInTable.split(","));
         } else {
@@ -111,7 +103,7 @@ public class DataSetContext {
     }
 
     public List<String> getCommandColumnsToIndex() {
-        final String configuredColumnsToDisplayInTable = properties.get(APP_COLUMNS_TO_INDEX_IN_COMMAND_TABLE);
+        final String configuredColumnsToDisplayInTable = properties.get(COLUMNS_TO_INDEX_IN_COMMAND_TABLE);
         if(configuredColumnsToDisplayInTable != null){
             return Arrays.asList(configuredColumnsToDisplayInTable.split(","));
         } else {
@@ -128,10 +120,10 @@ public class DataSetContext {
     }
 
     public String getValueToDisplayWhenDataRowSelected(final Row selectedRow, final String query) {
-        final String configuredColumnToDisplayInTable = properties.get(APP_DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED);
+        final String configuredColumnToDisplayInTable = properties.get(DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED);
         if(configuredColumnToDisplayInTable != null){
             if(!dataSet.getColumnHeadings().contains(configuredColumnToDisplayInTable)){
-                throw new IllegalArgumentException("The column specified in the property " + APP_DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED
+                throw new IllegalArgumentException("The column specified in the property " + DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED
                                                     + "=" + configuredColumnToDisplayInTable + " must be a valid data column.  e.g. "
                                                     + "one of: " + dataSet.getColumnHeadings());
             } else {
@@ -143,10 +135,10 @@ public class DataSetContext {
     }
 
     public String getValueToDisplayWhenCommandRowSelected(final Row selectedRow, final String query) {
-        final String configuredColumnToDisplayInTable = properties.get(APP_COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED);
+        final String configuredColumnToDisplayInTable = properties.get(COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED);
         if(configuredColumnToDisplayInTable != null){
             if(!Command.getCommandTableColumnHeadings().contains(configuredColumnToDisplayInTable)){
-                throw new IllegalArgumentException("The column specified in the property " + APP_COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED
+                throw new IllegalArgumentException("The column specified in the property " + COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED
                         + "=" + configuredColumnToDisplayInTable + " must be a valid command table column.  e.g. "
                         + "one of: " + Command.getCommandTableColumnHeadings());
             } else {
