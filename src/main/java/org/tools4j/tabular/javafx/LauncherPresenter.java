@@ -29,21 +29,20 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tools4j.tabular.service.AsyncIndex;
-import org.tools4j.tabular.datasets.DataSetContext;
-import org.tools4j.tabular.service.LuceneIndex;
-import org.tools4j.tabular.service.PostExecutionBehaviour;
-import org.tools4j.tabular.datasets.Row;
-import org.tools4j.tabular.datasets.RowWithCommands;
 import org.tools4j.tabular.commands.Command;
 import org.tools4j.tabular.commands.CommandMetadata;
-import org.tools4j.tabular.util.Utils;
+import org.tools4j.tabular.config.TabularProperties;
+import org.tools4j.tabular.datasets.DataSetContext;
+import org.tools4j.tabular.datasets.Row;
+import org.tools4j.tabular.datasets.RowWithCommands;
+import org.tools4j.tabular.service.AsyncIndex;
+import org.tools4j.tabular.service.LuceneIndex;
+import org.tools4j.tabular.service.PostExecutionBehaviour;
 
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -163,7 +162,7 @@ public class LauncherPresenter implements Initializable {
                             consoleLabel.getStyleClass().removeAll("error", "running");
                             consoleLabel.getStyleClass().add("finished");
                             consoleLabel.setText("Finished. Press [ENTER] to minimize.  [ESC] to run another command.");
-                            if(dataSetContext.getProperties().getAsBoolean("app.close.console.on.command.finish", false)){
+                            if(dataSetContext.getProperties().getAsBoolean(TabularProperties.CLOSE_CONSOLE_ON_COMMAND_FINISH, true)){
                                 exitConsoleCollapseAndMinimize();
                             }
                         });
@@ -306,16 +305,6 @@ public class LauncherPresenter implements Initializable {
 
                 } else if (e.getCode() == KeyCode.SPACE) {
                     LOG.debug("Space key pressed");
-                    String searchText = dataSearchBox.getText();
-                    Optional<String> lastWordInSearchText = Utils.getLastWordInText(searchText);
-                    if(lastWordInSearchText.isPresent()){
-                        String replacement = dataSetContext.getDataSearchAbbreviation(lastWordInSearchText.get());
-                        if(replacement != null){
-                            String newText = Utils.replaceLastWordWith(searchText, replacement);
-                            dataSearchBox.setText(newText);
-                            dataSearchBox.positionCaret(dataSearchBox.getText().length());
-                        }
-                    }
 
                 } else if (e.isControlDown() && !e.isShiftDown()) {
                     if (e.getCode() == KeyCode.R) {
@@ -357,16 +346,6 @@ public class LauncherPresenter implements Initializable {
 
                 } else if (e.getCode() == KeyCode.SPACE) {
                     LOG.debug("Space key pressed");
-                    String searchText = commandSearchBox.getText();
-                    Optional<String> lastWordInSearchText = Utils.getLastWordInText(searchText);
-                    if(lastWordInSearchText.isPresent()){
-                        String replacement = dataSetContext.getCommandSearchAbbreviation(lastWordInSearchText.get());
-                        if(replacement != null){
-                            String newText = Utils.replaceLastWordWith(searchText, replacement);
-                            commandSearchBox.setText(newText);
-                            commandSearchBox.positionCaret(commandSearchBox.getText().length());
-                        }
-                    }
 
                 } else if (e.isControlDown() && !e.isShiftDown()) {
                     if (e.getCode() == KeyCode.R) {
@@ -516,7 +495,7 @@ public class LauncherPresenter implements Initializable {
     private void updateDataSearchBackgroundText(){
         if(dataSearchBox.getText().isEmpty()){
             if(dataSearchBoxBackgroundLabel.getText().isEmpty()) {
-                dataSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("app.data.search.background.prompt.text", ""));
+                dataSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get(TabularProperties.DATA_SEARCH_BACKGROUND_PROMPT_TEXT, ""));
             }
         } else {
             if(!dataSearchBoxBackgroundLabel.getText().isEmpty()){
@@ -528,7 +507,7 @@ public class LauncherPresenter implements Initializable {
     private void updateCommandSearchBackgroundText(){
         if(commandSearchBox.getText().isEmpty()){
             if(commandSearchBoxBackgroundLabel.getText().isEmpty()) {
-                commandSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get("app.command.search.background.prompt.text", ""));
+                commandSearchBoxBackgroundLabel.setText(dataSetContext.getProperties().get(TabularProperties.COMMAND_SEARCH_BACKGROUND_PROMPT_TEXT, ""));
             }
         } else {
             if(!commandSearchBoxBackgroundLabel.getText().isEmpty()){

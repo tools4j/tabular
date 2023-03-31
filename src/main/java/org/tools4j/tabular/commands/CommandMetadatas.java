@@ -3,6 +3,7 @@ package org.tools4j.tabular.commands;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.service.Pretty;
 import org.tools4j.tabular.datasets.Row;
+import org.tools4j.tabular.service.datasets.ExpressionCompiler;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.ArrayList;
@@ -29,6 +30,12 @@ public class CommandMetadatas implements Pretty {
         return new CommandMetadatas(commandMetadataById.values().stream().filter((commandMetadata -> commandMetadata.test(row))).collect(Collectors.toList()));
     }
 
+    public void compile(ExpressionCompiler compiler){
+        for (CommandMetadata value : commandMetadataById.values()) {
+            value.compile(compiler);
+        }
+    }
+    
     public int size() {
         return commandMetadataById.size();
     }
@@ -42,7 +49,7 @@ public class CommandMetadatas implements Pretty {
     }
 
     public List<Command> getCommandInstances(final Row row, final PropertiesRepo properties) {
-        return getCommandsFor(row).commandMetadataById.values().stream().map((commandMetadata -> commandMetadata.getCommandInstance(row, properties))).collect(Collectors.toList());
+        return getCommandsFor(row).commandMetadataById.values().stream().map((commandMetadata -> commandMetadata.getCommandInstance(row))).collect(Collectors.toList());
     }
 
     @Override

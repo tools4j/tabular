@@ -48,27 +48,39 @@ some guidance.
 
 # Configuration reference
 ## General properties
-|property |description |
-|---|---|
-| hotkey.combinations.show |Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
-| app.data.search.background.prompt.text |Prompt to display when searching for data |
-| app.command.search.background.prompt.text |Prompt to display when searching for command |
-| app.columns.to.display.in.data.table |A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells. |
-| app.columns.to.index.in.data.table |A comma seperated list of columns names to index.  If property is not given, then all columns are indexed. |
-| app.column.abbreviations.<ColumnName> |Can be used to specify abbreviations for column names.  e.g. `app.column.abbreviations.Host=h` Can make for more concise variable names. |
-| app.columns.to.display.in.command.table |  Can be used to dictate which columns to show in the command table, and in what order.  Options are: Name & Description. |
-| app.columns.to.index.in.command.table |A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed. |
-| app.data.column.to.display.when.selected | Dictates the column to display in the main prompt box when a row is selected. |
-| app.command.column.to.display.when.selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'. |
-| app.close.console.on.command.finish | Close Tabular once the command has finished running. Defaults to false. |
-| app.skip.command.browse.if.only.one.command.configured |  Defaults to false. |
+|property | description                                                                                                                                                                                                                                        |
+|---|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| hotkey_combinations_show | Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
+| data_search_background_prompt_text | Prompt to display when searching for data                                                                                                                                                                                                          |
+| command_search_background_prompt_text | Prompt to display when searching for command                                                                                                                                                                                                       |
+| columns_to_display_in_data_table | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells.       |
+| columns_to_index_in_data_table | A comma seperated list of columns names to index.  If property is not given, then all columns are indexed.                                                                                                                                         |
+| columns_to_display_in_command_table | Can be used to dictate which columns to show in the command table, and in what order.  Options are: Name & Description.                                                                                                                            |
+| columns_to_index_in_command_table | A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed.                                                                                                      |
+| data_column_to_display_when_selected | Dictates the column to display in the main prompt box when a row is selected.                                                                                                                                                                      |
+| command_column_to_display_when_selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'.                                                                                                                                                |
+| close_console_on_command_finish | Close Tabular once the command has finished running. Defaults to true.                                                                                                                                                                             |
+| skip_command_browse_if_only_one_command_configured | Defaults to false.                                                                                                                                                                                                                                 |
 
-## Command definitions using properties (for small datasets)
+# Command definitions
+## Using properties or xml to define commands
+Command definitions can be defined in the older deprecated method of using properties.  Or by using the preferred method 
+of defining commands in an xml file.  The disadvantage of using properties to define commands is that the predicate (the
+expression to decide if a command is valid for a row) is run as a groovy expression. Executing thousands of groovy 
+(one-per-row-per-command) can take time.  The xml predicates are translated to pure java and run much faster.
+
+## Expressions
+Command expressions are compiled using freemarker.  Within your expression, you can use variables from:
+* Columns from the current row.
+* Properties defined within config.properties
+* Properties defined within config-local.properties (if it exists)
+* Any system properties
+* Any environment variables
+
+## Command definitions using properties (deprecated)
 This method of configuring commands is fine when working with a small number of data rows, against a small number of commands.
 If you wish to work with a large dataset (e.g. > 500) against a large number of commands (e.g. > 20) then commands configured
-via XML is preferred as startup of Tabular will be much quicker.  This is down to the groovy predicate used to decide
-whether to display a command against particular row.  Executing thousands of
-groovy interpreters can take time.
+via XML is preferred as startup of Tabular will be much quicker.
 |property |description |
 |---|---|
 | app.commands.[commandName].name |Human readable name for the command. |
@@ -76,15 +88,16 @@ groovy interpreters can take time.
 | app.commands.[commandName].command |The command to run.  Again any cell values, System Variables, Environment Variables can be referenced using the ${myVar} notation.  Also embedded groovy can be used to calcuate dynamic values using {{[groovy to execute}} syntax.  See example below whiich gets yesterdays date. |
 | app.commands.[commandName].description |Human readable description for the command. |
 
+
 ### Properties config example including commands
 ```properties
-hotkey.combinations.show=shift ctrl PLUS
+hotkey_combinations_show=shift ctrl PLUS
 
-app.data.column.to.display.when.selected=App
-app.command.column.to.display.when.selected=Name
+data_column_to_display_when_selected=App
+command_column_to_display_when_selected=Name
 
-data.search.background.prompt.text=App Search
-command.search.background.prompt.text=Command Search
+data_search_background_prompt_text=App Search
+command_search_background_prompt_text=Command Search
 
 app.commmands.openLog.name=display logs
 app.commmands.openLog.predicate=true
@@ -97,15 +110,15 @@ app.commmands.cmder.command=${CMDER_HOME}/cmder.bat ${Host} "ls -al"
 app.commmands.cmder.description=ssh to  host name
 ```
 
-## Command definitions using xml (preferred for large datasets)
+## Command definitions using xml
 ### Properties config example including commands
 #### config.properties
 ```properties
-hotkey.combinations.show=shift ctrl PLUS
+hotkey_combinations_show=shift ctrl PLUS
 
-app.data.column.to.display.when.selected=instance
+data_column_to_display_when_selected=instance
 
-command.xml.file=commands.xml
+command_xml_file=commands.xml
 app.columns.to.display.in.data.table=app,instance,host,region,env,dc
 app.columns.to.display.in.command.table=Name,Description
 app.data.search.background.prompt.text=Search Infrastructure
@@ -259,7 +272,3 @@ java -cp lib/jkeymaster-1.3.jar com.tulskiy.keymaster.AWTTest
 (jkeymaster jar is distributed with Tabular)
 If you're running on Windows, I've provided a key-grabber.bat file in the distribution which you can use.
 It will create a small window, with a small edit box which you can click into, and enter your keystrokes of choice.  The keystrokes are printed out in the format required to configure Tabular's hotkey.
-
-## Acknowledgements
-- jkeymaster is used to provide hotkey support.  https://github.com/tulskiy/jkeymaster
-- OpenCSV is used to parse the table.csv file: http://opencsv.sourceforge.net/

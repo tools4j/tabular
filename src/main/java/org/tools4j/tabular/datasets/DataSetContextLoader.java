@@ -11,9 +11,11 @@ import org.tools4j.tabular.config.DirResolver;
 import org.tools4j.tabular.config.UserDirResolver;
 import org.tools4j.tabular.config.WorkingDirResolver;
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.datasets.ExpressionCompiler;
+import org.tools4j.tabular.service.datasets.FreemarkerCompiler;
 import org.tools4j.tabular.util.FileResolver;
 
-import static org.tools4j.tabular.util.Constants.COMMAND_XML_FILE;
+import static org.tools4j.tabular.config.TabularProperties.COMMAND_XML_FILE;
 
 /**
  * User: ben
@@ -63,7 +65,11 @@ public class DataSetContextLoader {
             commandMetadatas = commandMetadataFromXml.load();
         }
 
-        LOG.info("==================== Matching commands with rows ====================");
+        LOG.info("==================== Compiling commands ====================");
+        ExpressionCompiler expressionCompiler = new FreemarkerCompiler(allProperties);
+        commandMetadatas.compile(expressionCompiler);
+        
+        LOG.info("==================== Resolving commands for dataset rows ====================");
         long startTime = System.currentTimeMillis();
         DataSet<RowWithCommands> rowsWithCommands = returnDataSet.resolveCommands(commandMetadatas, allProperties);
 

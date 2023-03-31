@@ -1,13 +1,15 @@
 package org.tools4j.tabular.service
 
-import org.tools4j.tabular.datasets.Row
-import org.tools4j.tabular.datasets.RowFromMap
-import org.tools4j.tabular.properties.PropertiesFromString
-import org.tools4j.tabular.properties.PropertiesRepo
 import org.tools4j.tabular.commands.Command
 import org.tools4j.tabular.commands.CommandMetadata
 import org.tools4j.tabular.commands.CommandMetadataFromProperties
 import org.tools4j.tabular.commands.CommandMetadatas
+import org.tools4j.tabular.datasets.Row
+import org.tools4j.tabular.datasets.RowFromMap
+import org.tools4j.tabular.properties.PropertiesFromString
+import org.tools4j.tabular.properties.PropertiesRepo
+import org.tools4j.tabular.service.datasets.ExpressionCompiler
+import org.tools4j.tabular.service.datasets.FreemarkerCompiler
 import spock.lang.Specification
 
 /**
@@ -32,9 +34,9 @@ class CommandMetadataTest extends Specification {
             
             app.commmands.tailAppLog.name=Tail App Log
             app.commmands.tailAppLog.predicate='${e}' == 'prod'
-            app.commmands.tailAppLog.command=ssh ${h} && cd ${l} && tail -f ${app.log.filename}
+            app.commmands.tailAppLog.command=ssh ${h} && cd ${l} && tail -f ${log_filename}
             
-            app.log.filename=app.log
+            log_filename=app.log
         ''').load());
 
         commandsMetadata = new CommandMetadataFromProperties(propertiesRepo).load()
@@ -56,16 +58,20 @@ class CommandMetadataTest extends Specification {
     def "get command 1"() {
         given:
         final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
+        final ExpressionCompiler expressionCompiler = new FreemarkerCompiler(propertiesRepo);
+        commandsForRow.compile(expressionCompiler);
         final CommandMetadata commandMetadata = commandsForRow.get("openHomeDir");
-        final Command command = commandMetadata.getCommandInstance(row, propertiesRepo);
+        final Command command = commandMetadata.getCommandInstance(row);
         assert command.toString() == 'ssh myhostname && cd ~/'
     }
 
     def "get command 2"() {
         given:
         final CommandMetadatas commandsForRow = commandsMetadata.getCommandsFor(row);
+        final ExpressionCompiler expressionCompiler = new FreemarkerCompiler(propertiesRepo);
+        commandsForRow.compile(expressionCompiler);
         final CommandMetadata commandMetadata = commandsForRow.get("tailAppLog");
-        final Command command = commandMetadata.getCommandInstance(row, propertiesRepo);
+        final Command command = commandMetadata.getCommandInstance(row);
         assert command.toString() == 'ssh myhostname && cd ~/logs/ && tail -f app.log'
     }
 }

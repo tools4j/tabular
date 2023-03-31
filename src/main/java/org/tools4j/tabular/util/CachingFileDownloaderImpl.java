@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.config.DirResolver;
+import org.tools4j.tabular.config.TabularProperties;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import java.io.File;
@@ -17,9 +18,6 @@ import java.net.URL;
 
 public class CachingFileDownloaderImpl implements FileDownloader {
     private final static Logger LOG = LoggerFactory.getLogger(CachingFileDownloaderImpl.class);
-
-    //Config
-    public static final String TABULAR_CACHE_URL_DOWNLOADS_PROP = "tabular_cache_url_downloads";
 
     private final PropertiesRepo propertiesRepo;
     private final DirResolver userDirResolver;
@@ -79,7 +77,7 @@ public class CachingFileDownloaderImpl implements FileDownloader {
     }
 
     private boolean cacheDownloads() {
-        return Boolean.parseBoolean(propertiesRepo.get(TABULAR_CACHE_URL_DOWNLOADS_PROP, "false"));
+        return Boolean.parseBoolean(propertiesRepo.get(TabularProperties.CACHE_URL_DOWNLOADS, "false"));
     }
 
     private File downloadToTmpFile(URL url) {
