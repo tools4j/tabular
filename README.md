@@ -48,20 +48,19 @@ some guidance.
 
 # Configuration reference
 ## General properties
-|property |description |
-|---|---|
-| hotkey.combinations.show |Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
-| app.data.search.background.prompt.text |Prompt to display when searching for data |
-| app.command.search.background.prompt.text |Prompt to display when searching for command |
-| app.columns.to.display.in.data.table |A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells. |
-| app.columns.to.index.in.data.table |A comma seperated list of columns names to index.  If property is not given, then all columns are indexed. |
-| app.column.abbreviations.<ColumnName> |Can be used to specify abbreviations for column names.  e.g. `app.column.abbreviations.Host=h` Can make for more concise variable names. |
-| app.columns.to.display.in.command.table |  Can be used to dictate which columns to show in the command table, and in what order.  Options are: Name & Description. |
-| app.columns.to.index.in.command.table |A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed. |
-| app.data.column.to.display.when.selected | Dictates the column to display in the main prompt box when a row is selected. |
-| app.command.column.to.display.when.selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'. |
-| app.close.console.on.command.finish | Close Tabular once the command has finished running. Defaults to false. |
-| app.skip.command.browse.if.only.one.command.configured |  Defaults to false. |
+|property | description                                                                                                                                                                                                                                        |
+|---|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| hotkey_combinations_show | Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
+| data_search_background_prompt_text | Prompt to display when searching for data                                                                                                                                                                                                          |
+| command_search_background_prompt_text | Prompt to display when searching for command                                                                                                                                                                                                       |
+| columns_to_display_in_data_table | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells.       |
+| columns_to_index_in_data_table | A comma seperated list of columns names to index.  If property is not given, then all columns are indexed.                                                                                                                                         |
+| columns_to_display_in_command_table | Can be used to dictate which columns to show in the command table, and in what order.  Options are: Name & Description.                                                                                                                            |
+| columns_to_index_in_command_table | A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed.                                                                                                      |
+| data_column_to_display_when_selected | Dictates the column to display in the main prompt box when a row is selected.                                                                                                                                                                      |
+| command_column_to_display_when_selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'.                                                                                                                                                |
+| close_console_on_command_finish | Close Tabular once the command has finished running. Defaults to true.                                                                                                                                                                             |
+| skip_command_browse_if_only_one_command_configured | Defaults to false.                                                                                                                                                                                                                                 |
 
 # Command definitions
 ## Using properties or xml to define commands
@@ -92,13 +91,13 @@ via XML is preferred as startup of Tabular will be much quicker.
 
 ### Properties config example including commands
 ```properties
-hotkey.combinations.show=shift ctrl PLUS
+hotkey_combinations_show=shift ctrl PLUS
 
-app.data.column.to.display.when.selected=App
-app.command.column.to.display.when.selected=Name
+data_column_to_display_when_selected=App
+command_column_to_display_when_selected=Name
 
-data.search.background.prompt.text=App Search
-command.search.background.prompt.text=Command Search
+data_search_background_prompt_text=App Search
+command_search_background_prompt_text=Command Search
 
 app.commmands.openLog.name=display logs
 app.commmands.openLog.predicate=true
@@ -115,11 +114,11 @@ app.commmands.cmder.description=ssh to  host name
 ### Properties config example including commands
 #### config.properties
 ```properties
-hotkey.combinations.show=shift ctrl PLUS
+hotkey_combinations_show=shift ctrl PLUS
 
-app.data.column.to.display.when.selected=instance
+data_column_to_display_when_selected=instance
 
-command.xml.file=commands.xml
+command_xml_file=commands.xml
 app.columns.to.display.in.data.table=app,instance,host,region,env,dc
 app.columns.to.display.in.command.table=Name,Description
 app.data.search.background.prompt.text=Search Infrastructure

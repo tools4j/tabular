@@ -1,14 +1,9 @@
 package org.tools4j.tabular.config
 
-import org.tools4j.tabular.datasets.DataSetResolver
+
 import org.tools4j.tabular.properties.PropertiesRepo
 import org.tools4j.tabular.util.FileResolver
 import spock.lang.Specification
-
-import java.nio.file.Files
-import java.util.stream.Collectors
-
-import static org.spockframework.util.Assert.fail
 
 class ConfigResolverTest extends Specification {
     private static final String BASE_TEST_DIR = "src/test/resources/config-resolver"
@@ -86,8 +81,8 @@ class ConfigResolverTest extends Specification {
         File localConfigFile = new File("$BASE_TEST_DIR/1/config-local.properties");
 
         PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(ConfigResolverFromConfigFiles.TABULAR_CONFIG_FILE_PATH_PROP, configFile.absolutePath)
-        propertiesRepo.put(ConfigResolverFromConfigFiles.TABULAR_LOCAL_CONFIG_FILE_PATH_PROP, localConfigFile.absolutePath)
+        propertiesRepo.put(TabularProperties.TABULAR_CONFIG_FILE_PATH_PROP, configFile.absolutePath)
+        propertiesRepo.put(TabularProperties.TABULAR_LOCAL_CONFIG_FILE_PATH_PROP, localConfigFile.absolutePath)
 
         when:
         FileResolver fileResolver = new FileResolver(

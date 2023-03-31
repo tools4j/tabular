@@ -14,4 +14,13 @@ public class TabularProperties {
     public static final String COMMAND_SEARCH_BACKGROUND_PROMPT_TEXT = "command_search_background_prompt_text";
     public static final String HOTKEY_COMBINATIONS_SHOW = "hotkey_combinations_show";
     public static final String CACHE_URL_DOWNLOADS = "cache_url_downloads";
+    public static final String TABULAR_CONFIG_FILE_URL_PROP = "tabular_config_file_url";
+    public static final String TABULAR_LOCAL_CONFIG_FILE_URL_PROP = "tabular_local_config_file_url";
+    public static final String TABULAR_CONFIG_FILE_PATH_PROP = "tabular_config_file_path";
+    public static final String TABULAR_LOCAL_CONFIG_FILE_PATH_PROP = "tabular_local_config_file_path";
+    public static final String TABULAR_CONFIG_FILE_NAME_DEFAULT = "config.properties";
+    public static final String TABULAR_LOCAL_CONFIG_FILE_NAME_DEFAULT = "config-local.properties";
+    public static final String TABULAR_TABLE_CSV_URL_PROP = "tabular_csv_url";
+    public static final String TABULAR_TABLE_CSV_PATH_PROP = "tabular_csv_path";
+    public static final String TABULAR_TABLE_CSV_FILE_NAME_DEFAULT = "table.csv";
 }

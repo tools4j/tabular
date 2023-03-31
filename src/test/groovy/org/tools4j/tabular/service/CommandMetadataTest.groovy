@@ -34,7 +34,7 @@ class CommandMetadataTest extends Specification {
             
             app.commmands.tailAppLog.name=Tail App Log
             app.commmands.tailAppLog.predicate='${e}' == 'prod'
-            app.commmands.tailAppLog.command=ssh ${h} && cd ${l} && tail -f ${.data_model["app.log.filename"]}
+            app.commmands.tailAppLog.command=ssh ${h} && cd ${l} && tail -f ${log_filename}
             
             log_filename=app.log
         ''').load());
