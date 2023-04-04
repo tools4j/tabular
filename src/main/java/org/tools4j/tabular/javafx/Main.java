@@ -54,7 +54,6 @@ public class Main extends Application {
 
         final LauncherView mainView = new LauncherView();
         final Scene scene = new Scene(mainView.getView());
-        scene.getStylesheets().add("org/tools4j/launcher/javafx/launcher.css");
         scene.setFill(Color.TRANSPARENT);
 
         primaryStage.setTitle("launcher");

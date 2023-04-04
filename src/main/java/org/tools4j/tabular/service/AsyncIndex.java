@@ -32,9 +32,10 @@ public class AsyncIndex<T extends Row> {
 
     public void init(){
         Thread t = new Thread(() -> {
-            try {
-                while(!Thread.currentThread().isInterrupted()){
-                    String query = this.queryQueue.take();
+            String query = "";
+            while(!Thread.currentThread().isInterrupted()){
+                try {
+                    query = this.queryQueue.take().trim();
                     List<T> results = luceneIndex.search(query);
                     if(queryQueue.isEmpty()) {
                         this.callback.accept(results);
@@ -42,9 +43,9 @@ public class AsyncIndex<T extends Row> {
                     } else {
                         LOG.info("Skipping sending back results as another query is in the pipeline...");
                     }
+                } catch (Exception e) {
+                    LOG.error("Error whilst searching using query [" + query + "]", e);
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
         });
         t.setDaemon(true);
