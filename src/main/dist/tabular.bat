@@ -32,7 +32,7 @@ if NOT "%JAVA_VERSION%"=="8" (
 	echo Either set your JAVA_HOME variable to a version of Java 8
 	echo Or, set a TABULAR_JAVA_HOME variable to a version of Java 8
 ) else (
-	%_JAVACMD% -Dlog4j.configuration=file:log4j.xml %* -jar tabular.jar
+	%_JAVACMD% -Dlog4j.configurationFile=log4j2.xml %* -jar tabular.jar
 )	
 
 endlocal
