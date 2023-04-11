@@ -7,21 +7,34 @@ import org.tools4j.tabular.config.DirResolver;
 import org.tools4j.tabular.config.TabularProperties;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class CachingFileDownloaderImpl implements FileDownloader {
     private final static Logger LOG = LoggerFactory.getLogger(CachingFileDownloaderImpl.class);
-
+    
+    private static final MessageDigest hasher;
     private final PropertiesRepo propertiesRepo;
     private final DirResolver userDirResolver;
 
+    static {
+        try {
+            hasher = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Cannot find MD5 hashing algorithm", e);
+        }   
+    }
+    
     public CachingFileDownloaderImpl(DirResolver userDirResolver, PropertiesRepo propertiesRepo) {
         this.userDirResolver = userDirResolver;
         this.propertiesRepo = propertiesRepo;
@@ -42,7 +55,7 @@ public class CachingFileDownloaderImpl implements FileDownloader {
             }
         } catch (Exception e) {
             if(cacheDownloads()){
-                LOG.info("Could not find file at [" + urlStr + "], looking for cached file");
+                LOG.info("Could not find file at [" + urlStr + "], looking for cached file", e);
                 Reader cacheFile = lookForCachedFile(urlStr);
                 if (cacheFile != null) return cacheFile;
             }
@@ -87,7 +100,10 @@ public class CachingFileDownloaderImpl implements FileDownloader {
                 FileUtils.forceDelete(downloadedFile);
             }
             LOG.info("Downloading file from url [" + url + "] to [" + downloadedFile.getAbsolutePath() + "]");
+            long startTime = System.currentTimeMillis();
             FileUtils.copyURLToFile(url, downloadedFile);
+            long endTime = System.currentTimeMillis();
+            LOG.info("Finished download, took " + (endTime - startTime) + "ms");
             return downloadedFile;
         } catch (Exception e){
             throw new IllegalStateException("Could not download file at url [" + url.toString() + "]", e);
@@ -113,7 +129,13 @@ public class CachingFileDownloaderImpl implements FileDownloader {
     }
 
     public static String encodeUrlToUseAsFilename(String url){
-        return url.replaceAll("[^\\w]+", "_");
+        try {
+            byte[] bytesOfMessage = url.getBytes("UTF-8");
+            byte[] digest = hasher.digest(bytesOfMessage);
+            return DatatypeConverter.printHexBinary(digest).toUpperCase();
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private static class FileReaderWhichDeletesFileOnClose extends FileReader {
