@@ -4,6 +4,8 @@ import org.tools4j.tabular.commands.Command;
 import org.tools4j.tabular.commands.CommandMetadata;
 import org.tools4j.tabular.commands.CommandMetadatas;
 import org.tools4j.tabular.properties.PropertiesRepo;
+import org.tools4j.tabular.service.datasets.Expression;
+import org.tools4j.tabular.service.datasets.FreemarkerCompiler;
 import org.tools4j.tabular.util.IndentableStringBuilder;
 
 import java.util.Arrays;
@@ -14,8 +16,8 @@ import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_DISPLAY_IN
 import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_DISPLAY_IN_DATA_TABLE;
 import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_INDEX_IN_COMMAND_TABLE;
 import static org.tools4j.tabular.config.TabularProperties.COLUMNS_TO_INDEX_IN_DATA_TABLE;
-import static org.tools4j.tabular.config.TabularProperties.COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED;
-import static org.tools4j.tabular.config.TabularProperties.DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED;
+import static org.tools4j.tabular.config.TabularProperties.COMMAND_EXPRESSION_TO_DISPLAY_WHEN_SELECTED;
+import static org.tools4j.tabular.config.TabularProperties.DATA_EXPRESSION_TO_DISPLAY_WHEN_SELECTED;
 import static org.tools4j.tabular.config.TabularProperties.SKIP_COMMAND_BROWSE_IF_ONLY_ONE_COMMAND_CONFIGURED;
 
 /**
@@ -27,11 +29,32 @@ public class DataSetContext {
     private final DataSet<RowWithCommands> dataSet;
     private final PropertiesRepo properties;
     private final CommandMetadatas commandMetadatas;
-
+    private final Expression dataExpressionToDisplayWhenSelected;
+    private final Expression commandExpressionToDisplayWhenSelected;
+    
     public DataSetContext(final DataSet<RowWithCommands> dataSet, final CommandMetadatas commandMetadatas, final PropertiesRepo properties) {
         this.dataSet = dataSet;
         this.properties = properties;
         this.commandMetadatas = commandMetadatas;
+        String dataExpressionToDisplayWhenSelected = properties.get(DATA_EXPRESSION_TO_DISPLAY_WHEN_SELECTED);
+        String commandExpressionToDisplayWhenSelected = properties.get(COMMAND_EXPRESSION_TO_DISPLAY_WHEN_SELECTED);
+        
+        if(dataExpressionToDisplayWhenSelected != null || commandExpressionToDisplayWhenSelected != null){
+            FreemarkerCompiler freemarkerCompiler = new FreemarkerCompiler(properties);
+            if(dataExpressionToDisplayWhenSelected != null){
+                this.dataExpressionToDisplayWhenSelected = freemarkerCompiler.compile(dataExpressionToDisplayWhenSelected);
+            } else {
+                this.dataExpressionToDisplayWhenSelected = null;
+            }
+            if(commandExpressionToDisplayWhenSelected != null){
+                this.commandExpressionToDisplayWhenSelected = freemarkerCompiler.compile(commandExpressionToDisplayWhenSelected);
+            } else {
+                this.commandExpressionToDisplayWhenSelected = null;
+            }
+        } else {
+            this.commandExpressionToDisplayWhenSelected = null;
+            this.dataExpressionToDisplayWhenSelected = null;
+        }
     }
 
     @Override
@@ -120,34 +143,20 @@ public class DataSetContext {
     }
 
     public String getValueToDisplayWhenDataRowSelected(final Row selectedRow, final String query) {
-        final String configuredColumnToDisplayInTable = properties.get(DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED);
-        if(configuredColumnToDisplayInTable != null){
-            if(!dataSet.getColumnHeadings().contains(configuredColumnToDisplayInTable)){
-                throw new IllegalArgumentException("The column specified in the property " + DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED
-                                                    + "=" + configuredColumnToDisplayInTable + " must be a valid data column.  e.g. "
-                                                    + "one of: " + dataSet.getColumnHeadings());
-            } else {
-                return selectedRow.get(configuredColumnToDisplayInTable);
-            }
+        if(dataExpressionToDisplayWhenSelected != null){
+            return dataExpressionToDisplayWhenSelected.resolve(selectedRow);
         } else {
             return query;
         }
     }
 
     public String getValueToDisplayWhenCommandRowSelected(final Row selectedRow, final String query) {
-        final String configuredColumnToDisplayInTable = properties.get(COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED);
-        if(configuredColumnToDisplayInTable != null){
-            if(!Command.getCommandTableColumnHeadings().contains(configuredColumnToDisplayInTable)){
-                throw new IllegalArgumentException("The column specified in the property " + COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED
-                        + "=" + configuredColumnToDisplayInTable + " must be a valid command table column.  e.g. "
-                        + "one of: " + Command.getCommandTableColumnHeadings());
-            } else {
-                return selectedRow.get(configuredColumnToDisplayInTable);
-            }
+        if(commandExpressionToDisplayWhenSelected != null){
+            return commandExpressionToDisplayWhenSelected.resolve(selectedRow);
         } else if(query != null && !query.isEmpty()){
             return query;
         } else {
-            return selectedRow.get(Command.ColumnHeadings.Description.toString());
+            return selectedRow.get(Command.ColumnHeadings.Name.toString());
         }
     }
 

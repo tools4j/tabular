@@ -1,8 +1,8 @@
 package org.tools4j.tabular.config;
 
 public class TabularProperties {
-    public static final String DATA_COLUMN_TO_DISPLAY_WHEN_SELECTED = "data_column_to_display_when_selected";
-    public static final String COMMAND_COLUMN_TO_DISPLAY_WHEN_SELECTED = "command_column_to_display_when_selected";
+    public static final String DATA_EXPRESSION_TO_DISPLAY_WHEN_SELECTED = "data_expression_to_display_when_selected";
+    public static final String COMMAND_EXPRESSION_TO_DISPLAY_WHEN_SELECTED = "command_expression_to_display_when_selected";
     public static final String COLUMNS_TO_DISPLAY_IN_COMMAND_TABLE = "columns_to_display_in_command_table";
     public static final String COLUMNS_TO_INDEX_IN_COMMAND_TABLE = "columns_to_index_in_command_table";
     public static final String COLUMNS_TO_DISPLAY_IN_DATA_TABLE = "columns_to_display_in_data_table";

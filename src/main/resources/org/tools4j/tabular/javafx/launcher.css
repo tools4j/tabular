@@ -45,9 +45,10 @@
 }
 
 .largeTextPrompt {
+    -fx-font: 24px Tahoma;
     -fx-text-fill: -fx-var-text;
     -fx-font-size: 24px;
-    -fx-padding: 7 2 10 10;
+    -fx-padding: 10 2 8 10;
 }
 
 #outerTablePane {
