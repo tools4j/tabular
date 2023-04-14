@@ -95,7 +95,7 @@ via XML is preferred as startup of Tabular will be much quicker.
 hotkey_combinations_show=shift ctrl PLUS
 
 data_expression_to_display_when_selected=${App}
-command_column_to_display_when_selected=${Name}
+command_expression_to_display_when_selected=${Name}
 
 data_search_background_prompt_text=App Search
 command_search_background_prompt_text=Command Search
