@@ -48,18 +48,18 @@ some guidance.
 
 # Configuration reference
 ## General properties
-|property | description                                                                                                                                                                                                                                        |
-|---|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| hotkey_combinations_show | Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
-| data_search_background_prompt_text | Prompt to display when searching for data                                                                                                                                                                                                          |
-| command_search_background_prompt_text | Prompt to display when searching for command                                                                                                                                                                                                       |
-| columns_to_display_in_data_table | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells.       |
-| columns_to_index_in_data_table | A comma seperated list of columns names to index.  If property is not given, then all columns are indexed.                                                                                                                                         |
-| columns_to_display_in_command_table | Can be used to dictate which columns to show in the command table, and in what order.  Options are: Name & Description.                                                                                                                            |
-| columns_to_index_in_command_table | A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed.                                                                                                      |
-| data_column_to_display_when_selected | Dictates the column to display in the main prompt box when a row is selected.                                                                                                                                                                      |
-| command_column_to_display_when_selected | The column to display in the main prompt box when a command is selected to run. Defaults to 'Name'.                                                                                                                                                |
-| close_console_on_command_finish | Close Tabular once the command has finished running. Defaults to true.                                                                                                                                                                             |
+| property                                           | description                                                                                                                                                                                                                                        |
+|----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| hotkey_combinations_show                           | Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
+| data_search_background_prompt_text                 | Prompt to display when searching for data                                                                                                                                                                                                          |
+| command_search_background_prompt_text              | Prompt to display when searching for command                                                                                                                                                                                                       |
+| columns_to_display_in_data_table                   | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells.       |
+| columns_to_index_in_data_table                     | A comma seperated list of columns names to index.  If property is not given, then all columns are indexed.                                                                                                                                         |
+| columns_to_display_in_command_table                | Can be used to specify which columns to show in the command table, and in what order.  Options are: Name & Description.                                                                                                                            |
+| columns_to_index_in_command_table                  | A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed.                                                                                                      |
+| data_expression_to_display_when_selected           | When a data column is selected, this Freemarker expression will be used to create a prefix in the main prompt box when a row is selected.                                                                                                          |
+| command_expression_to_display_when_selected        | When a command is selected, this Freemarker expression will be used to create a prefix in the main prompt box.  Defaults to 'command.name'.                                                                                                        |
+| close_console_on_command_finish                    | Close Tabular once the command has finished running. Defaults to true.                                                                                                                                                                             |
 | skip_command_browse_if_only_one_command_configured | Defaults to false.                                                                                                                                                                                                                                 |
 
 # Command definitions
@@ -70,7 +70,7 @@ expression to decide if a command is valid for a row) is run as a groovy express
 (one-per-row-per-command) can take time.  The xml predicates are translated to pure java and run much faster.
 
 ## Expressions
-Command expressions are compiled using freemarker.  Within your expression, you can use variables from:
+Command expressions are compiled using [Freemarker](https://freemarker.apache.org/docs/ref_builtins_alphaidx.html).  Within your expression, you can use variables from:
 * Columns from the current row.
 * Properties defined within config.properties
 * Properties defined within config-local.properties (if it exists)
@@ -81,6 +81,7 @@ Command expressions are compiled using freemarker.  Within your expression, you 
 This method of configuring commands is fine when working with a small number of data rows, against a small number of commands.
 If you wish to work with a large dataset (e.g. > 500) against a large number of commands (e.g. > 20) then commands configured
 via XML is preferred as startup of Tabular will be much quicker.
+
 |property |description |
 |---|---|
 | app.commands.[commandName].name |Human readable name for the command. |
@@ -93,8 +94,8 @@ via XML is preferred as startup of Tabular will be much quicker.
 ```properties
 hotkey_combinations_show=shift ctrl PLUS
 
-data_column_to_display_when_selected=App
-command_column_to_display_when_selected=Name
+data_expression_to_display_when_selected=${App}
+command_expression_to_display_when_selected=${Name}
 
 data_search_background_prompt_text=App Search
 command_search_background_prompt_text=Command Search
@@ -116,7 +117,7 @@ app.commmands.cmder.description=ssh to  host name
 ```properties
 hotkey_combinations_show=shift ctrl PLUS
 
-data_column_to_display_when_selected=instance
+data_expression_to_display_when_selected=${instance}
 
 command_xml_file=commands.xml
 app.columns.to.display.in.data.table=app,instance,host,region,env,dc

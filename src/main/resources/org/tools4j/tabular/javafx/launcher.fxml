@@ -2,13 +2,13 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.TextArea?>
 <VBox fx:controller="org.tools4j.tabular.javafx.LauncherPresenter" fx:id="mainPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
     <HBox fx:id="textSearchPane">
         <Label fx:id="labelLogo" styleClass="largeTextPrompt"/>
@@ -22,7 +22,7 @@
                     <left>
                         <HBox alignment="CENTER">
                             <Label fx:id="selectedDataLabel" styleClass="searchTextBox"/>
-                            <Label fx:id="separatorLabel" styleClass="largeTextPrompt"/>
+                            <Label fx:id="separatorLabel" styleClass="searchTextBox"/>
                         </HBox>
                     </left>
                     <center>
