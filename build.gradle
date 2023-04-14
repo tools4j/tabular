@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'org.tools4j'
-version '4.7'
+version '4.8'
 
 apply plugin: 'groovy'
 apply plugin: 'java'

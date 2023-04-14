@@ -1,1 +1,1 @@
-%JAVA_HOME%\bin\java -cp lib/jkeymaster-1.3.jar com.tulskiy.keymaster.AWTTest
+%JAVA_HOME%\bin\java -classpath "lib/*" com.tulskiy.keymaster.AWTTest
