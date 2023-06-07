@@ -1,56 +1,78 @@
-buildscript {
-    repositories { jcenter() }
-    dependencies {
-        classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2'
-    }
-}
-
 plugins {
-  id 'com.github.jk1.dependency-license-report' version '1.17'
+    id 'application'
+    id 'groovy'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.runtime' version '1.12.0'
 }
-
-group 'org.tools4j'
-version '4.8'
-
-apply plugin: 'groovy'
-apply plugin: 'java'
-apply plugin: 'javafx-gradle-plugin'
 
 repositories {
     mavenCentral()
 }
 
-jfx {
-    jfxMainAppJarName = "tabular.jar"
-    mainClass = 'org.tools4j.tabular.javafx.Main'
-    vendor = 'Ben Warner'
+javafx {
+    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml' ]
 }
 
+application {
+    mainClass = 'org.tools4j.tabular.javafx.Launcher'
+    applicationName = 'tabular'
+}
+
+tasks.named('test') {
+    useJUnitPlatform() 
+}
+
+runtime {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    targetPlatform("win") {
+        jdkHome = 'C:/dev/apps/java/jdk-11.0.10'
+    }
+
+    launcher {
+        noConsole = false
+    }
+    
+    jpackage {
+        // Uncomment and adjust the following line if your runtime task is configured to generate images for multiple platforms
+        // targetPlatformName = "mac"
+
+        installerOptions += ['--resource-dir', "src/main/resources"]
+        installerOptions += ['--vendor', 'Acme Corporation']
+        installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+    }
+}
+
+group 'org.tools4j'
+version '4.9'
+
 dependencies {
-    compile 'com.opencsv:opencsv:5.7.1'
-    compile 'org.slf4j:slf4j-api:1.7.36'
-    compile 'org.apache.logging.log4j:log4j-core:2.20.0'
-    compile 'org.apache.logging.log4j:log4j-api:2.20.0'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
-    compile 'com.airhacks:afterburner.fx:1.6.0'
-    compile 'com.github.tulskiy:jkeymaster:1.3'
-    compile('org.codehaus.groovy:groovy-all:2.5.21'){
+    implementation 'com.opencsv:opencsv:5.7.1'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
+    implementation 'com.airhacks:afterburner.fx:1.6.0'
+    implementation 'com.github.tulskiy:jkeymaster:1.3'
+    implementation 'javax.inject:javax.inject:1'
+    implementation('org.codehaus.groovy:groovy-all:2.5.21'){
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.testng', module: 'testng'
     }
-    compile 'commons-io:commons-io:2.11.0'
-    compile 'org.apache.lucene:lucene-core:8.3.0'
-    compile 'org.apache.lucene:lucene-queryparser:8.3.0'
-    compile 'org.apache.commons:commons-text:1.10.0'
-    compile 'org.freemarker:freemarker:2.3.32'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.apache.lucene:lucene-core:8.3.0'
+    implementation 'org.apache.lucene:lucene-queryparser:8.3.0'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'org.freemarker:freemarker:2.3.32'
+    implementation 'com.sun.xml.bind:jaxb-impl:2.3.3'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-2.5'
+    testImplementation 'org.hamcrest:hamcrest-core:1.3'
+    testImplementation 'org.tools4j:groovy-tables:1.6'
 
-    testCompile 'junit:junit:4.13'
-    testCompile 'org.spockframework:spock-core:2.3-groovy-2.5'
-    testCompile 'org.hamcrest:hamcrest-core:1.3'
-    testCompile 'org.tools4j:groovy-tables:1.6'
-
-    testRuntime 'cglib:cglib-nodep:3.1'          // allows mocking of classes (in addition to interfaces)
-    testRuntime 'org.objenesis:objenesis:2.1'    // allows mocking of classes without default constructor (together with CGLIB)
+    testImplementation 'cglib:cglib-nodep:3.1'          // allows mocking of classes (in addition to interfaces)
+    testImplementation 'org.objenesis:objenesis:2.1'    // allows mocking of classes without default constructor (together with CGLIB)
 }
 
 test {
@@ -69,22 +91,31 @@ sourceSets {
 }
 
 configurations {
-    integrationTestCompile.extendsFrom testCompile
+    integrationTestImplementation.extendsFrom testImplementation
     integrationTestRuntime.extendsFrom testRuntime
 }
 
-task copyAdditionalResources(type: Copy) {
+//JAR START
+
+jar {
+    archiveFileName.set('tabular.jar')
+    manifest {
+        attributes 'Main-Class': 'org.tools4j.tabular.javafx.Main'
+    }
+}
+
+task copyDependencyJarsToStagingArea(type: Copy) {
+    into "build/dist/files/lib"
+    from(sourceSets.main.runtimeClasspath){ include '*.jar' }
+}
+
+task copyAdditionalResourcesToStagingArea(type: Copy) {
     from 'src/main/dist'
     into 'build/dist/files'
 }
 
-task copyAdditionalLibs(type: Copy) {
-    from 'lib'
-    into 'build/dist/files/lib'
-}
-
-task copyJfxFiles(type: Copy) {
-    from 'build/jfx/app'
+task copyTabularJarToStagingArea(type: Copy) {
+    from 'build/libs/tabular.jar'
     into 'build/dist/files'
 }
 
@@ -92,8 +123,8 @@ task createTabularZip(type: Zip) {
     from 'build/dist/files'
     include '*'
     include '*/*'
-    archiveName "tabular-${version}.zip"
-    destinationDir(file('build/dist/zip/'))
+    archiveFileName = "tabular-${version}.zip"
+    destinationDirectory = layout.buildDirectory.dir('dist/zip/')
 }
 
 task buildTabularZip {
@@ -109,14 +140,37 @@ task copyTabularZipToDistDirectory(type: Copy) {
     into 'dist/'
 }
 
-buildTabularZip.dependsOn createTabularZip
-buildTabularZip.dependsOn copyAdditionalResources
-buildTabularZip.dependsOn copyAdditionalLibs
-buildTabularZip.dependsOn copyJfxFiles
-buildTabularZip.dependsOn jfxJar
+task cleanStagingArea(type: Delete) {
+    delete 'build/dist'
+}
+
+//JAR END
+
+//JRE ZIP START
+
+task copyTabularImageToDistDirectory(type: Copy) {
+    from "build/image-win.zip"
+    into "dist/"
+    rename { filename -> 
+        "tabular-with-jre-${version}.zip"
+    }
+}
+
+//JRE ZIP END
+
+task buildTabularZipAndImage() {
+    group 'build'
+}
+
+
+jar.dependsOn cleanStagingArea
+copyTabularJarToStagingArea.dependsOn jar
+copyDependencyJarsToStagingArea.dependsOn copyTabularJarToStagingArea
+copyAdditionalResourcesToStagingArea.dependsOn copyDependencyJarsToStagingArea
+createTabularZip.dependsOn copyAdditionalResourcesToStagingArea
+copyTabularZipToDistDirectory.dependsOn createTabularZip
 buildTabularZip.dependsOn copyTabularZipToDistDirectory
 
-copyTabularZipToDistDirectory.dependsOn createTabularZip
-createTabularZip.dependsOn copyAdditionalResources
-createTabularZip.dependsOn copyJfxFiles
-copyJfxFiles.dependsOn jfxJar
+copyTabularImageToDistDirectory.dependsOn runtimeZip
+buildTabularZipAndImage.dependsOn buildTabularZip
+buildTabularZipAndImage.dependsOn copyTabularImageToDistDirectory

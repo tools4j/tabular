@@ -4,4 +4,5 @@ out
 gen
 build
 .gradle
+.tabular
 tables.properties
