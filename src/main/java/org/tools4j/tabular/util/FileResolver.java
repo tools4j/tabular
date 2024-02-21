@@ -1,8 +1,10 @@
 package org.tools4j.tabular.util;
 
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.config.DirResolver;
+import org.tools4j.tabular.config.TabularProperties;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import java.io.File;
@@ -13,29 +15,42 @@ import java.util.Optional;
 
 public class FileResolver {
     //Config path prop
-    public static final String TABULAR_CONFIG_DIR_PROP = "tabular_config_dir";
-    
     private final static Logger LOG = LoggerFactory.getLogger(FileResolver.class);
     private final PropertiesRepo propertiesRepo;
     private final DirResolver workingDirResolver;
     private final DirResolver userDirResolver;
     private final FileDownloader fileDownloader;
+    private final DirResolver configDirResolver;
 
     public FileResolver(
             PropertiesRepo propertiesRepo,
             DirResolver workingDirResolver,
-            DirResolver userDirResolver) {
+            DirResolver userDirResolver,
+            DirResolver configDirResolver) {
         this.propertiesRepo = propertiesRepo;
         this.workingDirResolver = workingDirResolver;
         this.userDirResolver = userDirResolver;
         this.fileDownloader = new CachingFileDownloaderImpl(userDirResolver, this.propertiesRepo);
+        this.configDirResolver = configDirResolver;
     }
 
-    public Optional<Reader> resolveFile(String urlProp, String pathProp, String fileNameDefault) {
+    /**
+     * This method looks for a given file in a number of different locations.  Once a file is found, it is immediately
+     * returned.  Files are looked for in this order:
+     * 
+     * <ul>
+     *     <li>At the URL specified by the property urlProp.</li>
+     *     <li>At the location specified by fileNamePathProp.</li>
+     *     <li>In the folder specified by property {@value TabularProperties#CONFIG_DIR}, named fileNameDefault</li>
+     *     <li>In the users home folder under a subfolder named 'tabular'. (i.e. ~/tabular/${fileNameDefault}</li>
+     *     <li>In the current working directory named fileNameDefault</li>
+     * </ul>
+     */
+    public Optional<Reader> resolveFile(String urlProp, String fileNamePathProp, String fileNameDefault) {
         Optional<Reader> fileAtUrlProp = resolveFileUsingUrlProperty(urlProp);
         if (fileAtUrlProp.isPresent()) return fileAtUrlProp;
 
-        Optional<Reader> fileAtPathProp = resolveFileUsingPathProperty(pathProp);
+        Optional<Reader> fileAtPathProp = resolveFileUsingPathProperty(fileNamePathProp);
         if (fileAtPathProp.isPresent()) return fileAtPathProp;
 
         Optional<Reader> fileInConfigDir = resolveFileInConfigDir(fileNameDefault);
@@ -51,56 +66,69 @@ public class FileResolver {
     }
 
     private Optional<Reader> resolveFileUsingPathProperty(String pathProp) {
-        Optional<File> file = getFileAtProperty(pathProp);
-        if (file.isPresent()) {
-            LOG.info("Found file using pathProp [" + pathProp + "] at " + file.get().getAbsolutePath());
-            try {
-                return Optional.of(new FileReader(file.get()));
-            } catch (FileNotFoundException e) {
-                throw new IllegalStateException(e);
+        String path = propertiesRepo.get(pathProp);
+        if(path == null){
+            LOG.info("No property found [" + pathProp + "]");
+            return Optional.empty();
+        } else {
+            File file = new File(path);
+            if (file.exists() && file.isFile()) {
+                LOG.info("Found file at property [" + pathProp + "]: " + file.getAbsolutePath());
+                return toReader(file);
+            } else {
+                LOG.error("No file found at property [" + pathProp + "] " +
+                    "with value [" + path + "] resolving to absolute path [" + file.getAbsolutePath() + "]");
+                return Optional.empty();
             }
         }
-        return Optional.empty();
     }
 
     private Optional<Reader> resolveFileInConfigDir(String fileName) {
-        String dirPath = propertiesRepo.get(FileResolver.TABULAR_CONFIG_DIR_PROP);
-        if(dirPath == null) {
+        Optional<File> configDirOpt = configDirResolver.resolve();
+        if(configDirOpt.isEmpty()){
             return Optional.empty();
         }
-
-        File dir = new File(dirPath);
-        if(!doesDirExist(dir)) {
-            throw new IllegalArgumentException("Dir specified by property [" + FileResolver.TABULAR_CONFIG_DIR_PROP + "] value [" + dir.getAbsolutePath() + "] does not exist, or is not a directory.");
-        }
-
-        File file = new File(dir.getAbsolutePath() + "/" + fileName);
-        if(!doesFileExist(file)){
+        File configDir = configDirOpt.get();
+        Optional<File> file = resolveFile(configDir, fileName);
+        if(file.isPresent()){
+            LOG.info("Found file in config dir: " + file.get().getAbsolutePath());
+            return Optional.of(toReader(file).get());
+        } else {
+            LOG.info("No file found in config dir [" + configDir.getAbsolutePath() + "] named [" + fileName + "]");
             return Optional.empty();
-        }
-
-        LOG.info("Found file in config dir: " + file.getAbsolutePath());
-        try {
-            return Optional.of(new FileReader(file));
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
         }
     }
 
     private Optional<Reader> resolveFileInUserDir(String fileName) {
-        File userDir = userDirResolver.resolve();
-        LOG.info("Looking for file in user dir [" + userDir + "] named [" + fileName + "]");
+        Optional<File> userDirOpt = userDirResolver.resolve();
+        if(userDirOpt.isEmpty()){
+            return Optional.empty();
+        }
+        File userDir = userDirOpt.get();
         Optional<File> file = resolveFile(userDir, fileName);
-        file.ifPresent(f -> LOG.info("Found file in user dir: " + f.getAbsolutePath()));
-        return toReader(file);
+        if(file.isPresent()){
+            LOG.info("Found file in user dir [" + file.get().getAbsolutePath() + "]");
+            return toReader(file);
+        } else {
+            LOG.info("No file found in user dir [" + userDir.getAbsolutePath() + "] named [" + fileName + "]");
+            return Optional.empty();
+        }
     }
-
+    
     private Optional<Reader> resolveFileInWorkingDir(String fileName) {
-        File workingDir = workingDirResolver.resolve();
-        LOG.info("Looking for file in working dir [" + workingDir + "] named [" + fileName + "]");
+        Optional<File> workingDirDirOpt = workingDirResolver.resolve();
+        if(workingDirDirOpt.isEmpty()){
+            return Optional.empty();
+        }
+        File workingDir = workingDirDirOpt.get();
         Optional<File> file = resolveFile(workingDir, fileName);
-        file.ifPresent(f -> LOG.info("Found file in working dir: " + f.getAbsolutePath()));
-        return toReader(file);
+        if(file.isPresent()){
+            LOG.info("Found file in working dir [" + file.get().getAbsolutePath() + "]");
+            return toReader(file);
+        } else {
+            LOG.info("No file found in working dir [" + workingDir.getAbsolutePath() + "] named [" + fileName + "]");
+            return Optional.empty();
+        }
     }
 
     private Optional<File> resolveFile(File directory, String fileName) {
@@ -111,53 +139,37 @@ public class FileResolver {
         return Optional.empty();
     }
 
-    private Optional<File> getFileAtProperty(String propertyName){
-        LOG.info("Looking for file at property [" + propertyName + "]");
-        String path = propertiesRepo.get(propertyName);
-        if(path == null){
-            return Optional.empty();
-        }
-        File file = new File(path);
-        ensureFileExists(file);
-        LOG.info("Found file at property: " + file.getAbsolutePath());
-        return Optional.of(file);
-    }
-
     private Optional<Reader> resolveFileUsingUrlProperty(String propertyName){
-        LOG.info("Looking to download file at property [" + propertyName + "]");
         String url = propertiesRepo.get(propertyName);
         if(url == null){
+            LOG.info("No property found [" + propertyName + "]");
             return Optional.empty();
         }
         return Optional.of(fileDownloader.downloadFile(url));
-    }
-
-    private void ensureFileExists(File file) {
-        if (!file.exists()) {
-            throw new IllegalStateException("Could not find directory at [" + file.getAbsolutePath() + "]");
-        }
-        if (!file.isFile()) {
-            throw new IllegalStateException("Not a file [" + file.getAbsolutePath() + "]");
-        }
     }
 
     private boolean doesFileExist(File file) {
         return file.exists() && file.isFile();
     }
 
-    private boolean doesDirExist(File dir) {
+    public static boolean doesDirExist(File dir) {
         return dir.exists() && dir.isDirectory();
     }
 
     private Optional<Reader> toReader(Optional<File> file){
-        try {
-            if(file.isPresent()) {
-                return Optional.of(new FileReader(file.get()));
-            } else {
-                return Optional.empty();
-            }
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException(e);
+        if(file.isPresent()) {
+            return toReader(file.get());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @SneakyThrows
+    private static Optional<Reader> toReader(File file) {
+        if(file.exists() && file.isFile()){
+            return Optional.of(new FileReader(file));
+        } else {
+            return Optional.empty();
         }
     }
 }

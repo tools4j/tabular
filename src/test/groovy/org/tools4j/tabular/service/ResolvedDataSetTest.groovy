@@ -10,6 +10,7 @@ import org.tools4j.tabular.properties.PropertiesRepo
 import org.tools4j.tabular.util.TestUtils
 import spock.lang.Specification
 
+import static org.tools4j.tabular.config.TabularProperties.CONFIG_DIR
 import static org.tools4j.tabular.util.TestUtils.dataSetFromRows
 
 /**
@@ -27,7 +28,7 @@ class ResolvedDataSetTest extends Specification {
     def "test resolved dataset"(){
         given:
         PropertiesRepo config = new PropertiesRepo();
-        config.put("tabular_config_dir", "src/test/resources/table_with_substitutions")
+        config.put(CONFIG_DIR, "src/test/resources/table_with_substitutions")
         
         when:
         DataSetContext dataSetContext = new DataSetContextLoader(config).load();

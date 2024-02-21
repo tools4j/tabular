@@ -1,5 +1,6 @@
 package org.tools4j.tabular.datasets;
 
+import org.tools4j.tabular.config.TabularConstants;
 import org.tools4j.tabular.config.TabularProperties;
 import org.tools4j.tabular.util.FileResolver;
 
@@ -15,7 +16,7 @@ public class DataSetResolver {
     }
 
     public DataSet<? extends Row> resolve(){
-        Optional<Reader> tableCsvFile = fileResolver.resolveFile(TabularProperties.TABULAR_TABLE_CSV_URL_PROP, TabularProperties.TABULAR_TABLE_CSV_PATH_PROP, TabularProperties.TABULAR_TABLE_CSV_FILE_NAME_DEFAULT);
+        Optional<Reader> tableCsvFile = fileResolver.resolveFile(TabularProperties.TABLE_CSV_URL, TabularProperties.TABLE_CSV_PATH, TabularConstants.TABULAR_TABLE_CSV_FILE_NAME_DEFAULT);
         if(!tableCsvFile.isPresent()) {
             throw new IllegalArgumentException("Could not resolve table csv file.");
         }

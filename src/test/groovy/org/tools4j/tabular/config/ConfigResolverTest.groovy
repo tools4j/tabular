@@ -22,7 +22,8 @@ class ConfigResolverTest extends Specification {
         FileResolver fileResolver = new FileResolver(
             propertiesRepo,
             new DummyDirResolver(workingDir),
-            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)    
+            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),   
+            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)
         )
         PropertiesRepo config = new ConfigResolverFromConfigFiles(fileResolver).resolve();
 
@@ -43,8 +44,8 @@ class ConfigResolverTest extends Specification {
         FileResolver fileResolver = new FileResolver(
             propertiesRepo,
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
-            new DummyDirResolver(userDir)    
-        )
+            new DummyDirResolver(userDir),
+            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST))
         PropertiesRepo config = new ConfigResolverFromConfigFiles(fileResolver).resolve();
 
         then:
@@ -58,14 +59,14 @@ class ConfigResolverTest extends Specification {
         given:
         String configDir = "$BASE_TEST_DIR/2"
         PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(FileResolver.TABULAR_CONFIG_DIR_PROP, configDir)
+        propertiesRepo.put(TabularProperties.CONFIG_DIR, configDir)
 
         when:
         FileResolver fileResolver = new FileResolver(
             propertiesRepo,
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
-            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)    
-        )
+            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
+            new ConfigDirResolver(propertiesRepo))
         PropertiesRepo config = new ConfigResolverFromConfigFiles(fileResolver).resolve();
 
         then:
@@ -81,15 +82,15 @@ class ConfigResolverTest extends Specification {
         File localConfigFile = new File("$BASE_TEST_DIR/1/config-local.properties");
 
         PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(TabularProperties.TABULAR_CONFIG_FILE_PATH_PROP, configFile.absolutePath)
-        propertiesRepo.put(TabularProperties.TABULAR_LOCAL_CONFIG_FILE_PATH_PROP, localConfigFile.absolutePath)
+        propertiesRepo.put(TabularProperties.CONFIG_FILE_PATH, configFile.absolutePath)
+        propertiesRepo.put(TabularProperties.LOCAL_CONFIG_FILE_PATH, localConfigFile.absolutePath)
 
         when:
         FileResolver fileResolver = new FileResolver(
             propertiesRepo,
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
-            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST)    
-        )
+            new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
+            new ConfigDirResolver(propertiesRepo))
         PropertiesRepo config = new ConfigResolverFromConfigFiles(fileResolver).resolve();
 
         then:
@@ -98,6 +99,5 @@ class ConfigResolverTest extends Specification {
         assert config.get('2.config.properties') == null
         assert config.get('2.config.local.properties') == null
         assert config.get('1.non.default.named.config.properties') == 'fetched'
-        
     }
 }

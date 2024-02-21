@@ -1,5 +1,6 @@
 package org.tools4j.tabular.commands;
 
+import java.util.Collections;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.service.Pretty;
 import org.tools4j.tabular.datasets.Row;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
  * Time: 5:45 PM
  */
 public class CommandMetadatas implements Pretty {
+    public static final CommandMetadatas EMPTY = new CommandMetadatas(Collections.emptyList());
     private final Map<String, CommandMetadata> commandMetadataById;
 
     public CommandMetadatas(final List<CommandMetadata> commands) {

@@ -1,5 +1,6 @@
 package org.tools4j.tabular.util;
 
+import java.util.Optional;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public class CachingFileDownloaderImpl implements FileDownloader {
             }
         } catch (Exception e) {
             if(cacheDownloads()){
-                LOG.info("Could not find file at [" + urlStr + "], looking for cached file", e);
+                LOG.info("No file found at [" + urlStr + "], looking for cached file", e);
                 Reader cacheFile = lookForCachedFile(urlStr);
                 if (cacheFile != null) return cacheFile;
             }
@@ -112,7 +113,7 @@ public class CachingFileDownloaderImpl implements FileDownloader {
 
     private String resolveCachedFileName(URL url) {
         try {
-            File userDir = userDirResolver.resolve();
+            File userDir = resolveUserDir();
             return userDir.getAbsolutePath() + "/cache/" + encodeUrlToUseAsFilename(url.toURI().toString()) + ".cached";
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
@@ -121,11 +122,18 @@ public class CachingFileDownloaderImpl implements FileDownloader {
 
     private String resolveDownloadedTmpFileName(URL url) {
         try {
-            File userDir = userDirResolver.resolve();
+            File userDir = resolveUserDir();
             return userDir.getAbsolutePath() + "/cache/" + encodeUrlToUseAsFilename(url.toURI().toString()) + ".tmp";
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    private File resolveUserDir() {
+        Optional<File> userDirOpt = userDirResolver.resolve();
+        userDirOpt.orElseThrow(() -> new IllegalStateException("userDir could not be resolved"));
+        File userDir = userDirOpt.get();
+        return userDir;
     }
 
     public static String encodeUrlToUseAsFilename(String url){
