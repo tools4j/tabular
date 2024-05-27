@@ -27,7 +27,7 @@ public class ExecutionServiceImpl implements ExecutionService {
         Runtime rt = Runtime.getRuntime();
         final Process pr;
         try {
-            LOG.info("Executing: " + command.resolveCommandLineString() + " in workingDir:" + System.getProperty("user.home"));
+            LOG.info("Executing: " + command.resolveCommandLineString() + " in workingDir:" + System.getProperty("user.dir"));
             outputConsole.appendText("$ " + command.resolveCommandLineString() + "\n");
 
             ExecutingCommand executingCommand;

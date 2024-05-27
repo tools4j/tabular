@@ -80,7 +80,7 @@ runtime {
 }
 
 group 'org.tools4j'
-version '5.0'
+version '5.2'
 
 dependencies {
     implementation 'com.opencsv:opencsv:5.7.1'

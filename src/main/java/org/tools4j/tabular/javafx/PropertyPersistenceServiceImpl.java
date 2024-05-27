@@ -37,7 +37,7 @@ public class PropertyPersistenceServiceImpl implements PropertyPersistenceServic
 
     private void createPropertiesFileInWorkingDirectoryIfRequired() {
         try {
-            String path = System.getProperty("user.home");
+            String path = System.getProperty("user.dir");
             final String filePath = path + "/" + propertiesFileNameWithoutExtension + ".properties";
             final File file = new File(filePath);
             if(!file.exists()){
@@ -52,7 +52,7 @@ public class PropertyPersistenceServiceImpl implements PropertyPersistenceServic
     private Properties getPropertiesFromWorkingDirectory() {
         try {
             Properties config = new java.util.Properties();
-            String path = System.getProperty("user.home");
+            String path = System.getProperty("user.dir");
             FileInputStream fis = new FileInputStream(path + "/" + propertiesFileNameWithoutExtension + ".properties");
             config.load(fis);
             fis.close();
@@ -64,7 +64,7 @@ public class PropertyPersistenceServiceImpl implements PropertyPersistenceServic
 
     private void savePropertiesToWorkingDirectory() {
         try {
-            String path = System.getProperty("user.home");
+            String path = System.getProperty("user.dir");
             FileOutputStream fos = new FileOutputStream(path + "/" + propertiesFileNameWithoutExtension + ".properties");
             properties.store(fos, "Please do not modify this file manually, is created and updated automatically");
             fos.close();
