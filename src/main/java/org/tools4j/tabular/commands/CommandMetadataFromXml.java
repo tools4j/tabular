@@ -18,18 +18,18 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import org.tools4j.tabular.util.FileResolver;
+import org.tools4j.tabular.util.TabularDirAndFileResolver;
 
 public class CommandMetadataFromXml {
     private final static Logger LOG = LoggerFactory.getLogger(CommandMetadata.class);
     private final PropertiesRepo propertiesRepo;
     private final InputStream inputStream;
 
-    public CommandMetadataFromXml(PropertiesRepo propertiesRepo, FileResolver fileResolver) {
+    public CommandMetadataFromXml(PropertiesRepo propertiesRepo, TabularDirAndFileResolver fileResolver) {
         this(propertiesRepo, getAsInputStream(propertiesRepo, fileResolver));
     }
 
-    private static InputStream getAsInputStream(PropertiesRepo propertiesRepo, FileResolver fileResolver) {
+    private static InputStream getAsInputStream(PropertiesRepo propertiesRepo, TabularDirAndFileResolver fileResolver) {
         Optional<Reader> optReader = resolveCommandsFile(propertiesRepo, fileResolver);
         return optReader.map(ReaderInputStream::new).orElse(null);
     }
@@ -44,7 +44,7 @@ public class CommandMetadataFromXml {
     }
 
     @SneakyThrows
-    private static Optional<Reader> resolveCommandsFile(PropertiesRepo propertiesRepo, FileResolver fileResolver) {
+    private static Optional<Reader> resolveCommandsFile(PropertiesRepo propertiesRepo, TabularDirAndFileResolver fileResolver) {
         if(propertiesRepo.hasKey(COMMAND_XML_PATH)){
             File xmlFile = new File(propertiesRepo.get(COMMAND_XML_PATH));
             if(xmlFile.exists() && xmlFile.isFile()){

@@ -8,21 +8,20 @@ import org.tools4j.tabular.config.TabularProperties;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.Optional;
 
-public class FileResolver {
+public class TabularDirAndFileResolver {
     //Config path prop
-    private final static Logger LOG = LoggerFactory.getLogger(FileResolver.class);
+    private final static Logger LOG = LoggerFactory.getLogger(TabularDirAndFileResolver.class);
     private final PropertiesRepo propertiesRepo;
     private final DirResolver workingDirResolver;
     private final DirResolver userDirResolver;
     private final FileDownloader fileDownloader;
     private final DirResolver configDirResolver;
 
-    public FileResolver(
+    public TabularDirAndFileResolver(
             PropertiesRepo propertiesRepo,
             DirResolver workingDirResolver,
             DirResolver userDirResolver,
@@ -36,8 +35,10 @@ public class FileResolver {
 
     /**
      * This method looks for a given file in a number of different locations.  Once a file is found, it is immediately
-     * returned.  Files are looked for in this order:
-     * 
+     * returned.<br/>
+     * This method provides a standard way to resolve files in the tabular system.  Used for both configuration files and data files.<br/>
+     * This method tries to provide the right balance between flexibility and being able to fallback to sensible defaults.<br/>
+     * Files are looked for in this order:
      * <ul>
      *     <li>At the URL specified by the property urlProp.</li>
      *     <li>At the location specified by fileNamePathProp.</li>
@@ -67,8 +68,8 @@ public class FileResolver {
 
     private Optional<Reader> resolveFileUsingPathProperty(String pathProp) {
         String path = propertiesRepo.get(pathProp);
+        LOG.info("Looking for file at property  [" + pathProp + ":" + path + "]");
         if(path == null){
-            LOG.info("No property found [" + pathProp + "]");
             return Optional.empty();
         } else {
             File file = new File(path);
@@ -90,11 +91,11 @@ public class FileResolver {
         }
         File configDir = configDirOpt.get();
         Optional<File> file = resolveFile(configDir, fileName);
+        LOG.info("Looking for file in config dir [" + configDir.getAbsolutePath() + "/" + fileName + "]");
         if(file.isPresent()){
             LOG.info("Found file in config dir: " + file.get().getAbsolutePath());
             return Optional.of(toReader(file).get());
         } else {
-            LOG.info("No file found in config dir [" + configDir.getAbsolutePath() + "] named [" + fileName + "]");
             return Optional.empty();
         }
     }
@@ -106,11 +107,11 @@ public class FileResolver {
         }
         File userDir = userDirOpt.get();
         Optional<File> file = resolveFile(userDir, fileName);
+        LOG.info("Looking for file in user dir [" + userDir.getAbsolutePath() + "/" + fileName + "]");
         if(file.isPresent()){
             LOG.info("Found file in user dir [" + file.get().getAbsolutePath() + "]");
             return toReader(file);
         } else {
-            LOG.info("No file found in user dir [" + userDir.getAbsolutePath() + "] named [" + fileName + "]");
             return Optional.empty();
         }
     }
@@ -122,11 +123,11 @@ public class FileResolver {
         }
         File workingDir = workingDirDirOpt.get();
         Optional<File> file = resolveFile(workingDir, fileName);
+        LOG.info("Looking for file in working dir [" + workingDir.getAbsolutePath() + "/" + fileName + "]");
         if(file.isPresent()){
             LOG.info("Found file in working dir [" + file.get().getAbsolutePath() + "]");
             return toReader(file);
         } else {
-            LOG.info("No file found in working dir [" + workingDir.getAbsolutePath() + "] named [" + fileName + "]");
             return Optional.empty();
         }
     }
@@ -141,8 +142,8 @@ public class FileResolver {
 
     private Optional<Reader> resolveFileUsingUrlProperty(String propertyName){
         String url = propertiesRepo.get(propertyName);
+        LOG.info("Looking for file at URL given by property [" + propertyName + ":" + url + "]");
         if(url == null){
-            LOG.info("No property found [" + propertyName + "]");
             return Optional.empty();
         }
         return Optional.of(fileDownloader.downloadFile(url));

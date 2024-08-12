@@ -7,16 +7,20 @@ import static org.tools4j.tabular.config.TabularConstants.TABULAR_LOCAL_CONFIG_F
 import static org.tools4j.tabular.config.TabularProperties.LOCAL_CONFIG_FILE_PATH;
 import static org.tools4j.tabular.config.TabularProperties.LOCAL_CONFIG_FILE_URL;
 
+import jline.internal.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.util.FileResolver;
+import org.tools4j.tabular.util.TabularDirAndFileResolver;
 
 import java.io.Reader;
 import java.util.Optional;
 
 public class ConfigResolverFromConfigFiles {
-    private final FileResolver fileResolver;
+    private final static Logger LOG = LoggerFactory.getLogger(ConfigResolverFromConfigFiles.class);
+    private final TabularDirAndFileResolver fileResolver;
 
-    public ConfigResolverFromConfigFiles(FileResolver fileResolver) {
+    public ConfigResolverFromConfigFiles(TabularDirAndFileResolver fileResolver) {
         this.fileResolver = fileResolver;
     }
 
@@ -48,6 +52,7 @@ public class ConfigResolverFromConfigFiles {
      */
     
     public PropertiesRepo resolve() {
+        LOG.info("Looking for config file:");
         Optional<Reader> configFile = fileResolver.resolveFile(CONFIG_FILE_URL, CONFIG_FILE_PATH, TABULAR_CONFIG_FILE_NAME_DEFAULT);
         PropertiesRepo allProperties = new PropertiesRepo();
         if (!configFile.isPresent()) {
@@ -55,6 +60,7 @@ public class ConfigResolverFromConfigFiles {
         }
         allProperties.putAll(new PropertiesRepo(configFile.get()));
 
+        LOG.info("Looking for local-config file:");
         Optional<Reader> localConfigFile = fileResolver.resolveFile(LOCAL_CONFIG_FILE_URL, LOCAL_CONFIG_FILE_PATH, TABULAR_LOCAL_CONFIG_FILE_NAME_DEFAULT);
         if (localConfigFile.isPresent()){
             allProperties.putAll(new PropertiesRepo(localConfigFile.get()));

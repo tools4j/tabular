@@ -2,7 +2,7 @@ package org.tools4j.tabular.config
 
 
 import org.tools4j.tabular.properties.PropertiesRepo
-import org.tools4j.tabular.util.FileResolver
+import org.tools4j.tabular.util.TabularDirAndFileResolver
 import spock.lang.Specification
 
 class ConfigResolverTest extends Specification {
@@ -19,7 +19,7 @@ class ConfigResolverTest extends Specification {
         String workingDir = "$BASE_TEST_DIR/1"
 
         when:
-        FileResolver fileResolver = new FileResolver(
+        TabularDirAndFileResolver fileResolver = new TabularDirAndFileResolver(
             propertiesRepo,
             new DummyDirResolver(workingDir),
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),   
@@ -41,7 +41,7 @@ class ConfigResolverTest extends Specification {
         String userDir = "$BASE_TEST_DIR/2"
 
         when:
-        FileResolver fileResolver = new FileResolver(
+        TabularDirAndFileResolver fileResolver = new TabularDirAndFileResolver(
             propertiesRepo,
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
             new DummyDirResolver(userDir),
@@ -62,7 +62,7 @@ class ConfigResolverTest extends Specification {
         propertiesRepo.put(TabularProperties.CONFIG_DIR, configDir)
 
         when:
-        FileResolver fileResolver = new FileResolver(
+        TabularDirAndFileResolver fileResolver = new TabularDirAndFileResolver(
             propertiesRepo,
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
@@ -86,7 +86,7 @@ class ConfigResolverTest extends Specification {
         propertiesRepo.put(TabularProperties.LOCAL_CONFIG_FILE_PATH, localConfigFile.absolutePath)
 
         when:
-        FileResolver fileResolver = new FileResolver(
+        TabularDirAndFileResolver fileResolver = new TabularDirAndFileResolver(
             propertiesRepo,
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),
             new DummyDirResolver(FILE_WHICH_DOES_NOT_EXIST),

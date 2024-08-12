@@ -13,7 +13,7 @@ import org.tools4j.tabular.config.WorkingDirResolver;
 import org.tools4j.tabular.properties.PropertiesRepo;
 import org.tools4j.tabular.service.datasets.ExpressionCompiler;
 import org.tools4j.tabular.service.datasets.FreemarkerCompiler;
-import org.tools4j.tabular.util.FileResolver;
+import org.tools4j.tabular.util.TabularDirAndFileResolver;
 
 /**
  * User: ben
@@ -40,20 +40,20 @@ public class DataSetContextLoader {
         DirResolver workingDirResolver = new WorkingDirResolver();
         DirResolver userDirResolver = new UserDirResolver();
         DirResolver configDirResolver = new ConfigDirResolver(allProperties);
-        FileResolver fileResolver = new FileResolver(allProperties, workingDirResolver, userDirResolver, configDirResolver);
-        PropertiesRepo propertiesFromConfigFiles = new ConfigResolverFromConfigFiles(fileResolver).resolve();
+        TabularDirAndFileResolver tabularDirAndFileResolver = new TabularDirAndFileResolver(allProperties, workingDirResolver, userDirResolver, configDirResolver);
+        PropertiesRepo propertiesFromConfigFiles = new ConfigResolverFromConfigFiles(tabularDirAndFileResolver).resolve();
         allProperties.putAll(propertiesFromConfigFiles);
         allProperties.resolveVariablesWithinValues();
         
         LOG.info("==================== Resolving csv tables ====================");
-        DataSetResolver dataSetResolver = new DataSetResolver(fileResolver);
+        DataSetResolver dataSetResolver = new DataSetResolver(tabularDirAndFileResolver);
         DataSet<? extends Row> dataset = dataSetResolver.resolve();
         DataSet<? extends Row> returnDataSet = dataset.resolveVariablesInCells(allProperties);
 
         LOG.info("==================== Loading commands ====================");
         CommandMetadatas commandMetadatas;
         LOG.info("Loading commandMetadata from xml");
-        CommandMetadataFromXml commandMetadataFromXml = new CommandMetadataFromXml(allProperties, fileResolver);
+        CommandMetadataFromXml commandMetadataFromXml = new CommandMetadataFromXml(allProperties, tabularDirAndFileResolver);
         commandMetadatas = commandMetadataFromXml.load();
 
         LOG.info("==================== Compiling commands ====================");

@@ -1,7 +1,7 @@
 package org.tools4j.tabular.config;
 
 import static org.tools4j.tabular.config.TabularProperties.CONFIG_DIR;
-import static org.tools4j.tabular.util.FileResolver.doesDirExist;
+import static org.tools4j.tabular.util.TabularDirAndFileResolver.doesDirExist;
 
 import java.io.File;
 import java.util.Optional;
