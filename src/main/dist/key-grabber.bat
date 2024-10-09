@@ -1,1 +1,0 @@
-%JAVA_HOME%\bin\java -classpath "lib/*" com.tulskiy.keymaster.AWTTest

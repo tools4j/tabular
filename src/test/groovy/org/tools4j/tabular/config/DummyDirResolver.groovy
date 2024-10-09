@@ -1,7 +1,5 @@
 package org.tools4j.tabular.config
 
-import org.tools4j.tabular.config.DirResolver;
-
 class DummyDirResolver implements DirResolver {
     private final String path;
 
@@ -10,7 +8,7 @@ class DummyDirResolver implements DirResolver {
     }
 
     @Override
-    File resolve() {
-        return new File((String) path);
+    Optional<File> resolve() {
+        return Optional.of(new File((String) path));
     }
 }

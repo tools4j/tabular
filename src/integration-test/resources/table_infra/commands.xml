@@ -10,8 +10,8 @@
     <condition><equals col_name='app' value='http_server'/></condition>        
   </command>
   <command id='metrics' name='metrics' description='Opens metrics server portal for the app' command_line='dummycommand ${host} ${instance}'/>
-  <command id='deploy' name='deploy' description='Deploys this instance' command_line='dummycommand ${host} ${instance}'>
+  <command id='deploy' name='deploy' description='Deploys this instance' command_line='open https://app.travis-ci.com/'>
     <not><equals col_name='env' value='prod'/></not>            
   </command>
-  <command id='docs' name='docs' description='Opens documentation' command_line='dummycommand ${host} ${instance}'/>
+  <command id='docs' name='docs' description='Opens documentation' command_line='open https://developer.atlassian.com/server/confluence/confluence-rest-api-examples/'/>
 </commands>

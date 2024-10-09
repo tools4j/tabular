@@ -1,39 +1,41 @@
 package org.tools4j.tabular.commands;
 
-import org.tools4j.tabular.config.TabularProperties;
+import static org.tools4j.tabular.config.TabularProperties.COMMAND_XML_PATH;
+import static org.tools4j.tabular.config.TabularProperties.COMMAND_XML_URL;
+
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Optional;
+import lombok.SneakyThrows;
+import org.apache.tools.ant.util.ReaderInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tools4j.tabular.config.TabularConstants;
 import org.tools4j.tabular.properties.PropertiesRepo;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Collections;
+import org.tools4j.tabular.util.TabularDirAndFileResolver;
 
 public class CommandMetadataFromXml {
+    private final static Logger LOG = LoggerFactory.getLogger(CommandMetadata.class);
     private final PropertiesRepo propertiesRepo;
     private final InputStream inputStream;
 
-    public CommandMetadataFromXml(PropertiesRepo propertiesRepo) {
-        this(propertiesRepo, loadFile(propertiesRepo));
-    }
-    
-    public CommandMetadataFromXml(PropertiesRepo propertiesRepo, String xml){
-        this(propertiesRepo, new ByteArrayInputStream(xml.getBytes()));
+    public CommandMetadataFromXml(PropertiesRepo propertiesRepo, TabularDirAndFileResolver fileResolver) {
+        this(propertiesRepo, getAsInputStream(propertiesRepo, fileResolver));
     }
 
-    private static InputStream loadFile(PropertiesRepo propertiesRepo) {
-        String commandXmlFilePath = propertiesRepo.get(TabularProperties.COMMAND_XML_FILE, null);
-        if(commandXmlFilePath == null){
-            throw new IllegalStateException("Property must be specified with path to xml file '" + TabularProperties.COMMAND_XML_FILE + "'");
-        }
-        try {
-            return new FileInputStream(new File(commandXmlFilePath));
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("File not found exception [" + commandXmlFilePath + "]", e);
-        }
+    private static InputStream getAsInputStream(PropertiesRepo propertiesRepo, TabularDirAndFileResolver fileResolver) {
+        Optional<Reader> optReader = resolveCommandsFile(propertiesRepo, fileResolver);
+        return optReader.map(ReaderInputStream::new).orElse(null);
+    }
+
+    public CommandMetadataFromXml(PropertiesRepo propertiesRepo, String xml){
+        this(propertiesRepo, new ByteArrayInputStream(xml.getBytes()));
     }
 
     public CommandMetadataFromXml(PropertiesRepo propertiesRepo, InputStream inputStream) {
@@ -41,8 +43,26 @@ public class CommandMetadataFromXml {
         this.inputStream = inputStream;
     }
 
+    @SneakyThrows
+    private static Optional<Reader> resolveCommandsFile(PropertiesRepo propertiesRepo, TabularDirAndFileResolver fileResolver) {
+        if(propertiesRepo.hasKey(COMMAND_XML_PATH)){
+            File xmlFile = new File(propertiesRepo.get(COMMAND_XML_PATH));
+            if(xmlFile.exists() && xmlFile.isFile()){
+                LOG.info("Resolved file at path: [" + xmlFile.getAbsolutePath() + "]");
+                return Optional.of(new FileReader(xmlFile));
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return fileResolver.resolveFile(
+                COMMAND_XML_URL,
+                COMMAND_XML_PATH,
+                TabularConstants.TABULAR_COMMANDS_FILE_NAME_DEFAULT);
+        }
+    }
+
     public CommandMetadatas load(){
-        if(inputStream == null) return new CommandMetadatas(Collections.emptyList());
+        if(inputStream == null) return CommandMetadatas.EMPTY;
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();

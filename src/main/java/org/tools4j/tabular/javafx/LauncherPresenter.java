@@ -1,5 +1,7 @@
 package org.tools4j.tabular.javafx;
 
+import static org.tools4j.tabular.config.TabularProperties.INSTALL_HOTKEY_SHORTCUT;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -180,7 +182,9 @@ public class LauncherPresenter implements Initializable {
                 )
             );
 
-            new ShortcutInstaller( stage, dataSearchBox, dataSetContext.getProperties()).install();
+            if(dataSetContext.getProperties().getAsBoolean(INSTALL_HOTKEY_SHORTCUT, true)){
+                new ShortcutInstaller( stage, dataSearchBox, dataSetContext.getProperties()).install();
+            }
 
             expandCollapseHelper = new ExpandCollapseHelper(stage, textSearchPane, outerTablePane);
             labelLogo.setText(">");

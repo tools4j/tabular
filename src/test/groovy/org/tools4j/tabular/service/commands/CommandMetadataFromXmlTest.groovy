@@ -16,9 +16,9 @@ import java.util.function.Predicate
 class CommandMetadataFromXmlTest extends Specification {
     def "Load"() {
         given:
-        PropertiesRepo propertiesRepo = new PropertiesRepo();
-        propertiesRepo.put(TabularProperties.COMMAND_XML_FILE, "src/test/resources/table_with_xml_config/commands.xml")
-        CommandMetadataFromXml commandMetadataFromXml = new CommandMetadataFromXml(propertiesRepo);
+        def propertiesRepo = new PropertiesRepo();
+        def commandsXmlPath = "src/test/resources/table_with_commands/commands.xml"
+        def commandMetadataFromXml = new CommandMetadataFromXml(propertiesRepo, new FileInputStream(commandsXmlPath));
         CommandMetadatas commands = commandMetadataFromXml.load();
         
         when:

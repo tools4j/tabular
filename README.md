@@ -48,19 +48,40 @@ some guidance.
 
 # Configuration reference
 ## General properties
-| property                                           | description                                                                                                                                                                                                                                        |
-|----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| hotkey_combinations_show                           | Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
-| data_search_background_prompt_text                 | Prompt to display when searching for data                                                                                                                                                                                                          |
-| command_search_background_prompt_text              | Prompt to display when searching for command                                                                                                                                                                                                       |
-| columns_to_display_in_data_table                   | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells.       |
-| columns_to_index_in_data_table                     | A comma seperated list of columns names to index.  If property is not given, then all columns are indexed.                                                                                                                                         |
-| columns_to_display_in_command_table                | Can be used to specify which columns to show in the command table, and in what order.  Options are: Name & Description.                                                                                                                            |
-| columns_to_index_in_command_table                  | A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed.                                                                                                      |
-| data_expression_to_display_when_selected           | When a data column is selected, this Freemarker expression will be used to create a prefix in the main prompt box when a row is selected.                                                                                                          |
-| command_expression_to_display_when_selected        | When a command is selected, this Freemarker expression will be used to create a prefix in the main prompt box.  Defaults to 'command.name'.                                                                                                        |
-| close_console_on_command_finish                    | Close Tabular once the command has finished running. Defaults to true.                                                                                                                                                                             |
-| skip_command_browse_if_only_one_command_configured | Defaults to false.                                                                                                                                                                                                                                 |
+| property                                                   | description                                                                                                                                                                                                                                        |
+|------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| tabular_hotkey_combinations_show                           | Comma delimited list of hotkey combinations which can then be used to restore Tabular from a minimized state.  The format of these strings should be of the format used by the awt KeyStroke.getKeyStroke(String) method. See below for more info. |
+| tabular_data_search_background_prompt_text                 | Prompt to display when searching for data                                                                                                                                                                                                          |
+| tabular_command_search_background_prompt_text              | Prompt to display when searching for command                                                                                                                                                                                                       |
+| tabular_columns_to_display_in_data_table                   | A comma separated list of column names to show in the table.  Useful for specifying default column ordering.  Can also be used to hide columns which you don't want to show, i.e. which might just be used to reference to from other cells.       |
+| tabular_columns_to_index_in_data_table                     | A comma seperated list of columns names to index.  If property is not given, then all columns are indexed.                                                                                                                                         |
+| tabular_columns_to_display_in_command_table                | Can be used to specify which columns to show in the command table, and in what order.  Options are: Name & Description.                                                                                                                            |
+| tabular_columns_to_index_in_command_table                  | A comma seperated list of columns names to index.  Options are: Name & Description.  If property is not given, then both columns are indexed.                                                                                                      |
+| tabular_data_expression_to_display_when_selected           | When a data column is selected, this Freemarker expression will be used to create a prefix in the main prompt box when a row is selected.                                                                                                          |
+| tabular_command_expression_to_display_when_selected        | When a command is selected, this Freemarker expression will be used to create a prefix in the main prompt box.  Defaults to 'command.name'.                                                                                                        |
+| tabular_close_console_on_command_finish                    | Close Tabular once the command has finished running. Defaults to true.                                                                                                                                                                             |
+| tabular_skip_command_browse_if_only_one_command_configured | If there is only one command configured for a a row, skip the browse step and execute on ENTER. Defaults to false.                                                                                                                                 |
+| tabular_command_xml_pathname                               | Path to command xml file, including filename. (See config file resolution.)                                                                                                                                                                        |
+| tabular_command_xml_url                                    | Url to command xml file, including filename.  (See config file resolution.)                                                                                                                                                                        |
+| tabular_cache_url_downloads                                | Whether to cache any url downloads.  This means that if you've previously used a config xml file, and the file is currently unavailable, (e.g. you are offline) a cached file can be used.                                                         |
+| tabular_config_file_path                                   | Path to config properties file, including filename. (See config file resolution.)                                                                                                                                                                  |
+| tabular_config_file_url                                    | Url to config properties file, including filename.  (See config file resolution.)                                                                                                                                                                  
+| tabular_local_config_file_path                             | Path to config-local properties file, including filename. (See config file resolution.)                                                                                                                                                            |
+| tabular_local_config_file_url                              | Url to config-local properties file, including filename. (See config file resolution.)                                                                                                                                                             |
+| tabular_command_xml_file_path                              | Path to command xml file, including filename. (See command file resolution.)                                                                                                                                                                       |
+| tabular_command_xml_file_url                               | Url to command xml file, including filename.  (See command file resolution.)                                                                                                                                                                       |
+| tabular_csv_file_path                                      | Path to table csv file, including filename. (See csv file resolution.)                                                                                                                                                                             |
+| tabular_csv_file_url                                       | Url to table csv file, including filename.  (See csv file resolution.)                                                                                                                                                                             
+| tabular_config_dir                                         | Tabular config dir.  (See file resolution.)                                                                                                                                                                                                        |
+| tabular_install_hotkey_shortcut                            | Whether to install hotkey shortcut.  On some systems, the inbuilt hotkey (restore) mechanism does not activate the tabular UI (macos).                                                                                                             |
+
+
+NOTE, for macos, you will need to edit .zshrc and uncomment 
+DISABLE_AUTO_TITLE="true"
+
+Recommend Keysmith app for macos
+
+
 
 # Command definitions
 ## Using properties or xml to define commands
@@ -92,13 +113,13 @@ via XML is preferred as startup of Tabular will be much quicker.
 
 ### Properties config example including commands
 ```properties
-hotkey_combinations_show=shift ctrl PLUS
+tabular_hotkey_combinations_show=shift ctrl PLUS
 
-data_expression_to_display_when_selected=${App}
-command_expression_to_display_when_selected=${Name}
+tabular_data_expression_to_display_when_selected=${App}
+tabular_command_expression_to_display_when_selected=${Name}
 
-data_search_background_prompt_text=App Search
-command_search_background_prompt_text=Command Search
+tabular_data_search_background_prompt_text=App Search
+tabular_command_search_background_prompt_text=Command Search
 
 app.commmands.openLog.name=display logs
 app.commmands.openLog.predicate=true
@@ -115,11 +136,11 @@ app.commmands.cmder.description=ssh to  host name
 ### Properties config example including commands
 #### config.properties
 ```properties
-hotkey_combinations_show=shift ctrl PLUS
+tabular_hotkey_combinations_show=shift ctrl PLUS
 
-data_expression_to_display_when_selected=${instance}
+tabular_data_expression_to_display_when_selected=${instance}
 
-command_xml_file=commands.xml
+tabular_command_xml_file=commands.xml
 app.columns.to.display.in.data.table=app,instance,host,region,env,dc
 app.columns.to.display.in.command.table=Name,Description
 app.data.search.background.prompt.text=Search Infrastructure

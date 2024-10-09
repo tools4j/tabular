@@ -1,16 +1,28 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.beryx:badass-runtime-plugin:1.12.5'
+    }
+}
+
 plugins {
     id 'application'
     id 'groovy'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'org.beryx.runtime' version '1.12.0'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.beryx.runtime' version '1.12.5'
 }
+
+apply plugin: 'org.beryx.runtime'
 
 repositories {
     mavenCentral()
 }
 
 javafx {
-    modules = [ 'javafx.controls', 'javafx.graphics', 'javafx.fxml' ]
+    version = '17.0.2'
+    modules = ['javafx.base', 'javafx.controls', 'javafx.graphics', 'javafx.fxml']
 }
 
 application {
@@ -19,31 +31,11 @@ application {
 }
 
 tasks.named('test') {
-    useJUnitPlatform() 
-}
-
-runtime {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    targetPlatform("win") {
-        jdkHome = 'C:/dev/apps/java/jdk-11.0.10'
-    }
-
-    launcher {
-        noConsole = false
-    }
-    
-    jpackage {
-        // Uncomment and adjust the following line if your runtime task is configured to generate images for multiple platforms
-        // targetPlatformName = "mac"
-
-        installerOptions += ['--resource-dir', "src/main/resources"]
-        installerOptions += ['--vendor', 'Acme Corporation']
-        installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
-    }
+    useJUnitPlatform()
 }
 
 group 'org.tools4j'
-version '4.9'
+version '5.2'
 
 dependencies {
     implementation 'com.opencsv:opencsv:5.7.1'
@@ -54,7 +46,7 @@ dependencies {
     implementation 'com.airhacks:afterburner.fx:1.6.0'
     implementation 'com.github.tulskiy:jkeymaster:1.3'
     implementation 'javax.inject:javax.inject:1'
-    implementation('org.codehaus.groovy:groovy-all:2.5.21'){
+    implementation ('org.codehaus.groovy:groovy-all:2.5.21') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.testng', module: 'testng'
     }
@@ -65,14 +57,16 @@ dependencies {
     implementation 'org.freemarker:freemarker:2.3.32'
     implementation 'com.sun.xml.bind:jaxb-impl:2.3.3'
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
-    
+    implementation 'net.java.dev.jna:jna:5.7.0'
+    implementation 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.spockframework:spock-core:2.3-groovy-2.5'
     testImplementation 'org.hamcrest:hamcrest-core:1.3'
     testImplementation 'org.tools4j:groovy-tables:1.6'
-
-    testImplementation 'cglib:cglib-nodep:3.1'          // allows mocking of classes (in addition to interfaces)
-    testImplementation 'org.objenesis:objenesis:2.1'    // allows mocking of classes without default constructor (together with CGLIB)
+    testImplementation 'cglib:cglib-nodep:3.1'
+    testImplementation 'org.objenesis:objenesis:2.1'
 }
 
 test {
@@ -95,7 +89,7 @@ configurations {
     integrationTestRuntime.extendsFrom testRuntime
 }
 
-//JAR START
+// JAR START
 
 jar {
     archiveFileName.set('tabular.jar')
@@ -104,35 +98,91 @@ jar {
     }
 }
 
-task copyDependencyJarsToStagingArea(type: Copy) {
-    into "build/dist/files/lib"
-    from(sourceSets.main.runtimeClasspath){ include '*.jar' }
+runtime {
+    modules = [
+            'javafx.base',
+            'javafx.controls',
+            'javafx.graphics',
+            'javafx.fxml'
+    ]
+    options = [
+            '--strip-debug',
+            '--compress', '2',
+            '--no-header-files',
+            '--no-man-pages'
+    ]
 }
 
-task copyAdditionalResourcesToStagingArea(type: Copy) {
-    from 'src/main/dist'
-    into 'build/dist/files'
-}
+// Custom task to download JavaFX libraries
+task downloadJavaFXLibraries {
+    def javafxVersion = javafx.version
+    def downloadDir = file("$buildDir/javafx-libs")
 
-task copyTabularJarToStagingArea(type: Copy) {
-    from 'build/libs/tabular.jar'
-    into 'build/dist/files'
-}
+    inputs.property('javafxVersion', javafxVersion)
+    outputs.dir(downloadDir)
 
-task createTabularZip(type: Zip) {
-    from 'build/dist/files'
-    include '*'
-    include '*/*'
-    archiveFileName = "tabular-${version}.zip"
-    destinationDirectory = layout.buildDirectory.dir('dist/zip/')
-}
-
-task buildTabularZip {
-    group 'build'
-    description 'Produces the Tabular zip file.'
     doLast {
-        println 'Done!'
+        if (!downloadDir.exists()) {
+            println "Downloading JavaFX SDK $javafxVersion for ${osName()} from GluonHQ"
+            downloadDir.mkdirs()
+            //def url = "https://download2.gluonhq.com/openjfx/${javafxVersion}/openjfx-${javafxVersion}_${osName()}-x64_bin-sdk.zip"
+            def url = "https://download2.gluonhq.com/openjfx/${javafxVersion}/openjfx-${javafxVersion}_osx-aarch64_bin-sdk.zip"
+            ant.get(src: url, dest: "$downloadDir/javafx-sdk.zip")
+            ant.unzip(src: "$downloadDir/javafx-sdk.zip", dest: downloadDir)
+        } else {
+            println "Directory $downloadDir already exists, skipping download."
+        }
     }
+}
+
+// Task to run the application
+task runApplication(type: Exec){//dependsOn: 'downloadJavaFXLibraries', type: Exec) {
+    group = 'application'
+    description = 'Run the application'
+
+    doFirst {
+        def os = osName()
+        def javaDir = file("$buildDir/javafx-libs/javafx-sdk-${javafx.version}/lib")
+        def cmd = ''
+
+        switch (os) {
+            case 'mac':
+                cmd = "java -cp $javaDir/*:$buildDir/libs/tabular.jar ${application.mainClass.get()}"
+                break
+            case 'win':
+                cmd = "java -cp $javaDir/*;$buildDir/libs/tabular.jar ${application.mainClass.get()}"
+                break
+            case 'lin':
+                cmd = "java -cp $javaDir/*:$buildDir/libs/tabular.jar ${application.mainClass.get()}"
+                break
+        }
+
+        commandLine 'sh', '-c', cmd
+    }
+}
+
+// Helper method to detect OS
+def osName() {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if (os.isWindows()) {
+        return 'win'
+    } else if (os.isMacOsX()) {
+        return 'mac'
+    } else if (os.isLinux()) {
+        return 'lin'
+    }
+    return 'unknown'
+}
+
+task createTabularExampleZip(type: Zip) {
+    doFirst {
+        println "=================================="
+        println "${projectDir}/example"
+    }
+    from "${projectDir}/example"
+    include '**/*'
+    archiveFileName = "tabular-example-${version}.zip"
+    destinationDirectory = file('dist')
 }
 
 task copyTabularZipToDistDirectory(type: Copy) {
@@ -143,34 +193,3 @@ task copyTabularZipToDistDirectory(type: Copy) {
 task cleanStagingArea(type: Delete) {
     delete 'build/dist'
 }
-
-//JAR END
-
-//JRE ZIP START
-
-task copyTabularImageToDistDirectory(type: Copy) {
-    from "build/image-win.zip"
-    into "dist/"
-    rename { filename -> 
-        "tabular-with-jre-${version}.zip"
-    }
-}
-
-//JRE ZIP END
-
-task buildTabularZipAndImage() {
-    group 'build'
-}
-
-
-jar.dependsOn cleanStagingArea
-copyTabularJarToStagingArea.dependsOn jar
-copyDependencyJarsToStagingArea.dependsOn copyTabularJarToStagingArea
-copyAdditionalResourcesToStagingArea.dependsOn copyDependencyJarsToStagingArea
-createTabularZip.dependsOn copyAdditionalResourcesToStagingArea
-copyTabularZipToDistDirectory.dependsOn createTabularZip
-buildTabularZip.dependsOn copyTabularZipToDistDirectory
-
-copyTabularImageToDistDirectory.dependsOn runtimeZip
-buildTabularZipAndImage.dependsOn buildTabularZip
-buildTabularZipAndImage.dependsOn copyTabularImageToDistDirectory

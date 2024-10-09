@@ -1,10 +1,16 @@
 package org.tools4j.tabular.config;
 
 import java.io.File;
+import java.util.Optional;
 
 public class UserDirResolver implements DirResolver {
-    @Override
-    public File resolve() {
-        return new File(System.getProperty("user.dir") + "/.tabular");
+  @Override
+    public Optional<File> resolve() {
+      File userDirPlusTabular = new File(new File(System.getProperty("user.dir")), "tabular");
+      if(userDirPlusTabular.exists()) {
+          return Optional.of(userDirPlusTabular.getAbsoluteFile());
+      } else {
+          return Optional.empty();
+      }
     }
 }

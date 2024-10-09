@@ -1,6 +1,7 @@
 package org.tools4j.tabular.javafx;
 
 import com.airhacks.afterburner.injection.Injector;
+import com.opencsv.bean.exceptionhandler.ExceptionHandlerIgnoreThenThrowAfter;
 import com.tulskiy.keymaster.common.Provider;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -36,6 +37,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        try {
+            _start(primaryStage);
+        } catch (Throwable t){
+            LOG.error("Error starting application", t);
+            throw t;
+        }
+    }
+
+    private void _start(Stage primaryStage) {
         if(System.getProperties().containsKey("logging.level")){
             setLoggingLevel(Level.toLevel(System.getProperty("logging.level")));
         }

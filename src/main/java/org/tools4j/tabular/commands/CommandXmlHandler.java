@@ -1,21 +1,19 @@
 package org.tools4j.tabular.commands;
 
-import org.tools4j.tabular.properties.PropertiesRepo;
-import org.tools4j.tabular.datasets.Row;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import org.tools4j.tabular.datasets.Row;
+import org.tools4j.tabular.properties.PropertiesRepo;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class CommandXmlHandler extends DefaultHandler {
     private static final Predicate<Row> ALWAYS = row -> true;
     private final PropertiesRepo propertiesRepo;
     private final LogicPredicateParser logicPredicateParser;
     private List<CommandMetadata> commands = new ArrayList<>();
-
     private CommandMetadata.Builder commandMetadataBuilder = new CommandMetadata.Builder();
     private boolean insideConditionElement = false;
     private String conditionType;

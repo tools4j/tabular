@@ -162,8 +162,10 @@ public class PropertiesRepo {
         return new HashMap<>(properties);
     }
 
-    public PropertiesRepo resolveVariablesWithinValues() {
-        return new PropertiesRepo(new MapResolver().resolve(asMap()));
+    public void resolveVariablesWithinValues() {
+        Map<String, String> resolvedProperties = new MapResolver().resolve(asMap());
+        this.properties.clear();
+        this.properties.putAll(resolvedProperties);
     }
 
     public String toPrettyString() {
@@ -204,5 +206,9 @@ public class PropertiesRepo {
 
     public boolean isEmpty() {
         return size() == 0;
+    }
+
+    public boolean hasKey(String key) {
+        return keySet().contains(key);
     }
 }
