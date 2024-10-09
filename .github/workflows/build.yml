@@ -5,11 +5,11 @@ on:
     branches:
       - main
   pull_request:
-    - main
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
