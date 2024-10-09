@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.beryx:badass-runtime-plugin:1.12.5'
+    }
+}
+
 plugins {
     id 'application'
     id 'groovy'
@@ -5,13 +14,15 @@ plugins {
     id 'org.beryx.runtime' version '1.12.5'
 }
 
+apply plugin: 'org.beryx.runtime'
+
 repositories {
     mavenCentral()
 }
 
 javafx {
-    version = '21'
-    modules = [ 'javafx.base', 'javafx.controls', 'javafx.graphics', 'javafx.fxml' ]
+    version = '17.0.2'
+    modules = ['javafx.base', 'javafx.controls', 'javafx.graphics', 'javafx.fxml']
 }
 
 application {
@@ -20,63 +31,7 @@ application {
 }
 
 tasks.named('test') {
-    useJUnitPlatform() 
-}
-
-runtime {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    targetPlatform("mac") {
-        jdkHome = "/Users/ben/Library/Java/JavaVirtualMachines/corretto-17.0.10/Contents/Home"
-    }
-//    targetPlatform("mac") {
-//        jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/semeru17-binaries/releases/download/jdk-17.0.9%2B9_openj9-0.41.0/ibm-semeru-open-jdk_aarch64_mac_17.0.9_9_openj9-0.41.0.tar.gz") {
-//            downloadDir = "$buildDir/mac-jdk"
-//            archiveName = "my-mac-jdk"
-//            archiveExtension = "tar.gz"
-//            pathToHome = "jdk-17.0.9+9/Contents/Home"
-//            overwrite = true
-//        }    
-//    }
-//    
-//    targetPlatform("win") {
-//        jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/semeru17-binaries/releases/download/jdk-17.0.9%2B9_openj9-0.41.0/ibm-semeru-open-jdk_x64_windows_17.0.9_9_openj9-0.41.0.zip") {
-//            downloadDir = "$buildDir/win-jdk"
-//            archiveName = "my-win-jdk"
-//            archiveExtension = "zip"
-//            pathToHome = "jdk-17.0.9+9"
-//            overwrite = false
-//        }    
-//    }
-    
-    launcher {
-        noConsole = false
-    }
-    
-    jpackage {
-        def currentOs = org.gradle.internal.os.OperatingSystem.current()
-        def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
-        imageOptions += ['--icon', "resources/icon.$imgType"]
-        installerOptions += ['--resource-dir', "src/main/resources"]
-        installerOptions += ['--vendor', 'tools4j']
-        skipInstaller = true
-        outputDir = "packaging"
-
-        if(currentOs.windows) {
-            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
-            imageName = "tabular-win"
-            targetPlatformName = "win"
-        }
-        else if (currentOs.linux) {
-            installerOptions += ['--linux-package-name', 'tabular','--linux-shortcut']
-            imageName = "tabular-linux"
-            targetPlatformName = "lin"
-        }
-        else if (currentOs.macOsX) {
-            installerOptions += ['--mac-package-name', 'tabular']
-            imageName = "tabular-mac"
-            targetPlatformName = "mac"
-        }
-    }
+    useJUnitPlatform()
 }
 
 group 'org.tools4j'
@@ -91,7 +46,7 @@ dependencies {
     implementation 'com.airhacks:afterburner.fx:1.6.0'
     implementation 'com.github.tulskiy:jkeymaster:1.3'
     implementation 'javax.inject:javax.inject:1'
-    implementation('org.codehaus.groovy:groovy-all:2.5.21'){
+    implementation ('org.codehaus.groovy:groovy-all:2.5.21') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.testng', module: 'testng'
     }
@@ -110,9 +65,8 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:2.3-groovy-2.5'
     testImplementation 'org.hamcrest:hamcrest-core:1.3'
     testImplementation 'org.tools4j:groovy-tables:1.6'
-
-    testImplementation 'cglib:cglib-nodep:3.1'          // allows mocking of classes (in addition to interfaces)
-    testImplementation 'org.objenesis:objenesis:2.1'    // allows mocking of classes without default constructor (together with CGLIB)
+    testImplementation 'cglib:cglib-nodep:3.1'
+    testImplementation 'org.objenesis:objenesis:2.1'
 }
 
 test {
@@ -135,7 +89,7 @@ configurations {
     integrationTestRuntime.extendsFrom testRuntime
 }
 
-//JAR START
+// JAR START
 
 jar {
     archiveFileName.set('tabular.jar')
@@ -144,12 +98,80 @@ jar {
     }
 }
 
-task createMacOsZip(type: Zip) {
-    dependsOn jpackageImage
-    from 'build/packaging/'
-    include 'tabular-mac.app/**/*'
-    archiveFileName = "tabular-mac-${version}.zip"
-    destinationDirectory = layout.projectDirectory.dir('dist/')
+runtime {
+    modules = [
+            'javafx.base',
+            'javafx.controls',
+            'javafx.graphics',
+            'javafx.fxml'
+    ]
+    options = [
+            '--strip-debug',
+            '--compress', '2',
+            '--no-header-files',
+            '--no-man-pages'
+    ]
+}
+
+// Custom task to download JavaFX libraries
+task downloadJavaFXLibraries {
+    def javafxVersion = javafx.version
+    def downloadDir = file("$buildDir/javafx-libs")
+
+    inputs.property('javafxVersion', javafxVersion)
+    outputs.dir(downloadDir)
+
+    doLast {
+        if (!downloadDir.exists()) {
+            println "Downloading JavaFX SDK $javafxVersion for ${osName()} from GluonHQ"
+            downloadDir.mkdirs()
+            //def url = "https://download2.gluonhq.com/openjfx/${javafxVersion}/openjfx-${javafxVersion}_${osName()}-x64_bin-sdk.zip"
+            def url = "https://download2.gluonhq.com/openjfx/${javafxVersion}/openjfx-${javafxVersion}_osx-aarch64_bin-sdk.zip"
+            ant.get(src: url, dest: "$downloadDir/javafx-sdk.zip")
+            ant.unzip(src: "$downloadDir/javafx-sdk.zip", dest: downloadDir)
+        } else {
+            println "Directory $downloadDir already exists, skipping download."
+        }
+    }
+}
+
+// Task to run the application
+task runApplication(type: Exec){//dependsOn: 'downloadJavaFXLibraries', type: Exec) {
+    group = 'application'
+    description = 'Run the application'
+
+    doFirst {
+        def os = osName()
+        def javaDir = file("$buildDir/javafx-libs/javafx-sdk-${javafx.version}/lib")
+        def cmd = ''
+
+        switch (os) {
+            case 'mac':
+                cmd = "java -cp $javaDir/*:$buildDir/libs/tabular.jar ${application.mainClass.get()}"
+                break
+            case 'win':
+                cmd = "java -cp $javaDir/*;$buildDir/libs/tabular.jar ${application.mainClass.get()}"
+                break
+            case 'lin':
+                cmd = "java -cp $javaDir/*:$buildDir/libs/tabular.jar ${application.mainClass.get()}"
+                break
+        }
+
+        commandLine 'sh', '-c', cmd
+    }
+}
+
+// Helper method to detect OS
+def osName() {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if (os.isWindows()) {
+        return 'win'
+    } else if (os.isMacOsX()) {
+        return 'mac'
+    } else if (os.isLinux()) {
+        return 'lin'
+    }
+    return 'unknown'
 }
 
 task createTabularExampleZip(type: Zip) {
