@@ -122,16 +122,16 @@ task downloadJavaFXLibraries {
     outputs.dir(downloadDir)
 
     doLast {
-        if (!downloadDir.exists()) {
+//        if (!downloadDir.exists()) {
             println "Downloading JavaFX SDK $javafxVersion for ${osName()} from GluonHQ"
             downloadDir.mkdirs()
             //def url = "https://download2.gluonhq.com/openjfx/${javafxVersion}/openjfx-${javafxVersion}_${osName()}-x64_bin-sdk.zip"
             def url = "https://download2.gluonhq.com/openjfx/${javafxVersion}/openjfx-${javafxVersion}_osx-aarch64_bin-sdk.zip"
             ant.get(src: url, dest: "$downloadDir/javafx-sdk.zip")
             ant.unzip(src: "$downloadDir/javafx-sdk.zip", dest: downloadDir)
-        } else {
-            println "Directory $downloadDir already exists, skipping download."
-        }
+//        } else {
+//            println "Directory $downloadDir already exists, skipping download."
+//        }
     }
 }
 
