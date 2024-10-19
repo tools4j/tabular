@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -24,10 +25,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: 'adopt'
@@ -35,6 +36,21 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/wrapper/
+            ~/.gradle/caches/
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Build with Gradle
         run: ${{ matrix.run }}
 
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post job cleanup
+        run: echo "Post job cleanup"
