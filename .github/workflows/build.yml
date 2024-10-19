@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -47,3 +48,9 @@ jobs:
 
       - name: Build with Gradle
         run: ${{ matrix.run }}
+
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post job cleanup
+        run: echo "Post job cleanup"
